@@ -51,7 +51,12 @@ export default function Events() {
         {/* Heading */}
         <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
           <Heading color={textColor}>Events</Heading>
-          <Text color={subTextColor} mt={4} fontSize="lg">
+          <Text
+            color={subTextColor}
+            fontFamily="monospace"
+            mt={4}
+            fontSize="lg"
+          >
             Stay up-to-date with upcoming events and schedule new ones.
           </Text>
         </Box>
@@ -63,6 +68,7 @@ export default function Events() {
           </Heading>
           <VStack spacing={4}>
             <Input
+              fontFamily="monospace"
               placeholder="Event Title"
               value={newEventTitle}
               onChange={(e) => setNewEventTitle(e.target.value)}
@@ -113,7 +119,12 @@ export default function Events() {
                 >
                   {new Date(event.date).toDateString()}
                 </Badge>
-                <Text fontWeight="bold" color={textColor} fontSize="lg">
+                <Text
+                  fontWeight="bold"
+                  fontFamily="monospace"
+                  color={textColor}
+                  fontSize="lg"
+                >
                   {event.title}
                 </Text>
               </Box>

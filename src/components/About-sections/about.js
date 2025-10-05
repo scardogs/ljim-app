@@ -28,6 +28,7 @@ export default function About() {
     "linear(to-r, gray.400, gray.600, black)",
     "linear(to-r, gray.300, gray.500, white)"
   );
+  const fontFamily = "monospace";
 
   return (
     <Box
@@ -36,6 +37,7 @@ export default function About() {
       textAlign="center"
       py={{ base: 16, md: 24 }}
       px={{ base: 4, md: 8 }}
+      fontFamily={fontFamily}
     >
       <VStack spacing={12} maxW="6xl" mx="auto">
         {/* Main About Heading */}
@@ -55,6 +57,7 @@ export default function About() {
             bgClip="text"
             fontSize={{ base: "3xl", md: "4xl" }}
             mb={4}
+            fontFamily={fontFamily}
           >
             About LJWM
           </Heading>
@@ -87,6 +90,7 @@ export default function About() {
               bgClip="text"
               fontSize="2xl"
               mb={3}
+              fontFamily={fontFamily}
             >
               Our Story
             </Heading>
@@ -111,6 +115,7 @@ export default function About() {
               bgClip="text"
               fontSize="2xl"
               mb={3}
+              fontFamily={fontFamily}
             >
               Our Mission
             </Heading>
@@ -136,13 +141,14 @@ export default function About() {
               bgClip="text"
               fontSize="2xl"
               mb={3}
+              fontFamily={fontFamily}
             >
               Our Vision
             </Heading>
             <Text color={subTextColor} fontSize="md">
-              A world transformed by the Gospel, reflecting God's love, peace,
-              and justice. Equipping believers to shine as lights in every
-              community.
+              A world transformed by the Gospel, reflecting God&apos;s love,
+              peace, and justice. Equipping believers to shine as lights in
+              every community.
             </Text>
           </MotionBox>
 
@@ -161,6 +167,7 @@ export default function About() {
               bgClip="text"
               fontSize="2xl"
               mb={3}
+              fontFamily={fontFamily}
             >
               Core Values
             </Heading>

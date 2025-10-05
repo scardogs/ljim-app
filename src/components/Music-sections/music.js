@@ -225,7 +225,12 @@ export default function Music() {
       <VStack spacing={8} maxW="4xl" mx="auto" px={{ base: 4, md: 8 }}>
         <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
           <Heading color={textColor}>Song Line Up</Heading>
-          <Text color={subTextColor} mt={4} fontSize="lg">
+          <Text
+            fontFamily="monospace"
+            color={subTextColor}
+            mt={4}
+            fontSize="lg"
+          >
             Song Line Ups Database
           </Text>
         </Box>
@@ -280,12 +285,23 @@ export default function Music() {
                     </AccordionButton>
                   </h2>
                   <AccordionPanel pb={4} textAlign="left">
-                    <Text color={subTextColor}>Artist: {song.artist}</Text>
-                    <Text color={subTextColor}>Album: {song.album}</Text>
-                    <Text color={subTextColor}>Genre: {song.genre}</Text>
+                    <Text fontFamily="monospace" color={subTextColor}>
+                      Artist: {song.artist}
+                    </Text>
+                    <Text fontFamily="monospace" color={subTextColor}>
+                      Album: {song.album}
+                    </Text>
+                    <Text fontFamily="monospace" color={subTextColor}>
+                      Genre: {song.genre}
+                    </Text>
 
                     {song.lyricsAndChords && (
-                      <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
+                      <Text
+                        fontFamily="monospace"
+                        color={subTextColor}
+                        mt={2}
+                        whiteSpace="pre-wrap"
+                      >
                         Lyrics & Chords: {song.lyricsAndChords}
                       </Text>
                     )}
@@ -297,7 +313,7 @@ export default function Music() {
                     )}
 
                     {song.url && (
-                      <Text color={textColor} mt={2}>
+                      <Text fontFamily="monospace" color={textColor} mt={2}>
                         <a
                           href={song.url}
                           target="_blank"
@@ -399,6 +415,7 @@ export default function Music() {
               <FormControl>
                 <FormLabel>Lyrics & Chords</FormLabel>
                 <Textarea
+                  fontFamily="monospace"
                   name="lyricsAndChords"
                   value={formData.lyricsAndChords}
                   onChange={handleInputChange}
@@ -410,6 +427,7 @@ export default function Music() {
               <FormControl>
                 <FormLabel>Notes</FormLabel>
                 <Textarea
+                  fontFamily="monospace"
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}

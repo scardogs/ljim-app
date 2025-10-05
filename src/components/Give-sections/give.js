@@ -85,7 +85,7 @@ export default function Give() {
                 borderRadius="md"
                 boxShadow="lg"
               />
-              <Text color={subTextColor}>
+              <Text fontFamily="monospace" color={subTextColor}>
                 QR Code expires in {timer} second{timer !== 1 ? "s" : ""}
               </Text>
             </VStack>

@@ -64,7 +64,12 @@ export default function Contact() {
         {/* Contact Heading */}
         <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
           <Heading color={textColor}>Contact Us</Heading>
-          <Text color={subTextColor} mt={4} fontSize="lg">
+          <Text
+            fontFamily="monospace"
+            color={subTextColor}
+            mt={4}
+            fontSize="lg"
+          >
             Reach out to us with questions, prayer requests, or feedback.
           </Text>
         </Box>
@@ -74,7 +79,7 @@ export default function Contact() {
           <Heading size="md" color={textColor} mb={2}>
             Get in Touch
           </Heading>
-          <Text color={subTextColor} mb={4}>
+          <Text fontFamily="monospace" color={subTextColor} mb={4}>
             Email: johnmichael.escarlan14@gmail.com <br />
             Phone: +639 946760366
           </Text>
@@ -83,6 +88,7 @@ export default function Contact() {
           <VStack spacing={4}>
             <Input
               placeholder="Your Email"
+              fontFamily="monospace"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               bg={inputBg}
@@ -90,6 +96,7 @@ export default function Contact() {
             />
             <Textarea
               placeholder="Your Message"
+              fontFamily="monospace"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               bg={inputBg}
