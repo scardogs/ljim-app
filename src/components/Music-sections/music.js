@@ -25,10 +25,14 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Spinner,
 } from "@chakra-ui/react";
 
 export default function Music() {
   const [songs, setSongs] = useState([]);
+  const [filteredSongs, setFilteredSongs] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const [editingSong, setEditingSong] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,6 +44,7 @@ export default function Music() {
     url: "",
     notes: "",
   });
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -52,21 +57,42 @@ export default function Music() {
   const subTextColor = useColorModeValue("gray.700", "gray.300");
   const sectionBg = useColorModeValue("gray.100", "gray.800");
 
-  // Fetch songs from MongoDB API
+  // Fetch songs from API
   const fetchMusic = async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/songs");
       const data = await res.json();
       setSongs(data);
+      setFilteredSongs(data);
     } catch (err) {
       console.error("Failed to fetch music:", err);
       setSongs([]);
+      setFilteredSongs([]);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchMusic();
   }, []);
+
+  // Filter songs based on search
+  useEffect(() => {
+    if (!searchQuery) {
+      setFilteredSongs(songs);
+    } else {
+      const lowerQuery = searchQuery.toLowerCase();
+      const filtered = songs.filter(
+        (song) =>
+          song.songName.toLowerCase().includes(lowerQuery) ||
+          song.artist.toLowerCase().includes(lowerQuery) ||
+          song.album.toLowerCase().includes(lowerQuery) ||
+          song.genre.toLowerCase().includes(lowerQuery)
+      );
+      setFilteredSongs(filtered);
+    }
+  }, [searchQuery, songs]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -106,9 +132,7 @@ export default function Music() {
         fetchMusic();
         resetForm();
         onClose();
-      } else {
-        throw new Error("Failed to add song");
-      }
+      } else throw new Error("Failed to add song");
     } catch (err) {
       toast({
         title: "Error",
@@ -146,9 +170,7 @@ export default function Music() {
         fetchMusic();
         resetForm();
         onClose();
-      } else {
-        throw new Error("Failed to update song");
-      }
+      } else throw new Error("Failed to update song");
     } catch (err) {
       toast({
         title: "Error",
@@ -163,9 +185,7 @@ export default function Music() {
   const handleDeleteSong = async (id) => {
     if (window.confirm("Are you sure you want to delete this song?")) {
       try {
-        const response = await fetch(`/api/songs/${id}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(`/api/songs/${id}`, { method: "DELETE" });
 
         if (response.ok) {
           toast({
@@ -176,9 +196,7 @@ export default function Music() {
             isClosable: true,
           });
           fetchMusic();
-        } else {
-          throw new Error("Failed to delete song");
-        }
+        } else throw new Error("Failed to delete song");
       } catch (err) {
         toast({
           title: "Error",
@@ -218,83 +236,111 @@ export default function Music() {
             <Heading size="md" color={textColor}>
               Our Worship Music
             </Heading>
-            <Button colorScheme="gray" onClick={handleOpenAddModal}>
+            <Button
+              bgGradient="linear(to-r, gray.400, gray.600, black)"
+              color="white"
+              _hover={{ bgGradient: "linear(to-r, gray.500, gray.700, black)" }}
+              size="sm"
+              variant="solid"
+              onClick={handleOpenAddModal}
+            >
               Add New Song
             </Button>
           </HStack>
 
-          {/* Collapsible FAQ-style list */}
-          <Accordion allowToggle>
-            {songs.length === 0 && (
-              <Text color={subTextColor}>No songs found.</Text>
-            )}
-            {songs.map((song) => (
-              <AccordionItem
-                key={song._id}
-                border="1px solid"
-                borderColor={subTextColor}
-                borderRadius="md"
-                mb={2}
-              >
-                <h2>
-                  <AccordionButton _expanded={{ bg: sectionBg }}>
-                    <Box flex="1" textAlign="left" color={textColor}>
-                      {song.songName}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4} textAlign="left">
-                  <Text color={subTextColor}>Artist: {song.artist}</Text>
-                  <Text color={subTextColor}>Album: {song.album}</Text>
-                  <Text color={subTextColor}>Genre: {song.genre}</Text>
+          {/* Search Input */}
+          <Input
+            placeholder="Search by song, artist, album, or genre..."
+            mb={4}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            bg={useColorModeValue("white", "gray.700")}
+          />
 
-                  {song.lyricsAndChords && (
-                    <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
-                      Lyrics & Chords: {song.lyricsAndChords}
-                    </Text>
-                  )}
+          {/* Loading state */}
+          {loading ? (
+            <Spinner size="xl" color="gray.500" mt={8} />
+          ) : (
+            <Accordion allowToggle>
+              {filteredSongs.length === 0 && (
+                <Text color={subTextColor}>No songs found.</Text>
+              )}
+              {filteredSongs.map((song) => (
+                <AccordionItem
+                  key={song._id}
+                  border="1px solid"
+                  borderColor={subTextColor}
+                  borderRadius="md"
+                  mb={2}
+                >
+                  <h2>
+                    <AccordionButton _expanded={{ bg: sectionBg }}>
+                      <Box flex="1" textAlign="left" color={textColor}>
+                        {song.songName}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4} textAlign="left">
+                    <Text color={subTextColor}>Artist: {song.artist}</Text>
+                    <Text color={subTextColor}>Album: {song.album}</Text>
+                    <Text color={subTextColor}>Genre: {song.genre}</Text>
 
-                  {song.notes && (
-                    <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
-                      Notes: {song.notes}
-                    </Text>
-                  )}
+                    {song.lyricsAndChords && (
+                      <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
+                        Lyrics & Chords: {song.lyricsAndChords}
+                      </Text>
+                    )}
 
-                  {song.url && (
-                    <Text color={textColor} mt={2}>
-                      <a
-                        href={song.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    {song.notes && (
+                      <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
+                        Notes: {song.notes}
+                      </Text>
+                    )}
+
+                    {song.url && (
+                      <Text color={textColor} mt={2}>
+                        <a
+                          href={song.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Listen
+                        </a>
+                      </Text>
+                    )}
+
+                    <HStack spacing={2} mt={2}>
+                      <Button
+                        bgGradient="linear(to-r, gray.400, gray.600, black)"
+                        color="white"
+                        _hover={{
+                          bgGradient: "linear(to-r, gray.500, gray.700, black)",
+                        }}
+                        size="sm"
+                        variant="solid"
+                        onClick={() => handleEditSong(song)}
                       >
-                        Listen
-                      </a>
-                    </Text>
-                  )}
-
-                  <HStack spacing={2} mt={2}>
-                    <Button
-                      size="sm"
-                      colorScheme="gray"
-                      variant="outline"
-                      onClick={() => handleEditSong(song)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      colorScheme="gray"
-                      variant="outline"
-                      onClick={() => handleDeleteSong(song._id)}
-                    >
-                      Delete
-                    </Button>
-                  </HStack>
-                </AccordionPanel>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                        Edit
+                      </Button>
+                      <Button
+                        bgGradient="linear(to-r, gray.400, gray.600, black)"
+                        color="white"
+                        _hover={{
+                          bgGradient: "linear(to-r, gray.500, gray.700, black)",
+                        }}
+                        size="sm"
+                        variant="solid"
+                        onClick={() => handleDeleteSong(song._id)}
+                      >
+                        Delete
+                      </Button>
+                    </HStack>
+                  </AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
         </Box>
       </VStack>
 
@@ -383,11 +429,23 @@ export default function Music() {
           </ModalBody>
 
           <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
+            <Button
+              bgGradient="linear(to-r, gray.400, gray.600, black)"
+              color="white"
+              _hover={{ bgGradient: "linear(to-r, gray.500, gray.700, black)" }}
+              size="sm"
+              variant="solid"
+              mr={3}
+              onClick={onClose}
+            >
               Cancel
             </Button>
             <Button
-              colorScheme="gray"
+              bgGradient="linear(to-r, gray.400, gray.600, black)"
+              color="white"
+              _hover={{ bgGradient: "linear(to-r, gray.500, gray.700, black)" }}
+              size="sm"
+              variant="solid"
               onClick={isEditing ? handleUpdateSong : handleAddSong}
             >
               {isEditing ? "Update Song" : "Add Song"}
