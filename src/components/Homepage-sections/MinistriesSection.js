@@ -1,5 +1,16 @@
 import React from "react";
 import { Box, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { keyframes } from "@emotion/react"; // ✅ Correct import
+
+const MotionBox = motion(Box);
+
+// Shimmer animation
+const shimmer = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
 
 const ministries = [
   { name: "Worship", tagline: "Lift God in Spirit and Truth" },
@@ -9,7 +20,6 @@ const ministries = [
 ];
 
 export default function MinistriesSection() {
-  const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
   const glassBg = useColorModeValue(
     "rgba(255,255,255,0.8)",
@@ -34,8 +44,8 @@ export default function MinistriesSection() {
         maxW="6xl"
         textAlign="center"
       >
-        {ministries.map((m) => (
-          <Box
+        {ministries.map((m, index) => (
+          <MotionBox
             key={m.name}
             bg={glassBg}
             borderWidth="1px"
@@ -43,20 +53,32 @@ export default function MinistriesSection() {
             backdropFilter="blur(10px)"
             borderRadius="xl"
             p={8}
-            transition="all 0.3s ease"
             boxShadow="lg"
-            _hover={{
-              transform: "translateY(-8px) scale(1.05)",
-              boxShadow: "2xl",
+            animate={{ scale: [1, 1.05, 1] }} // heartbeat
+            transition={{
+              delay: index * 1,
+              duration: 5,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "easeInOut",
             }}
           >
-            <Text fontSize="2xl" fontWeight="bold" color={textColor} mb={3}>
+            <Text
+              fontSize="2xl"
+              fontWeight="bold"
+              mb={3}
+              bgGradient="linear(to-r, gray.400, silver, black)"
+              bgClip="text"
+              bgSize="200% 100%"
+              fontFamily="monospace"
+              animation={`${shimmer} 2s linear infinite`}
+            >
               {m.name}
             </Text>
             <Text fontSize="md" color={subText}>
               {m.tagline}
             </Text>
-          </Box>
+          </MotionBox>
         ))}
       </SimpleGrid>
     </Box>
