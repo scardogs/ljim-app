@@ -46,6 +46,11 @@ export default function Music() {
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isFullScreenOpen,
+    onOpen: onFullScreenOpen,
+    onClose: onFullScreenClose,
+  } = useDisclosure();
   const toast = useToast();
 
   // Monochrome colors
@@ -213,6 +218,10 @@ export default function Music() {
     resetForm();
     setIsEditing(false);
     onOpen();
+  };
+
+  const handleOpenFullScreenLyrics = () => {
+    onFullScreenOpen();
   };
 
   return (
@@ -422,6 +431,17 @@ export default function Music() {
                   placeholder="Enter lyrics and chords"
                   rows={4}
                 />
+                <Button
+                  mt={2}
+                  size="sm"
+                  onClick={handleOpenFullScreenLyrics}
+                  bg="white"
+                  color="black"
+                  border="1px solid black"
+                  _hover={{ bg: "black", color: "white" }}
+                >
+                  Full Screen
+                </Button>
               </FormControl>
 
               <FormControl>
@@ -457,6 +477,36 @@ export default function Music() {
               onClick={isEditing ? handleUpdateSong : handleAddSong}
             >
               {isEditing ? "Update Song" : "Add Song"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Full Screen Lyrics Modal */}
+      <Modal isOpen={isFullScreenOpen} onClose={onFullScreenClose} size="full">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Lyrics & Chords - Full Screen</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Textarea
+              fontFamily="monospace"
+              value={formData.lyricsAndChords}
+              onChange={handleInputChange}
+              name="lyricsAndChords"
+              rows={20}
+              h="80vh"
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              onClick={onFullScreenClose}
+              bg="white"
+              color="black"
+              border="1px solid black"
+              _hover={{ bg: "black", color: "white" }}
+            >
+              Close
             </Button>
           </ModalFooter>
         </ModalContent>
