@@ -49,7 +49,6 @@ export default function MissionValuesSection() {
         textAlign="left"
         transition="all 0.3s ease"
         _hover={{ transform: "translateY(-4px)", boxShadow: "2xl" }}
-        ml="100px"
       >
         <Heading
           size="lg"
