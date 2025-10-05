@@ -20,6 +20,11 @@ import {
   FormLabel,
   useToast,
   useColorModeValue,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 
 export default function Music() {
@@ -27,53 +32,35 @@ export default function Music() {
   const [editingSong, setEditingSong] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    "Song Name": "",
-    Artist: "",
-    Album: "",
-    Genre: "",
-    "Lyrics & Chords": "",
-    URL: "",
-    Notes: "",
+    songName: "",
+    artist: "",
+    album: "",
+    genre: "",
+    lyricsAndChords: "",
+    url: "",
+    notes: "",
   });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
+  // Monochrome colors
   const bg = useColorModeValue(
-    "linear(to-b, white, gray.100)",
-    "linear(to-b, gray.900, black)"
+    "linear(to-b, white, gray.300)",
+    "linear(to-b, gray.900, gray.700)"
   );
-  const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
-  const subTextColor = useColorModeValue("gray.600", "gray.400");
-  const sectionBg = useColorModeValue(
-    "rgba(255,255,255,0.8)",
-    "rgba(0,0,0,0.45)"
-  );
+  const textColor = useColorModeValue("black", "white");
+  const subTextColor = useColorModeValue("gray.700", "gray.300");
+  const sectionBg = useColorModeValue("gray.100", "gray.800");
 
-  // Fetch songs from Google Sheets API
+  // Fetch songs from MongoDB API
   const fetchMusic = async () => {
     try {
-      const res = await fetch("/api/music");
+      const res = await fetch("/api/songs");
       const data = await res.json();
-
-      // Transform Google Sheets data (array of arrays) to objects
-      if (Array.isArray(data) && data.length > 0) {
-        // Skip the header row (first row) and transform each row to an object
-        const transformedSongs = data.slice(1).map((row) => ({
-          "Song Name": row[0] || "",
-          Artist: row[1] || "",
-          Album: row[2] || "",
-          Genre: row[3] || "",
-          "Lyrics & Chords": row[4] || "",
-          URL: row[5] || "",
-          Notes: row[6] || "",
-        }));
-        setSongs(transformedSongs);
-      } else {
-        setSongs([]);
-      }
+      setSongs(data);
     } catch (err) {
       console.error("Failed to fetch music:", err);
-      setSongs([]); // Set empty array on error
+      setSongs([]);
     }
   };
 
@@ -81,24 +68,20 @@ export default function Music() {
     fetchMusic();
   }, []);
 
-  // CRUD Functions
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const resetForm = () => {
     setFormData({
-      "Song Name": "",
-      Artist: "",
-      Album: "",
-      Genre: "",
-      "Lyrics & Chords": "",
-      URL: "",
-      Notes: "",
+      songName: "",
+      artist: "",
+      album: "",
+      genre: "",
+      lyricsAndChords: "",
+      url: "",
+      notes: "",
     });
     setEditingSong(null);
     setIsEditing(false);
@@ -106,22 +89,10 @@ export default function Music() {
 
   const handleAddSong = async () => {
     try {
-      const row = [
-        formData["Song Name"],
-        formData.Artist,
-        formData.Album,
-        formData.Genre,
-        formData["Lyrics & Chords"],
-        formData.URL,
-        formData.Notes,
-      ];
-
-      const response = await fetch("/api/music", {
+      const response = await fetch("/api/songs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(row),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -132,16 +103,16 @@ export default function Music() {
           duration: 3000,
           isClosable: true,
         });
-        fetchMusic(); // Refresh the list
+        fetchMusic();
         resetForm();
         onClose();
       } else {
         throw new Error("Failed to add song");
       }
-    } catch (error) {
+    } catch (err) {
       toast({
         title: "Error",
-        description: "Failed to add song. Please try again.",
+        description: "Failed to add song.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -149,34 +120,19 @@ export default function Music() {
     }
   };
 
-  const handleEditSong = (song, index) => {
+  const handleEditSong = (song) => {
     setFormData(song);
-    setEditingSong({ ...song, index });
+    setEditingSong(song);
     setIsEditing(true);
     onOpen();
   };
 
   const handleUpdateSong = async () => {
     try {
-      const row = [
-        formData["Song Name"],
-        formData.Artist,
-        formData.Album,
-        formData.Genre,
-        formData["Lyrics & Chords"],
-        formData.URL,
-        formData.Notes,
-      ];
-
-      const response = await fetch("/api/music", {
+      const response = await fetch(`/api/songs/${editingSong._id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          rowIndex: editingSong.index,
-          rowData: row,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -187,16 +143,16 @@ export default function Music() {
           duration: 3000,
           isClosable: true,
         });
-        fetchMusic(); // Refresh the list
+        fetchMusic();
         resetForm();
         onClose();
       } else {
         throw new Error("Failed to update song");
       }
-    } catch (error) {
+    } catch (err) {
       toast({
         title: "Error",
-        description: "Failed to update song. Please try again.",
+        description: "Failed to update song.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -204,33 +160,29 @@ export default function Music() {
     }
   };
 
-  const handleDeleteSong = async (index) => {
+  const handleDeleteSong = async (id) => {
     if (window.confirm("Are you sure you want to delete this song?")) {
       try {
-        const response = await fetch("/api/music", {
+        const response = await fetch(`/api/songs/${id}`, {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ rowIndex: index }),
         });
 
         if (response.ok) {
           toast({
-            title: "Success",
+            title: "Deleted",
             description: "Song deleted successfully!",
             status: "success",
             duration: 3000,
             isClosable: true,
           });
-          fetchMusic(); // Refresh the list
+          fetchMusic();
         } else {
           throw new Error("Failed to delete song");
         }
-      } catch (error) {
+      } catch (err) {
         toast({
           title: "Error",
-          description: "Failed to delete song. Please try again.",
+          description: "Failed to delete song.",
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -266,73 +218,87 @@ export default function Music() {
             <Heading size="md" color={textColor}>
               Our Worship Music
             </Heading>
-            <Button colorScheme="blue" onClick={handleOpenAddModal}>
+            <Button colorScheme="gray" onClick={handleOpenAddModal}>
               Add New Song
             </Button>
           </HStack>
 
-          <VStack spacing={4}>
+          {/* Collapsible FAQ-style list */}
+          <Accordion allowToggle>
             {songs.length === 0 && (
               <Text color={subTextColor}>No songs found.</Text>
             )}
-            {songs.map((song, i) => (
-              <Box key={i} p={4} borderWidth={1} borderRadius="md" w="100%">
-                <HStack justify="space-between" align="flex-start" mb={2}>
-                  <Box flex={1}>
-                    <Heading size="sm" color={textColor}>
-                      {song["Song Name"]}
-                    </Heading>
-                    <Text color={subTextColor}>Artist: {song["Artist"]}</Text>
-                    <Text color={subTextColor}>Album: {song["Album"]}</Text>
-                    <Text color={subTextColor}>Genre: {song["Genre"]}</Text>
-                    {song["Lyrics & Chords"] && (
-                      <Text color={subTextColor} fontSize="sm" mt={1}>
-                        Lyrics & Chords: {song["Lyrics & Chords"]}
-                      </Text>
-                    )}
-                    {song["Notes"] && (
-                      <Text color={subTextColor} fontSize="sm" mt={1}>
-                        Notes: {song["Notes"]}
-                      </Text>
-                    )}
-                    {song["URL"] && (
-                      <Text color="blue.500" mt={2}>
-                        <a
-                          href={song["URL"]}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Listen
-                        </a>
-                      </Text>
-                    )}
-                  </Box>
-                  <HStack spacing={2}>
+            {songs.map((song) => (
+              <AccordionItem
+                key={song._id}
+                border="1px solid"
+                borderColor={subTextColor}
+                borderRadius="md"
+                mb={2}
+              >
+                <h2>
+                  <AccordionButton _expanded={{ bg: sectionBg }}>
+                    <Box flex="1" textAlign="left" color={textColor}>
+                      {song.songName}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} textAlign="left">
+                  <Text color={subTextColor}>Artist: {song.artist}</Text>
+                  <Text color={subTextColor}>Album: {song.album}</Text>
+                  <Text color={subTextColor}>Genre: {song.genre}</Text>
+
+                  {song.lyricsAndChords && (
+                    <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
+                      Lyrics & Chords: {song.lyricsAndChords}
+                    </Text>
+                  )}
+
+                  {song.notes && (
+                    <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
+                      Notes: {song.notes}
+                    </Text>
+                  )}
+
+                  {song.url && (
+                    <Text color={textColor} mt={2}>
+                      <a
+                        href={song.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Listen
+                      </a>
+                    </Text>
+                  )}
+
+                  <HStack spacing={2} mt={2}>
                     <Button
                       size="sm"
-                      colorScheme="blue"
+                      colorScheme="gray"
                       variant="outline"
-                      onClick={() => handleEditSong(song, i)}
+                      onClick={() => handleEditSong(song)}
                     >
                       Edit
                     </Button>
                     <Button
                       size="sm"
-                      colorScheme="red"
+                      colorScheme="gray"
                       variant="outline"
-                      onClick={() => handleDeleteSong(i)}
+                      onClick={() => handleDeleteSong(song._id)}
                     >
                       Delete
                     </Button>
                   </HStack>
-                </HStack>
-              </Box>
+                </AccordionPanel>
+              </AccordionItem>
             ))}
-          </VStack>
+          </Accordion>
         </Box>
       </VStack>
 
-      {/* Add/Edit Song Modal */}
+      {/* Add/Edit Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
@@ -343,8 +309,8 @@ export default function Music() {
               <FormControl>
                 <FormLabel>Song Name</FormLabel>
                 <Input
-                  name="Song Name"
-                  value={formData["Song Name"]}
+                  name="songName"
+                  value={formData.songName}
                   onChange={handleInputChange}
                   placeholder="Enter song name"
                 />
@@ -354,8 +320,8 @@ export default function Music() {
                 <FormControl>
                   <FormLabel>Artist</FormLabel>
                   <Input
-                    name="Artist"
-                    value={formData.Artist}
+                    name="artist"
+                    value={formData.artist}
                     onChange={handleInputChange}
                     placeholder="Enter artist name"
                   />
@@ -363,8 +329,8 @@ export default function Music() {
                 <FormControl>
                   <FormLabel>Album</FormLabel>
                   <Input
-                    name="Album"
-                    value={formData.Album}
+                    name="album"
+                    value={formData.album}
                     onChange={handleInputChange}
                     placeholder="Enter album name"
                   />
@@ -375,8 +341,8 @@ export default function Music() {
                 <FormControl>
                   <FormLabel>Genre</FormLabel>
                   <Input
-                    name="Genre"
-                    value={formData.Genre}
+                    name="genre"
+                    value={formData.genre}
                     onChange={handleInputChange}
                     placeholder="Enter genre"
                   />
@@ -384,8 +350,8 @@ export default function Music() {
                 <FormControl>
                   <FormLabel>URL</FormLabel>
                   <Input
-                    name="URL"
-                    value={formData.URL}
+                    name="url"
+                    value={formData.url}
                     onChange={handleInputChange}
                     placeholder="Enter song URL"
                   />
@@ -395,8 +361,8 @@ export default function Music() {
               <FormControl>
                 <FormLabel>Lyrics & Chords</FormLabel>
                 <Textarea
-                  name="Lyrics & Chords"
-                  value={formData["Lyrics & Chords"]}
+                  name="lyricsAndChords"
+                  value={formData.lyricsAndChords}
                   onChange={handleInputChange}
                   placeholder="Enter lyrics and chords"
                   rows={4}
@@ -406,8 +372,8 @@ export default function Music() {
               <FormControl>
                 <FormLabel>Notes</FormLabel>
                 <Textarea
-                  name="Notes"
-                  value={formData.Notes}
+                  name="notes"
+                  value={formData.notes}
                   onChange={handleInputChange}
                   placeholder="Enter any additional notes"
                   rows={2}
@@ -421,7 +387,7 @@ export default function Music() {
               Cancel
             </Button>
             <Button
-              colorScheme="blue"
+              colorScheme="gray"
               onClick={isEditing ? handleUpdateSong : handleAddSong}
             >
               {isEditing ? "Update Song" : "Add Song"}

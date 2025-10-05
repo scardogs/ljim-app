@@ -7,7 +7,7 @@ import {
 
 export default async function handler(req, res) {
   console.log(`API ${req.method} /api/music called`);
-
+  
   try {
     switch (req.method) {
       case "GET":
@@ -36,9 +36,9 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error("API Error:", error);
-    res.status(500).json({
+    res.status(500).json({ 
       error: error.message,
-      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
