@@ -62,7 +62,7 @@ export default function MissionValuesSection() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentIndex((prev) => (prev + 1) % cards.length);
-      setTimeout(() => setIsAnimating(false), 500);
+      setTimeout(() => setIsAnimating(false), 2000);
     }
   };
 
@@ -70,12 +70,12 @@ export default function MissionValuesSection() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
-      setTimeout(() => setIsAnimating(false), 500);
+      setTimeout(() => setIsAnimating(false), 2500);
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 1000);
+    const interval = setInterval(nextSlide, 2500);
     return () => clearInterval(interval);
   }, [isAnimating]);
 
