@@ -20,7 +20,7 @@ export default function MinistriesSection() {
   return (
     <Box
       w="100vw"
-      h="100vh"
+      h="60vh"
       display="flex"
       alignItems="center"
       justifyContent="center"

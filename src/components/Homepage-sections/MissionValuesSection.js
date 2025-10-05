@@ -26,7 +26,7 @@ export default function MissionValuesSection() {
   return (
     <Box
       w="100vw"
-      h="100vh"
+      h="50vh"
       display="flex"
       alignItems="center"
       justifyContent="center"
