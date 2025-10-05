@@ -5,10 +5,15 @@ import {
   Text,
   VStack,
   useColorModeValue,
+  SimpleGrid,
+  Divider,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+// MotionBox for subtle entrance animations
+const MotionBox = motion(Box);
 
 export default function About() {
-  // Color palette
   const bg = useColorModeValue(
     "linear(to-b, white, gray.100)",
     "linear(to-b, gray.900, black)"
@@ -16,8 +21,12 @@ export default function About() {
   const textColor = useColorModeValue("gray.800", "whiteAlpha.900");
   const subTextColor = useColorModeValue("gray.600", "gray.400");
   const sectionBg = useColorModeValue(
-    "rgba(255,255,255,0.8)",
+    "rgba(255,255,255,0.85)",
     "rgba(0,0,0,0.45)"
+  );
+  const gradientText = useColorModeValue(
+    "linear(to-r, gray.400, gray.600, black)",
+    "linear(to-r, gray.300, gray.500, white)"
   );
 
   return (
@@ -26,37 +35,148 @@ export default function About() {
       bgGradient={bg}
       textAlign="center"
       py={{ base: 16, md: 24 }}
+      px={{ base: 4, md: 8 }}
     >
-      <VStack spacing={8} maxW="4xl" mx="auto" px={{ base: 4, md: 8 }}>
-        {/* About Heading */}
-        <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
-          <Heading color={textColor}>About Us</Heading>
-          <Text color={subTextColor} mt={4} fontSize="lg">
-            Welcome to the About page. Here you can learn more about our mission
-            and values.
-          </Text>
-        </Box>
-
-        {/* Additional Content Section */}
-        <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
-          <Heading size="md" color={textColor} mb={2}>
-            Our Story
+      <VStack spacing={12} maxW="6xl" mx="auto">
+        {/* Main About Heading */}
+        <MotionBox
+          bg={sectionBg}
+          borderRadius="2xl"
+          p={{ base: 6, md: 12 }}
+          w="100%"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          boxShadow="xl"
+          _hover={{ boxShadow: "2xl", transform: "translateY(-5px)" }}
+        >
+          <Heading
+            bgGradient={gradientText}
+            bgClip="text"
+            fontSize={{ base: "3xl", md: "4xl" }}
+            mb={4}
+          >
+            About LJWM
           </Heading>
-          <Text color={subTextColor}>
-            We are dedicated to fostering a community of faith, love, and
-            compassion.
+          <Text color={subTextColor} fontSize={{ base: "md", md: "lg" }}>
+            Lift Jesus Worldwide Ministries (LJWM) is a Christ-centered global
+            fellowship committed to spreading the message of salvation through
+            faith in Jesus Christ.
           </Text>
-        </Box>
+        </MotionBox>
 
-        <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
-          <Heading size="md" color={textColor} mb={2}>
-            Our Mission
-          </Heading>
-          <Text color={subTextColor}>
-            To uplift, educate, and serve our community through meaningful
-            programs and initiatives.
-          </Text>
-        </Box>
+        {/* Our Story & Mission Section */}
+        <SimpleGrid
+          columns={{ base: 1, md: 2 }}
+          spacing={8}
+          w="full"
+          alignItems="start"
+        >
+          <MotionBox
+            bg={sectionBg}
+            borderRadius="xl"
+            p={8}
+            boxShadow="lg"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            _hover={{ transform: "translateY(-4px)", boxShadow: "2xl" }}
+          >
+            <Heading
+              bgGradient={gradientText}
+              bgClip="text"
+              fontSize="2xl"
+              mb={3}
+            >
+              Our Story
+            </Heading>
+            <Text color={subTextColor} fontSize="md">
+              Founded to uplift communities through faith, LJWM strives to
+              transform lives with love, compassion, and biblical teachings.
+            </Text>
+          </MotionBox>
+
+          <MotionBox
+            bg={sectionBg}
+            borderRadius="xl"
+            p={8}
+            boxShadow="lg"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            _hover={{ transform: "translateY(-4px)", boxShadow: "2xl" }}
+          >
+            <Heading
+              bgGradient={gradientText}
+              bgClip="text"
+              fontSize="2xl"
+              mb={3}
+            >
+              Our Mission
+            </Heading>
+            <Text color={subTextColor} fontSize="md">
+              To bring spiritual transformation worldwide, empower believers,
+              and serve communities through meaningful outreach programs and
+              initiatives.
+            </Text>
+          </MotionBox>
+
+          <MotionBox
+            bg={sectionBg}
+            borderRadius="xl"
+            p={8}
+            boxShadow="lg"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            _hover={{ transform: "translateY(-4px)", boxShadow: "2xl" }}
+          >
+            <Heading
+              bgGradient={gradientText}
+              bgClip="text"
+              fontSize="2xl"
+              mb={3}
+            >
+              Our Vision
+            </Heading>
+            <Text color={subTextColor} fontSize="md">
+              A world transformed by the Gospel, reflecting God's love, peace,
+              and justice. Equipping believers to shine as lights in every
+              community.
+            </Text>
+          </MotionBox>
+
+          <MotionBox
+            bg={sectionBg}
+            borderRadius="xl"
+            p={8}
+            boxShadow="lg"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            _hover={{ transform: "translateY(-4px)", boxShadow: "2xl" }}
+          >
+            <Heading
+              bgGradient={gradientText}
+              bgClip="text"
+              fontSize="2xl"
+              mb={3}
+            >
+              Core Values
+            </Heading>
+            <Text color={subTextColor} fontSize="md">
+              Faith, community, service, and evangelism. These values guide our
+              ministry as we spread the message of salvation and serve the
+              world.
+            </Text>
+          </MotionBox>
+        </SimpleGrid>
+
+        <Divider borderColor={useColorModeValue("gray.300", "gray.700")} />
+        <Text color={subTextColor} fontSize="sm">
+          © {new Date().getFullYear()} Lift Jesus Worldwide Ministries. All
+          Rights Reserved.
+        </Text>
       </VStack>
     </Box>
   );

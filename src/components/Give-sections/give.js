@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -6,6 +6,7 @@ import {
   VStack,
   useColorModeValue,
   Button,
+  Image,
 } from "@chakra-ui/react";
 
 export default function Give() {
@@ -19,6 +20,26 @@ export default function Give() {
     "rgba(255,255,255,0.8)",
     "rgba(0,0,0,0.45)"
   );
+
+  const [showQR, setShowQR] = useState(false);
+  const [timer, setTimer] = useState(60);
+
+  const handleGiveClick = () => {
+    setShowQR(true);
+    setTimer(60); // Reset timer
+  };
+
+  useEffect(() => {
+    let interval;
+    if (showQR && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setShowQR(false);
+    }
+    return () => clearInterval(interval);
+  }, [showQR, timer]);
 
   return (
     <Box
@@ -42,9 +63,33 @@ export default function Give() {
           <Text color={subTextColor} mb={4}>
             You can give online or in person during our services.
           </Text>
-          <Button colorScheme="teal" size="md">
+
+          <Button
+            bg="white"
+            color="black"
+            border="2px solid black"
+            _hover={{ bg: "black", color: "white" }}
+            size="md"
+            onClick={handleGiveClick}
+          >
             Give Now
           </Button>
+
+          {showQR && (
+            <VStack mt={4}>
+              <Image
+                src="/images/qrcode.png"
+                alt="QR Code"
+                width={{ base: "250px", md: "300px" }} // slightly smaller on mobile
+                objectFit="contain"
+                borderRadius="md"
+                boxShadow="lg"
+              />
+              <Text color={subTextColor}>
+                QR Code expires in {timer} second{timer !== 1 ? "s" : ""}
+              </Text>
+            </VStack>
+          )}
         </Box>
       </VStack>
     </Box>

@@ -224,24 +224,22 @@ export default function Music() {
     >
       <VStack spacing={8} maxW="4xl" mx="auto" px={{ base: 4, md: 8 }}>
         <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
-          <Heading color={textColor}>Music</Heading>
+          <Heading color={textColor}>Song Line Up</Heading>
           <Text color={subTextColor} mt={4} fontSize="lg">
-            Explore our music collection and enjoy inspiring songs and
-            performances.
+            Song Line Ups Database
           </Text>
         </Box>
 
         <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
           <HStack justify="space-between" mb={4}>
             <Heading size="md" color={textColor}>
-              Our Worship Music
+              Our Song Line Ups
             </Heading>
             <Button
-              bgGradient="linear(to-r, gray.400, gray.600, black)"
-              color="white"
-              _hover={{ bgGradient: "linear(to-r, gray.500, gray.700, black)" }}
-              size="sm"
-              variant="solid"
+              bg="white"
+              color="black"
+              border="1px solid black"
+              _hover={{ bg: "black", color: "white" }}
               onClick={handleOpenAddModal}
             >
               Add New Song
@@ -312,25 +310,19 @@ export default function Music() {
 
                     <HStack spacing={2} mt={2}>
                       <Button
-                        bgGradient="linear(to-r, gray.400, gray.600, black)"
-                        color="white"
-                        _hover={{
-                          bgGradient: "linear(to-r, gray.500, gray.700, black)",
-                        }}
-                        size="sm"
-                        variant="solid"
+                        bg="white"
+                        color="black"
+                        border="1px solid black"
+                        _hover={{ bg: "black", color: "white" }}
                         onClick={() => handleEditSong(song)}
                       >
                         Edit
                       </Button>
                       <Button
-                        bgGradient="linear(to-r, gray.400, gray.600, black)"
-                        color="white"
-                        _hover={{
-                          bgGradient: "linear(to-r, gray.500, gray.700, black)",
-                        }}
-                        size="sm"
-                        variant="solid"
+                        bg="white"
+                        color="black"
+                        border="1px solid black"
+                        _hover={{ bg: "black", color: "white" }}
                         onClick={() => handleDeleteSong(song._id)}
                       >
                         Delete
@@ -430,22 +422,20 @@ export default function Music() {
 
           <ModalFooter>
             <Button
-              bgGradient="linear(to-r, gray.400, gray.600, black)"
-              color="white"
-              _hover={{ bgGradient: "linear(to-r, gray.500, gray.700, black)" }}
-              size="sm"
-              variant="solid"
+              bg="white"
+              color="black"
+              border="1px solid black"
+              _hover={{ bg: "black", color: "white" }}
               mr={3}
               onClick={onClose}
             >
               Cancel
             </Button>
             <Button
-              bgGradient="linear(to-r, gray.400, gray.600, black)"
-              color="white"
-              _hover={{ bgGradient: "linear(to-r, gray.500, gray.700, black)" }}
-              size="sm"
-              variant="solid"
+              bg="white"
+              color="black"
+              border="1px solid black"
+              _hover={{ bg: "black", color: "white" }}
               onClick={isEditing ? handleUpdateSong : handleAddSong}
             >
               {isEditing ? "Update Song" : "Add Song"}
