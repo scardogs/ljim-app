@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "lucky-influence-452913-f9",
+  "private_key_id": "f44647d06ff4c1570cddfce0fe2fcfa5906a40c2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCuvXkc2BZrUctA\ng72uQ70D3dV8TISmK0IZ7KB4F4O5Xi7IDE3cWjN/wxJ2KUQoX3V2gEB0Eie4zfr4\nNUTsf0hZgYpppvUYK0Mb4I1nKj+Qa0uJoPCHR2c4jJZLwYpfrN02grBdupBbdM/B\nxtGaSAhDv94wmOf1ZEzbcTuGlqCEebPzBt2xRp7InZ6A6urQLNA4f35wjpRvssIA\n6UpppOnsvqm4Wlcc+KoUYUUE86Q6Ub2MBtag2dodRRSQnBmpT3ytUS4BSYNmd62H\n7aU/GGjkcLOMU4fG4nPRikr3itVD3uCe3qaU6Ar1x33uvqGWi8YKjPbCRxfUMopX\nVa0eXD3PAgMBAAECggEAAwxe2F74qt3CkKtpZPsB0mmWt6+unLk0wG2YxDHYP7cr\nCy84Vjea5z6tOaEMqg3s1RaH9weLw9m1MUFLgBZmoyNg9OjhtyDvyulrgF2odMnM\nrENBxcpgqiyYigxbAp2zPsyf/ru8mKvYASIbyIo7Jz/8DZeNR8tX/+W8ORqzTeDe\nQn6JRL938FnDLox1jGWzGQvZXSC8yauADDoHQL1B/pCk1n3BfkcG+anWQLCceUpX\nK/AMmyCNjDdEms63fmqljpA+uXdo0a8YhWMsU2Q0GD/Z+qVKubd3hbR8ybIB0e9Y\nS8QIJL9ZC4UTXAObWiyBl5Z8q8yOJ1Xl9HLsH0+iWQKBgQDZdYLjz7RFZzVk0Ngz\nazSuUmakCvh2jZg1OlvESguWM+pat6FVQ+EJtuTMUruR3SmDpEZKpqQU8yx9yPae\nVpgEF2Zz9hfdvrlCNqbvWpwka3p5PwEjS2UJV9Cubh+E9/T9zNGJBt6aiXU9Ecch\n6RPPmPnIpr07koIXA66eTYteSwKBgQDNtbtus6G91NKgTLPqCBWkd36UQJXpZUk4\nOn4HwkWDnZ/i0jUHNuyshqIDHkXiyauHirarMK6ZAj+O/WkFWn2DxC8VqHLvRU3G\niPjJugPJqkRzg2KG/tqC8JcdLwDGL3B4yZjTztScBTqb+hVbhCv6xeCpOrVHWEsM\nJtU3c8DcDQKBgCB7IfLfKmEXem01mKWNhM/o9PXZwaULn0mMDvrxyGtGE+I6/Xkb\n63gk/mXakbPG4hWMqwcpfua2L9YV92hNLOWnjSETCBuSCl/ug97KnPn/p8qGc6gO\n8eeEW2JChqi41Lo4JrAd+4//qihWCHVzOAdRJTYoWamVR6MiZKm2kXOjAoGAY/P9\n0thtqrOSdFlQwlKTUYrOcnK/ZNzWKwAg5Nw8sqsQWUISiiLh9SKl7iXzhzK+qel4\nwM2yyJ4TDAON2BAUFMZqqndjAWgHVoSPflVoKcEV6ZrZcQa8XgtRIdkI40OBvu8V\n1zUUkYro44ksf39Fb2BevVvNYZFBRfJIf906xLECgYA+aYonu9OxEWi4ZCjCbQUq\nLXDHz91GoaPOBvCN1qcYLbVuCSSi74dououuV1N+voI3WNvEkzPT1yDhEijCBOb8\nYOGB4FxgOgDp9Y0ZnnP2xMGBCd9WvJfaunNxGRaNOZgXnSvtfgRaLk3cKG2utKIc\nM+MoG9JGu2N8w93Hjo/CeA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "scardogs@lucky-influence-452913-f9.iam.gserviceaccount.com",
+  "client_id": "111030257811626801144",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/scardogs%40lucky-influence-452913-f9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
