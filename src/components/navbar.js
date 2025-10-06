@@ -30,21 +30,28 @@ export default function Navbar() {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // Scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  // Top-level hooks for colors
   const bg = useColorModeValue(
     scrolled ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
     scrolled ? "rgba(26, 32, 44, 0.6)" : "rgba(26, 32, 44, 0.3)"
   );
   const color = useColorModeValue("gray.800", "gray.100");
-  const accent = useColorModeValue("#A0A0A0", "#C0C0C0"); // silver accent
+  const accent = useColorModeValue("#A0A0A0", "#C0C0C0");
+  const dropdownBg = useColorModeValue("white", "gray.800");
+  const dropdownHoverBg = useColorModeValue("gray.100", "gray.700");
+  const drawerBg = useColorModeValue(
+    "rgba(255,255,255,0.9)",
+    "rgba(26,32,44,0.9)"
+  );
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -96,7 +103,6 @@ export default function Navbar() {
                   position="relative"
                   _hover={{ ".dropdown": { display: "block" } }}
                 >
-                  {/* Menu Button with indicator */}
                   <Button
                     variant="ghost"
                     color={isActive(item.href) ? accent : color}
@@ -120,7 +126,7 @@ export default function Navbar() {
                     position="absolute"
                     top="100%"
                     left={0}
-                    bg={useColorModeValue("white", "gray.800")}
+                    bg={dropdownBg}
                     borderRadius="md"
                     boxShadow="md"
                     py={2}
@@ -133,9 +139,7 @@ export default function Navbar() {
                         px={4}
                         py={2}
                         w="full"
-                        _hover={{
-                          bg: useColorModeValue("gray.100", "gray.700"),
-                        }}
+                        _hover={{ bg: dropdownHoverBg }}
                       >
                         Song Line Up
                       </Link>
@@ -144,9 +148,7 @@ export default function Navbar() {
                         px={4}
                         py={2}
                         w="full"
-                        _hover={{
-                          bg: useColorModeValue("gray.100", "gray.700"),
-                        }}
+                        _hover={{ bg: dropdownHoverBg }}
                       >
                         Song Composition
                       </Link>
@@ -217,10 +219,7 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} onClose={onClose} placement="right">
         <DrawerOverlay />
-        <DrawerContent
-          bg={useColorModeValue("rgba(255,255,255,0.9)", "rgba(26,32,44,0.9)")}
-          backdropFilter="blur(12px)"
-        >
+        <DrawerContent bg={drawerBg} backdropFilter="blur(12px)">
           <DrawerCloseButton />
           <DrawerBody mt={12}>
             <VStack spacing={6} align="start">
