@@ -48,11 +48,23 @@ export default function Events() {
       minH="100vh"
       py={{ base: 16, md: 24 }}
       px={{ base: 4, md: 8 }}
-      backgroundSize="40px 40px"
-      backgroundImage={`linear-gradient(to right, ${accentLine} 1px, transparent 1px),
-                        linear-gradient(to bottom, ${accentLine} 1px, transparent 1px)`}
       bgGradient={bgGradient}
+      position="relative"
     >
+      {/* Decorative lines in background */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        w="100%"
+        h="100%"
+        backgroundSize="20px 20px"
+        backgroundImage="
+          linear-gradient(to right, gray 1px, transparent 1px),
+          linear-gradient(to bottom, gray 1px, transparent 1px)"
+        opacity={0.1}
+        zIndex={0}
+      />
       <VStack spacing={12} maxW="6xl" mx="auto">
         {/* Heading */}
         <Box
@@ -62,6 +74,7 @@ export default function Events() {
           w="100%"
           shadow="xl"
           textAlign="center"
+          position="relative"
         >
           <Heading color={textColor} fontFamily="monospace">
             Events
@@ -85,6 +98,7 @@ export default function Events() {
           shadow="md"
           border="1px solid"
           borderColor={accentLine}
+          position="relative"
         >
           <Heading size="md" color={textColor} mb={4}>
             Schedule a New Event
@@ -135,6 +149,7 @@ export default function Events() {
           shadow="md"
           border="1px solid"
           borderColor={accentLine}
+          position="relative"
         >
           <Heading size="md" color={textColor} mb={4}>
             Upcoming Events

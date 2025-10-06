@@ -15,7 +15,6 @@ import {
   AccordionPanel,
   AccordionIcon,
   Spinner,
-  Select,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -233,8 +232,30 @@ export default function Music() {
   };
 
   return (
-    <Box minH="100vh" bgGradient={bgGradient} py={16}>
-      <VStack spacing={10} maxW="5xl" mx="auto" px={4}>
+    <Box minH="100vh" bgGradient={bgGradient} py={16} position="relative">
+      {/* Decorative lines in background */}
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        w="100%"
+        h="100%"
+        backgroundSize="40px 40px"
+        backgroundImage="
+          linear-gradient(to right, gray 1px, transparent 1px),
+          linear-gradient(to bottom, gray 1px, transparent 1px)"
+        opacity={0.2}
+        zIndex={0}
+      />
+
+      <VStack
+        spacing={10}
+        maxW="5xl"
+        mx="auto"
+        px={4}
+        position="relative"
+        zIndex={1}
+      >
         {/* Header */}
         <Box
           bg={sectionBg}

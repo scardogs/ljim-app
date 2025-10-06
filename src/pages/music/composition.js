@@ -10,7 +10,7 @@ export default function ComingSoon() {
     <Box
       w="100vw"
       h="100vh"
-      bg="black"
+      bg="gray.900"
       display="flex"
       flexDirection="column"
       justifyContent="center"

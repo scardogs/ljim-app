@@ -67,7 +67,26 @@ export default function HomePageTab() {
       </Box>
 
       {/* ✅ Main Content Section */}
-      <Box px={{ base: 4, md: 8 }} py={{ base: 16, md: 24 }}>
+      <Box
+        px={{ base: 4, md: 8 }}
+        py={{ base: 16, md: 24 }}
+        position="relative"
+      >
+        {/* Decorative lines in background */}
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          w="100%"
+          h="100%"
+          backgroundSize="20px 20px"
+          backgroundImage="
+          linear-gradient(to right, gray 1px, transparent 1px),
+          linear-gradient(to bottom, gray 1px, transparent 1px)"
+          opacity={0.1}
+          zIndex={0}
+        />
+
         <VStack align="center" maxW="6xl" mx="auto">
           <MainContentSection />
           {/* Singer Images Grid */}
