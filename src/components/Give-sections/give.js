@@ -22,7 +22,7 @@ export default function Give() {
   );
 
   const [showQR, setShowQR] = useState(false);
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(0); // start at 0 so button is enabled
 
   const handleGiveClick = () => {
     setShowQR(true);
@@ -71,8 +71,9 @@ export default function Give() {
             _hover={{ bg: "black", color: "white" }}
             size="md"
             onClick={handleGiveClick}
+            isDisabled={showQR && timer > 0} // disable while timer is running
           >
-            Give Now
+            {showQR && timer > 0 ? `Please wait (${timer}s)` : "Give Now"}
           </Button>
 
           {showQR && (
@@ -80,7 +81,7 @@ export default function Give() {
               <Image
                 src="/images/qrcode.png"
                 alt="QR Code"
-                width={{ base: "250px", md: "300px" }} // slightly smaller on mobile
+                width={{ base: "250px", md: "300px" }}
                 objectFit="contain"
                 borderRadius="md"
                 boxShadow="lg"

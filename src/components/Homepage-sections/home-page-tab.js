@@ -30,6 +30,7 @@ import MinistriesSection from "./MinistriesSection";
 import CallToActionSection from "./CallToActionSection";
 import FooterSection from "./FooterSection";
 import MainContentSection from "../components/../Homepage-sections/MainContentSection";
+import SingersImagesSection from "../components/../Homepage-sections/Singers-images-sections";
 const ministries = [
   { name: "Worship", tagline: "Lift God in Spirit and Truth" },
   { name: "Word", tagline: "Teaching the Living Word" },
@@ -69,7 +70,8 @@ export default function HomePageTab() {
       <Box px={{ base: 4, md: 8 }} py={{ base: 16, md: 24 }}>
         <VStack align="center" maxW="6xl" mx="auto">
           <MainContentSection />
-
+          {/* Singer Images Grid */}
+          <SingersImagesSection />
           {/* Mission & Values */}
           <MissionVluesSection />
 
