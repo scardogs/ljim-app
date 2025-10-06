@@ -106,22 +106,7 @@ export default function MissionValuesSection() {
       black 10px
     )
   `,
-        `
-    repeating-linear-gradient(
-      0deg,
-      black,
-      black 9px,
-      white 9px,
-      white 10px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      black,
-      black 9px,
-      white 9px,
-      white 10px
-    )
-  `
+        "black" // Plain dark background instead of lines
       )}
       p={4}
       position="relative"
