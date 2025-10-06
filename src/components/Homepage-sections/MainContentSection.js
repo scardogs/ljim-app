@@ -4,8 +4,10 @@ import {
   Heading,
   Text,
   VStack,
+  HStack,
   Image,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,8 +23,6 @@ const MotionText = motion(Text);
 export default function IntroSection() {
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
-
-  // 🟢 Dynamically choose map image based on color mode
   const mapImage = useColorModeValue(
     "/images/map-ph.png",
     "/images/white-map-ph.png"
@@ -45,21 +45,19 @@ export default function IntroSection() {
   }, [textVariants.length]);
 
   return (
-    <Box
-      w="100%"
-      minH="120vh"
-      bg="black"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
+    <Flex
+      direction={{ base: "column", md: "row" }}
+      align="center"
+      justify="center"
+      spacing={8}
+      maxW="7xl"
+      mx="auto"
+      py={12}
       px={6}
-      bgGradient={useColorModeValue(
-        "linear(to-b, white, gray.100)",
-        "linear(to-b, gray.900, black)"
-      )}
+      gap={12}
     >
-      <VStack spacing={8} maxW="3xl" textAlign="center">
+      {/* Text Content */}
+      <VStack spacing={8} maxW={{ base: "full", md: "50%" }} textAlign="left">
         {/* Title */}
         <Heading
           as="h2"
@@ -106,30 +104,15 @@ export default function IntroSection() {
           </AnimatePresence>
         </Box>
 
-        {/* 🗺️ Map Image — changes automatically in dark/light mode */}
-        <Box mt={12} w={{ base: "90%", md: "700px" }}>
-          <Image
-            src={mapImage}
-            alt="Philippines Map"
-            borderRadius="2xl"
-            boxShadow="0 0 25px rgba(255,255,255,0.1)"
-            transition="transform 1.5s ease, box-shadow 1.5s ease"
-            _hover={{
-              transform: "scale(1.03)",
-              boxShadow: "0 0 35px rgba(255,255,255,0.2)",
-            }}
-          />
-        </Box>
-
         {/* Church Description */}
-        <VStack spacing={4} mt={10} maxW="3xl">
+        <VStack spacing={4} maxW="full">
           <Heading
             as="h3"
             size="lg"
             bgGradient="linear(to-r, silver, gray.400, black)"
             bgClip="text"
           >
-            Lift Jesus International Ministries – Philippines
+            LJIM – Philippines
           </Heading>
 
           <Text
@@ -145,13 +128,12 @@ export default function IntroSection() {
             love continues to transform lives.
           </Text>
 
-          {/* Verse */}
           <Text
             fontStyle="italic"
             fontFamily="monospace"
             color={useColorModeValue("gray.700", "gray.300")}
             fontSize="sm"
-            mt={4}
+            mt={2}
           >
             “From him the whole body, joined and held together by every
             supporting ligament, grows and builds itself up in love, as each
@@ -159,6 +141,21 @@ export default function IntroSection() {
           </Text>
         </VStack>
       </VStack>
-    </Box>
+
+      {/* Map Image */}
+      <Box flexShrink={0} w={{ base: "90%", md: "40%" }}>
+        <Image
+          src={mapImage}
+          alt="Philippines Map"
+          borderRadius="2xl"
+          boxShadow="0 0 25px rgba(255,255,255,0.1)"
+          transition="transform 1.5s ease, box-shadow 1.5s ease"
+          _hover={{
+            transform: "scale(1.03)",
+            boxShadow: "0 0 35px rgba(255,255,255,0.2)",
+          }}
+        />
+      </Box>
+    </Flex>
   );
 }

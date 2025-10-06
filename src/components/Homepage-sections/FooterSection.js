@@ -23,7 +23,7 @@ export default function FooterSection() {
           icon={<FaFacebook />}
           variant="ghost"
           fontSize="2xl"
-          color={textColor}
+          color={"white"}
           _hover={{ color: "gray.500", transform: "scale(1.1)" }}
         />
         <IconButton
@@ -33,7 +33,7 @@ export default function FooterSection() {
           icon={<FaEnvelope />}
           variant="ghost"
           fontSize="2xl"
-          color={textColor}
+          color={"white"}
           _hover={{ color: "gray.500", transform: "scale(1.1)" }}
         />
         <IconButton
@@ -43,11 +43,11 @@ export default function FooterSection() {
           icon={<FaPhone />}
           variant="ghost"
           fontSize="2xl"
-          color={textColor}
+          color={"white"}
           _hover={{ color: "gray.500", transform: "scale(1.1)" }}
         />
       </HStack>
-      <Text color={subText} fontSize="sm">
+      <Text color={"white"} fontSize="sm">
         © {new Date().getFullYear()} Lift Jesus InternationalMinistries. All
         rights reserved.
       </Text>

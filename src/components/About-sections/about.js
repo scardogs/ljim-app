@@ -4,6 +4,7 @@ import {
   Heading,
   Text,
   VStack,
+  HStack,
   useColorModeValue,
   SimpleGrid,
   Divider,
@@ -26,24 +27,24 @@ export default function About() {
     "rgba(0,0,0,0.45)"
   );
   const gradientText = useColorModeValue(
-    "linear(to-r, gray.400, gray.600, black)",
-    "linear(to-r, gray.300, gray.500, white)"
+    "linear(to-r, gray.700,  black)",
+    "linear(to-r, gray.700,  white)"
   );
   const fontFamily = "monospace";
 
   return (
     <Box
       minH="100vh"
-      bgGradient={bg}
+      bg={"gray.100"}
       textAlign="center"
       py={{ base: 16, md: 24 }}
       px={{ base: 4, md: 8 }}
       fontFamily={fontFamily}
     >
-      <VStack spacing={12} maxW="6xl" mx="auto">
+      <VStack spacing={12} maxW="7xl" mx="auto">
         {/* Founder Section */}
         <MotionBox
-          bg={sectionBg}
+          bg={"gray.400"}
           borderRadius="2xl"
           p={{ base: 6, md: 12 }}
           w="100%"
@@ -53,7 +54,7 @@ export default function About() {
           transition={{ duration: 0.8 }}
           _hover={{ boxShadow: "2xl", transform: "translateY(-5px)" }}
         >
-          <Stack
+          <HStack
             direction={{ base: "column", md: "row" }}
             spacing={8}
             align="center"
@@ -85,8 +86,9 @@ export default function About() {
                 believers to lift up the name of Jesus above all.
               </Text>
             </Box>
-          </Stack>
+          </HStack>
         </MotionBox>
+
         {/* Main About Heading */}
         <MotionBox
           bg={sectionBg}
@@ -115,12 +117,12 @@ export default function About() {
           </Text>
         </MotionBox>
 
-        {/* Our Story & Mission Section */}
+        {/* Our Story & Mission Section (Horizontal on large screens) */}
         <SimpleGrid
           columns={{ base: 1, md: 2 }}
           spacing={8}
           w="full"
-          alignItems="start"
+          alignItems="stretch"
         >
           <MotionBox
             bg={sectionBg}

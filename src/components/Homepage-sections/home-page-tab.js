@@ -54,7 +54,7 @@ export default function HomePageTab() {
     <Box
       minH="100vh"
       bgGradient={useColorModeValue(
-        "linear(to-b, white, gray.100)",
+        "linear(to-b, white, gray.400)",
         "linear(to-b, gray.900, black)"
       )}
       textAlign="center"

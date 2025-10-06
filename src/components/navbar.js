@@ -17,10 +17,6 @@ import {
   VStack,
   Link,
   Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -95,26 +91,68 @@ export default function Navbar() {
           <HStack spacing={8} display={{ base: "none", md: "flex" }}>
             {navItems.map((item) =>
               item.hasDropdown ? (
-                <Menu key={item.label} isLazy>
-                  <MenuButton
-                    as={Button}
-                    rightIcon={<ChevronDownIcon />}
+                <Box
+                  key={item.label}
+                  position="relative"
+                  _hover={{ ".dropdown": { display: "block" } }}
+                >
+                  {/* Menu Button with indicator */}
+                  <Button
                     variant="ghost"
                     color={isActive(item.href) ? accent : color}
                     _hover={{ color: accent }}
                     fontWeight={isActive(item.href) ? "bold" : "medium"}
+                    rightIcon={
+                      <ChevronDownIcon
+                        w={4}
+                        h={4}
+                        color={isActive(item.href) ? accent : color}
+                      />
+                    }
                   >
                     {item.label}
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem onClick={() => router.push("/music/lineup")}>
-                      Song Line Up
-                    </MenuItem>
-                    <MenuItem onClick={() => router.push("/music/composition")}>
-                      Song Composition
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                  </Button>
+
+                  {/* Dropdown */}
+                  <Box
+                    className="dropdown"
+                    display="none"
+                    position="absolute"
+                    top="100%"
+                    left={0}
+                    bg={useColorModeValue("white", "gray.800")}
+                    borderRadius="md"
+                    boxShadow="md"
+                    py={2}
+                    minW="150px"
+                    zIndex={10}
+                  >
+                    <VStack align="start" spacing={0}>
+                      <Link
+                        onClick={() => router.push("/music/lineup")}
+                        px={4}
+                        py={2}
+                        w="full"
+                        _hover={{
+                          bg: useColorModeValue("gray.100", "gray.700"),
+                        }}
+                      >
+                        Song Line Up
+                      </Link>
+                      <Link
+                        onClick={() => router.push("/music/composition")}
+                        px={4}
+                        py={2}
+                        w="full"
+                        _hover={{
+                          bg: useColorModeValue("gray.100", "gray.700"),
+                        }}
+                      >
+                        Song Composition
+                      </Link>
+                    </VStack>
+                  </Box>
+                </Box>
               ) : (
                 <Link
                   key={item.href}

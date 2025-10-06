@@ -62,7 +62,7 @@ export default function MissionValuesSection() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentIndex((prev) => (prev + 1) % cards.length);
-      setTimeout(() => setIsAnimating(false), 2000);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
@@ -70,7 +70,7 @@ export default function MissionValuesSection() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
-      setTimeout(() => setIsAnimating(false), 2500);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
@@ -89,9 +89,39 @@ export default function MissionValuesSection() {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      bgGradient={useColorModeValue(
-        "linear(to-r, gray.100, white)",
-        "linear(to-r, gray.800, gray.900)"
+      bg={useColorModeValue(
+        `
+    repeating-linear-gradient(
+      0deg,
+      white,
+      white 9px,
+      black 9px,
+      black 10px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      white,
+      white 9px,
+      black 9px,
+      black 10px
+    )
+  `,
+        `
+    repeating-linear-gradient(
+      0deg,
+      black,
+      black 9px,
+      white 9px,
+      white 10px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      black,
+      black 9px,
+      white 9px,
+      white 10px
+    )
+  `
       )}
       p={4}
       position="relative"
@@ -118,7 +148,7 @@ export default function MissionValuesSection() {
         borderColor={borderColor}
         backdropFilter="blur(12px)"
         boxShadow="xl"
-        p={{ base: 6, md: 10 }}
+        p={{ base: 8, md: 10 }}
         textAlign="left"
         transition="all 0.3s ease"
         _hover={{ transform: "translateY(-4px)", boxShadow: "2xl" }}

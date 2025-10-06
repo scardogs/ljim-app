@@ -75,7 +75,7 @@ export default function SingersSection() {
           bgClip="text"
           animation={`${shimmer} 6s ease-in-out infinite`}
         >
-          Singers
+          Worship Leaders
         </Heading>
         <Text fontSize="lg" fontFamily="monospace" color={subText} maxW="3xl">
           Voices united in harmony — sharing their passion and faith through
