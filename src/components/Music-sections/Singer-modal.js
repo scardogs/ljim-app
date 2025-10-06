@@ -35,7 +35,9 @@ export default function SingerModal({ isOpen, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
   const toast = useToast();
 
+  // ✅ Hooks must be called at the top level
   const bg = useColorModeValue("white", "gray.800");
+  const tableHeadBg = useColorModeValue("gray.200", "gray.700");
 
   const fetchSingers = async () => {
     setLoading(true);
@@ -212,7 +214,8 @@ export default function SingerModal({ isOpen, onClose }) {
                 <Spinner mt={4} />
               ) : (
                 <Table variant="simple" size="md">
-                  <Thead bg={useColorModeValue("gray.200", "gray.700")}>
+                  {/* ✅ use variable instead of calling hook directly */}
+                  <Thead bg={tableHeadBg}>
                     <Tr>
                       <Th>First Name</Th>
                       <Th>Middle Name</Th>
