@@ -27,15 +27,15 @@ export default function About() {
     "rgba(0,0,0,0.45)"
   );
   const gradientText = useColorModeValue(
-    "linear(to-r, gray.700,  black)",
-    "linear(to-r, gray.700,  white)"
+    "linear(to-r, gray.400, gray.600, black)",
+    "linear(to-r, gray.300, gray.500, white)"
   );
   const fontFamily = "monospace";
 
   return (
     <Box
       minH="100vh"
-      bg={"gray.100"}
+      bgGradient={bg}
       textAlign="center"
       py={{ base: 16, md: 24 }}
       px={{ base: 4, md: 8 }}
@@ -44,7 +44,6 @@ export default function About() {
       <VStack spacing={12} maxW="7xl" mx="auto">
         {/* Founder Section */}
         <MotionBox
-          bg={"gray.400"}
           borderRadius="2xl"
           p={{ base: 6, md: 12 }}
           w="100%"
