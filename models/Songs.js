@@ -9,6 +9,8 @@ const SongSchema = new mongoose.Schema(
     url: { type: String },
     lyricsAndChords: { type: String },
     notes: { type: String },
+    dateTime: { type: Date, required: true },
+    SingerFname: { type: String },
   },
   { timestamps: true }
 );
