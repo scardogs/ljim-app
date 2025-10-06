@@ -44,6 +44,11 @@ const singers = [
     tagline: "Lifting her voice to inspire faith and devotion.",
     image: "/images/hannah.jpg",
   },
+  {
+    name: "Azaleah",
+    tagline: "Bringing melodies that touch the soul and uplift spirits.",
+    image: "/images/azaleah.jpg",
+  },
 ];
 
 export default function SingersSection() {
@@ -92,7 +97,7 @@ export default function SingersSection() {
 
       {/* Singers Grid */}
       <SimpleGrid
-        columns={{ base: 1, sm: 2, md: 3 }}
+        columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
         spacing={10}
         w="full"
         maxW="6xl"
@@ -102,6 +107,7 @@ export default function SingersSection() {
         {singers.map((s, index) => (
           <MotionBox
             key={s.name}
+            order={s.name === "Azaleah" ? 2 : undefined} // optional: you can tweak order if needed
             bg={cardBg}
             borderRadius="2xl"
             overflow="hidden"

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -185,21 +186,43 @@ export default function AddSongModal({
       </Modal>
 
       {/* Full Screen Lyrics Modal (Scrollable Textarea) */}
-      <Modal isOpen={isFullScreenOpen} onClose={onFullScreenClose} size="full">
+      <Modal
+        isOpen={isFullScreenOpen}
+        onClose={onFullScreenClose}
+        size="full"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
-        <ModalContent h="100vh">
+        <ModalContent height="100vh" display="flex" flexDirection="column">
           <ModalHeader>Lyrics & Chords - Full Screen</ModalHeader>
           <ModalCloseButton />
-          <ModalBody p={4}>
-            <Textarea
-              fontFamily="monospace"
-              value={formData.lyricsAndChords}
-              onChange={handleInputChange}
-              name="lyricsAndChords"
-              height="80vh"
-              resize="vertical"
-              overflowY="auto"
-            />
+          <ModalBody
+            p={4}
+            flex="1"
+            display="flex"
+            flexDirection="column"
+            overflow="hidden" // allow child scroll
+            minH="0" // ensure children can shrink to allow scrolling
+          >
+            <Box flex="1" minH="0" overflowY="auto">
+              <Textarea
+                fontFamily="monospace"
+                value={formData.lyricsAndChords}
+                onChange={handleInputChange}
+                name="lyricsAndChords"
+                h="100%"
+                resize="none"
+                sx={{
+                  "&::-webkit-scrollbar": {
+                    width: "8px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "gray",
+                    borderRadius: "4px",
+                  },
+                }}
+              />
+            </Box>
           </ModalBody>
           <ModalFooter>
             <Button

@@ -429,43 +429,11 @@ export default function Music() {
         handleAddSong={handleAddSong}
         handleUpdateSong={handleUpdateSong}
         handleOpenFullScreenLyrics={onFullScreenOpen}
+        isFullScreenOpen={isFullScreenOpen}
+        onFullScreenClose={onFullScreenClose}
         isSubmitting={isSubmitting}
         singers={singers}
       />
-
-      {/* Full Screen Lyrics Modal */}
-      <Modal isOpen={isFullScreenOpen} onClose={onFullScreenClose} size="full">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader fontFamily="monospace">
-            Lyrics & Chords - Full Screen
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody p={4}>
-            <Textarea
-              fontFamily="monospace"
-              value={formData.lyricsAndChords}
-              onChange={handleInputChange}
-              name="lyricsAndChords"
-              h="80vh"
-              resize="vertical"
-              overflowY="auto"
-              p={4}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={onFullScreenClose}
-              bg="black"
-              color="white"
-              _hover={{ bg: "gray.800" }}
-              fontFamily="monospace"
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
 
       {/* Singer Modal */}
       <SingerModal isOpen={isSingerModalOpen} onClose={closeSingerModal} />
