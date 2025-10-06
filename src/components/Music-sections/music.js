@@ -7,17 +7,7 @@ import {
   HStack,
   Button,
   Input,
-  Textarea,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
   useDisclosure,
-  FormControl,
-  FormLabel,
   useToast,
   useColorModeValue,
   Accordion,
@@ -27,9 +17,18 @@ import {
   AccordionIcon,
   Spinner,
   Select,
+  Modal, // ✅ Add this
+  ModalOverlay, // ✅ Add this
+  ModalContent, // ✅ Add this
+  ModalHeader, // ✅ Add this
+  ModalBody, // ✅ Add this
+  ModalFooter, // ✅ Add this
+  ModalCloseButton, // ✅ Add this
+  Textarea, // ✅ Add this
 } from "@chakra-ui/react";
 
-import SingerModal from "../Music-sections/Singer-modal"; // ✅ import Singer modal
+import SingerModal from "../Music-sections/Singer-modal";
+import AddSongModal from "../Music-sections/addSongModal"; // ✅ imported AddSongModal
 
 export default function Music() {
   const [songs, setSongs] = useState([]);
@@ -38,7 +37,7 @@ export default function Music() {
   const [loading, setLoading] = useState(false);
   const [editingSong, setEditingSong] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [singers, setSingers] = useState([]); // ✅ store all singers
+  const [singers, setSingers] = useState([]);
   const [formData, setFormData] = useState({
     songName: "",
     artist: "",
@@ -48,7 +47,7 @@ export default function Music() {
     url: "",
     notes: "",
     dateTime: "",
-    SingerFname: "", // ✅ added singer field
+    SingerFname: "",
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -62,7 +61,7 @@ export default function Music() {
   const openSingerModal = () => setIsSingerModalOpen(true);
   const closeSingerModal = () => {
     setIsSingerModalOpen(false);
-    fetchSingers(); // ✅ refresh singers when modal closes
+    fetchSingers(); // refresh singers when modal closes
   };
 
   const toast = useToast();
@@ -74,6 +73,8 @@ export default function Music() {
   const textColor = useColorModeValue("black", "white");
   const subTextColor = useColorModeValue("gray.700", "gray.300");
   const sectionBg = useColorModeValue("gray.100", "gray.800");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ Fetch all singers for the dropdown
   const fetchSingers = async () => {
@@ -111,7 +112,7 @@ export default function Music() {
 
   useEffect(() => {
     fetchMusic();
-    fetchSingers(); // ✅ load singers at start
+    fetchSingers();
   }, []);
 
   useEffect(() => {
@@ -122,16 +123,10 @@ export default function Music() {
 
       const filtered = songs.filter((song) => {
         const dateObj = song.dateTime ? new Date(song.dateTime) : null;
-
-        // Convert date to different readable formats for matching
         const dateStr = dateObj ? dateObj.toLocaleString().toLowerCase() : "";
-
-        // Convert month name (like October) for better matching
         const monthName = dateObj
           ? dateObj.toLocaleString("default", { month: "long" }).toLowerCase()
           : "";
-
-        // Add singer’s first name to searchable fields
         const singerFname = song.SingerFname?.toLowerCase() || "";
 
         return (
@@ -148,7 +143,6 @@ export default function Music() {
       setFilteredSongs(filtered);
     }
   }, [searchQuery, songs]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -182,7 +176,6 @@ export default function Music() {
 
       if (response.ok) {
         const newSong = await response.json();
-
         toast({
           title: "Success",
           description: "Song added successfully!",
@@ -193,7 +186,6 @@ export default function Music() {
 
         setSongs((prev) => [newSong, ...prev]);
         setFilteredSongs((prev) => [newSong, ...prev]);
-
         resetForm();
         onClose();
         setTimeout(fetchMusic, 500);
@@ -461,157 +453,19 @@ export default function Music() {
         </Box>
       </VStack>
 
-      {/* Add/Edit Song Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{isEditing ? "Edit Song" : "Add New Song"}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <VStack spacing={4}>
-              <FormControl>
-                <FormLabel>Song Name</FormLabel>
-                <Input
-                  name="songName"
-                  value={formData.songName}
-                  onChange={handleInputChange}
-                  placeholder="Enter song name"
-                />
-              </FormControl>
-
-              <HStack spacing={4} w="100%">
-                <FormControl>
-                  <FormLabel>Artist</FormLabel>
-                  <Input
-                    name="artist"
-                    value={formData.artist}
-                    onChange={handleInputChange}
-                    placeholder="Enter artist name"
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Album</FormLabel>
-                  <Input
-                    name="album"
-                    value={formData.album}
-                    onChange={handleInputChange}
-                    placeholder="Enter album name"
-                  />
-                </FormControl>
-              </HStack>
-
-              <HStack spacing={4} w="100%">
-                <FormControl>
-                  <FormLabel>Genre</FormLabel>
-                  <Input
-                    name="genre"
-                    value={formData.genre}
-                    onChange={handleInputChange}
-                    placeholder="Enter genre"
-                  />
-                </FormControl>
-
-                {/* ✅ SingerFname Combobox */}
-                <FormControl>
-                  <FormLabel>Singer</FormLabel>
-                  <Select
-                    name="SingerFname"
-                    value={formData.SingerFname}
-                    onChange={handleInputChange}
-                    placeholder="Select Singer"
-                  >
-                    {singers.map((singer) => (
-                      <option key={singer._id} value={singer.Fname}>
-                        {singer.Fname}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              </HStack>
-
-              <FormControl>
-                <FormLabel>URL</FormLabel>
-                <Input
-                  name="url"
-                  value={formData.url}
-                  onChange={handleInputChange}
-                  placeholder="Enter song URL"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Date & Time</FormLabel>
-                <Input
-                  type="datetime-local"
-                  name="dateTime"
-                  value={formData.dateTime}
-                  onChange={handleInputChange}
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Lyrics & Chords</FormLabel>
-                <Textarea
-                  fontFamily="monospace"
-                  name="lyricsAndChords"
-                  value={formData.lyricsAndChords}
-                  onChange={handleInputChange}
-                  placeholder="Enter lyrics and chords"
-                  rows={4}
-                />
-                <Button
-                  mt={2}
-                  size="sm"
-                  onClick={handleOpenFullScreenLyrics}
-                  bg="white"
-                  color="black"
-                  border="1px solid black"
-                  _hover={{ bg: "black", color: "white" }}
-                >
-                  Full Screen
-                </Button>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Notes</FormLabel>
-                <Textarea
-                  fontFamily="monospace"
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleInputChange}
-                  placeholder="Enter any additional notes"
-                  rows={2}
-                />
-              </FormControl>
-            </VStack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              bg="white"
-              color="black"
-              border="1px solid black"
-              _hover={{ bg: "black", color: "white" }}
-              mr={3}
-              onClick={onClose}
-              isDisabled={isSubmitting} // disable while submitting
-            >
-              Cancel
-            </Button>
-            <Button
-              bg="white"
-              color="black"
-              border="1px solid black"
-              _hover={{ bg: "black", color: "white" }}
-              onClick={isEditing ? handleUpdateSong : handleAddSong}
-              isLoading={isSubmitting} // show spinner
-              loadingText={isEditing ? "Updating..." : "Adding..."} // text while loading
-            >
-              {isEditing ? "Update Song" : "Add Song"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {/* ✅ Add/Edit Song Modal */}
+      <AddSongModal
+        isOpen={isOpen}
+        onClose={onClose}
+        isEditing={isEditing}
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleAddSong={handleAddSong}
+        handleUpdateSong={handleUpdateSong}
+        handleOpenFullScreenLyrics={handleOpenFullScreenLyrics}
+        isSubmitting={isSubmitting}
+        singers={singers}
+      />
 
       {/* Full Screen Lyrics Modal */}
       <Modal isOpen={isFullScreenOpen} onClose={onFullScreenClose} size="full">
