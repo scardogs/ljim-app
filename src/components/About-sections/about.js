@@ -7,10 +7,11 @@ import {
   useColorModeValue,
   SimpleGrid,
   Divider,
+  Image,
+  Stack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
-// MotionBox for subtle entrance animations
 const MotionBox = motion(Box);
 
 export default function About() {
@@ -40,6 +41,52 @@ export default function About() {
       fontFamily={fontFamily}
     >
       <VStack spacing={12} maxW="6xl" mx="auto">
+        {/* Founder Section */}
+        <MotionBox
+          bg={sectionBg}
+          borderRadius="2xl"
+          p={{ base: 6, md: 12 }}
+          w="100%"
+          boxShadow="xl"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          _hover={{ boxShadow: "2xl", transform: "translateY(-5px)" }}
+        >
+          <Stack
+            direction={{ base: "column", md: "row" }}
+            spacing={8}
+            align="center"
+          >
+            <Image
+              src="/images/ed-fernandez.jpg"
+              alt="Bishop Ed Dalisay Fernandez"
+              borderRadius="full"
+              boxSize={{ base: "150px", md: "200px" }}
+              objectFit="cover"
+              boxShadow="lg"
+            />
+            <Box textAlign={{ base: "center", md: "left" }}>
+              <Heading
+                bgGradient={gradientText}
+                bgClip="text"
+                fontSize={{ base: "2xl", md: "3xl" }}
+                mb={3}
+                fontFamily={fontFamily}
+              >
+                Bishop Ed Dalisay Fernandez
+              </Heading>
+              <Text color={subTextColor} fontSize={{ base: "md", md: "lg" }}>
+                Bishop Ed Dalisay Fernandez is the founder and spiritual leader
+                of Lift Jesus International Ministries. His ministry journey is
+                marked by faith, humility, and a passion for evangelism. Through
+                his leadership, LJIM has reached countless lives worldwide with
+                the message of Jesus Christ. His vision continues to inspire
+                believers to lift up the name of Jesus above all.
+              </Text>
+            </Box>
+          </Stack>
+        </MotionBox>
         {/* Main About Heading */}
         <MotionBox
           bg={sectionBg}
@@ -62,9 +109,9 @@ export default function About() {
             About LJWM
           </Heading>
           <Text color={subTextColor} fontSize={{ base: "md", md: "lg" }}>
-            Lift Jesus Worldwide Ministries (LJWM) is a Christ-centered global
-            fellowship committed to spreading the message of salvation through
-            faith in Jesus Christ.
+            Lift Jesus International Ministries (LJIM) is a Christ-centered
+            global fellowship committed to spreading the message of salvation
+            through faith in Jesus Christ.
           </Text>
         </MotionBox>
 
