@@ -148,6 +148,7 @@ export default function Music() {
       setFilteredSongs(filtered);
     }
   }, [searchQuery, songs]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -171,6 +172,7 @@ export default function Music() {
   };
 
   const handleAddSong = async () => {
+    setIsSubmitting(true);
     try {
       const response = await fetch("/api/songs", {
         method: "POST",
@@ -179,7 +181,7 @@ export default function Music() {
       });
 
       if (response.ok) {
-        const newSong = await response.json(); // 👈 get the new song data from backend
+        const newSong = await response.json();
 
         toast({
           title: "Success",
@@ -189,14 +191,11 @@ export default function Music() {
           isClosable: true,
         });
 
-        // ✅ Instantly update state to show new song in the UI
         setSongs((prev) => [newSong, ...prev]);
         setFilteredSongs((prev) => [newSong, ...prev]);
 
         resetForm();
         onClose();
-
-        // (Optional) Re-fetch in the background to sync DB state
         setTimeout(fetchMusic, 500);
       } else {
         throw new Error("Failed to add song");
@@ -209,6 +208,8 @@ export default function Music() {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -223,6 +224,7 @@ export default function Music() {
   };
 
   const handleUpdateSong = async () => {
+    setIsSubmitting(true);
     try {
       const response = await fetch(`/api/songs/${editingSong._id}`, {
         method: "PUT",
@@ -250,6 +252,8 @@ export default function Music() {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -590,6 +594,7 @@ export default function Music() {
               _hover={{ bg: "black", color: "white" }}
               mr={3}
               onClick={onClose}
+              isDisabled={isSubmitting} // disable while submitting
             >
               Cancel
             </Button>
@@ -599,6 +604,8 @@ export default function Music() {
               border="1px solid black"
               _hover={{ bg: "black", color: "white" }}
               onClick={isEditing ? handleUpdateSong : handleAddSong}
+              isLoading={isSubmitting} // show spinner
+              loadingText={isEditing ? "Updating..." : "Adding..."} // text while loading
             >
               {isEditing ? "Update Song" : "Add Song"}
             </Button>
