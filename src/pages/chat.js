@@ -16,6 +16,8 @@ export default function ChatPage() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingDots, setTypingDots] = useState(".");
   const containerBg = useColorModeValue("white", "gray.900");
   const bubbleUser = useColorModeValue("gray.900", "gray.100");
   const bubbleModel = useColorModeValue("gray.200", "gray.800");
@@ -29,6 +31,14 @@ export default function ChatPage() {
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (!isTyping) return;
+    const id = setInterval(() => {
+      setTypingDots((prev) => (prev.length >= 3 ? "." : prev + "."));
+    }, 400);
+    return () => clearInterval(id);
+  }, [isTyping]);
+
   // No API key UI; backend should be configured via environment
 
   const sendMessage = async () => {
@@ -38,6 +48,7 @@ export default function ChatPage() {
     const newMessages = [...messages, { role: "user", content: text }];
     setMessages(newMessages);
     setLoading(true);
+    setIsTyping(true);
     try {
       const res = await fetch("/api/chat/gemini", {
         method: "POST",
@@ -45,23 +56,15 @@ export default function ChatPage() {
         body: JSON.stringify({ message: text, history: newMessages }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        const errMsg = data?.details || data?.error || "Request failed";
-        setMessages((prev) => [
-          ...prev,
-          { role: "model", content: `Error: ${errMsg}` },
-        ]);
-      } else {
+      if (res.ok) {
         const reply = data?.reply || "(No response)";
         setMessages((prev) => [...prev, { role: "model", content: reply }]);
       }
     } catch (e) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", content: "Sorry, something went wrong." },
-      ]);
+      // Swallow errors; no error bubble shown
     } finally {
       setLoading(false);
+      setIsTyping(false);
     }
   };
 
@@ -122,6 +125,21 @@ export default function ChatPage() {
               </Box>
             </Flex>
           ))}
+          {isTyping && (
+            <Flex justify="flex-start">
+              <Box
+                bg={bubbleModel}
+                color={modelTextColor}
+                px={4}
+                py={2}
+                borderRadius="lg"
+                maxW="60%"
+                fontStyle="italic"
+              >
+                Typing{typingDots}
+              </Box>
+            </Flex>
+          )}
         </VStack>
 
         <Flex

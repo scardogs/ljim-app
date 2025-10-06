@@ -17,6 +17,8 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingDots, setTypingDots] = useState(".");
   const containerBg = useColorModeValue("white", "gray.900");
   const border = useColorModeValue("gray.300", "gray.700");
   const bubbleUser = useColorModeValue("gray.900", "gray.100");
@@ -31,6 +33,14 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
     }
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    if (!isTyping) return;
+    const id = setInterval(() => {
+      setTypingDots((prev) => (prev.length >= 3 ? "." : prev + "."));
+    }, 400);
+    return () => clearInterval(id);
+  }, [isTyping]);
+
   // No API key UI; backend should be configured via environment
 
   if (!isOpen) return null;
@@ -42,6 +52,7 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
     const newMessages = [...messages, { role: "user", content: text }];
     setMessages(newMessages);
     setLoading(true);
+    setIsTyping(true);
     try {
       const res = await fetch("/api/chat/gemini", {
         method: "POST",
@@ -49,23 +60,15 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
         body: JSON.stringify({ message: text, history: newMessages }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        const errMsg = data?.details || data?.error || "Request failed";
-        setMessages((prev) => [
-          ...prev,
-          { role: "model", content: `Error: ${errMsg}` },
-        ]);
-      } else {
+      if (res.ok) {
         const reply = data?.reply || "(No response)";
         setMessages((prev) => [...prev, { role: "model", content: reply }]);
       }
     } catch (e) {
-      setMessages((prev) => [
-        ...prev,
-        { role: "model", content: "Sorry, something went wrong." },
-      ]);
+      // Swallow errors; no error bubble shown
     } finally {
       setLoading(false);
+      setIsTyping(false);
     }
   };
 
@@ -139,6 +142,22 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
               </Box>
             </Flex>
           ))}
+          {isTyping && (
+            <Flex justify="flex-start">
+              <Box
+                bg={bubbleModel}
+                color={modelTextColor}
+                px={3}
+                py={2}
+                borderRadius="lg"
+                maxW="65%"
+                fontStyle="italic"
+                fontSize="sm"
+              >
+                Typing{typingDots}
+              </Box>
+            </Flex>
+          )}
         </VStack>
 
         <Flex gap={2} px={3} py={3} borderTop="1px solid" borderColor={border}>
