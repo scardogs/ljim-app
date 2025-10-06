@@ -184,21 +184,21 @@ export default function AddSongModal({
         </ModalContent>
       </Modal>
 
-      {/* Full Screen Lyrics Modal */}
+      {/* Full Screen Lyrics Modal (Scrollable Textarea) */}
       <Modal isOpen={isFullScreenOpen} onClose={onFullScreenClose} size="full">
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent h="100vh">
           <ModalHeader>Lyrics & Chords - Full Screen</ModalHeader>
           <ModalCloseButton />
-          <ModalBody overflowY="auto" maxH="90vh" p={4}>
+          <ModalBody p={4}>
             <Textarea
               fontFamily="monospace"
               value={formData.lyricsAndChords}
               onChange={handleInputChange}
               name="lyricsAndChords"
-              minH="80vh"
-              h="auto"
+              height="80vh"
               resize="vertical"
+              overflowY="auto"
             />
           </ModalBody>
           <ModalFooter>

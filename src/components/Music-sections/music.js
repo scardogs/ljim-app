@@ -9,7 +9,6 @@ import {
   Input,
   useDisclosure,
   useToast,
-  useColorModeValue,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -17,18 +16,19 @@ import {
   AccordionIcon,
   Spinner,
   Select,
-  Modal, // ✅ Add this
-  ModalOverlay, // ✅ Add this
-  ModalContent, // ✅ Add this
-  ModalHeader, // ✅ Add this
-  ModalBody, // ✅ Add this
-  ModalFooter, // ✅ Add this
-  ModalCloseButton, // ✅ Add this
-  Textarea, // ✅ Add this
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  Textarea,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 import SingerModal from "../Music-sections/Singer-modal";
-import AddSongModal from "../Music-sections/addSongModal"; // ✅ imported AddSongModal
+import AddSongModal from "../Music-sections/addSongModal";
 
 export default function Music() {
   const [songs, setSongs] = useState([]);
@@ -61,22 +61,22 @@ export default function Music() {
   const openSingerModal = () => setIsSingerModalOpen(true);
   const closeSingerModal = () => {
     setIsSingerModalOpen(false);
-    fetchSingers(); // refresh singers when modal closes
+    fetchSingers();
   };
 
   const toast = useToast();
-
-  const bg = useColorModeValue(
-    "linear(to-b, white, gray.300)",
-    "linear(to-b, gray.900, gray.700)"
-  );
-  const textColor = useColorModeValue("black", "white");
-  const subTextColor = useColorModeValue("gray.700", "gray.300");
-  const sectionBg = useColorModeValue("gray.100", "gray.800");
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ✅ Fetch all singers for the dropdown
+  const bgGradient = useColorModeValue(
+    "linear(to-b, gray.100, white)",
+    "linear(to-b, gray.900, gray.800)"
+  );
+  const sectionBg = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("black", "white");
+  const subTextColor = useColorModeValue("gray.600", "gray.300");
+  const accent = useColorModeValue("gray.700", "gray.400");
+
+  // Fetch functions
   const fetchSingers = async () => {
     try {
       const res = await fetch("/api/singers");
@@ -84,7 +84,6 @@ export default function Music() {
       const data = await res.json();
       setSingers(data);
     } catch (err) {
-      console.error("Error loading singers:", err);
       toast({
         title: "Error loading singers",
         status: "error",
@@ -103,11 +102,11 @@ export default function Music() {
       setSongs(data);
       setFilteredSongs(data);
     } catch (err) {
-      console.error("Failed to fetch music:", err);
       setSongs([]);
       setFilteredSongs([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -116,32 +115,28 @@ export default function Music() {
   }, []);
 
   useEffect(() => {
-    if (!searchQuery) {
-      setFilteredSongs(songs);
-    } else {
-      const lowerQuery = searchQuery.toLowerCase();
+    if (!searchQuery) return setFilteredSongs(songs);
 
-      const filtered = songs.filter((song) => {
-        const dateObj = song.dateTime ? new Date(song.dateTime) : null;
-        const dateStr = dateObj ? dateObj.toLocaleString().toLowerCase() : "";
-        const monthName = dateObj
-          ? dateObj.toLocaleString("default", { month: "long" }).toLowerCase()
-          : "";
-        const singerFname = song.SingerFname?.toLowerCase() || "";
+    const lowerQuery = searchQuery.toLowerCase();
+    const filtered = songs.filter((song) => {
+      const dateObj = song.dateTime ? new Date(song.dateTime) : null;
+      const dateStr = dateObj ? dateObj.toLocaleString().toLowerCase() : "";
+      const monthName = dateObj
+        ? dateObj.toLocaleString("default", { month: "long" }).toLowerCase()
+        : "";
+      const singerFname = song.SingerFname?.toLowerCase() || "";
 
-        return (
-          song.songName.toLowerCase().includes(lowerQuery) ||
-          song.artist.toLowerCase().includes(lowerQuery) ||
-          song.album?.toLowerCase().includes(lowerQuery) ||
-          song.genre?.toLowerCase().includes(lowerQuery) ||
-          dateStr.includes(lowerQuery) ||
-          monthName.includes(lowerQuery) ||
-          singerFname.includes(lowerQuery)
-        );
-      });
-
-      setFilteredSongs(filtered);
-    }
+      return (
+        song.songName.toLowerCase().includes(lowerQuery) ||
+        song.artist.toLowerCase().includes(lowerQuery) ||
+        song.album?.toLowerCase().includes(lowerQuery) ||
+        song.genre?.toLowerCase().includes(lowerQuery) ||
+        dateStr.includes(lowerQuery) ||
+        monthName.includes(lowerQuery) ||
+        singerFname.includes(lowerQuery)
+      );
+    });
+    setFilteredSongs(filtered);
   }, [searchQuery, songs]);
 
   const handleInputChange = (e) => {
@@ -168,38 +163,20 @@ export default function Music() {
   const handleAddSong = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/songs", {
+      const res = await fetch("/api/songs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
-      if (response.ok) {
-        const newSong = await response.json();
-        toast({
-          title: "Success",
-          description: "Song added successfully!",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-
-        setSongs((prev) => [newSong, ...prev]);
-        setFilteredSongs((prev) => [newSong, ...prev]);
-        resetForm();
-        onClose();
-        setTimeout(fetchMusic, 500);
-      } else {
-        throw new Error("Failed to add song");
-      }
-    } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to add song.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      if (!res.ok) throw new Error("Failed to add song");
+      const newSong = await res.json();
+      setSongs((prev) => [newSong, ...prev]);
+      setFilteredSongs((prev) => [newSong, ...prev]);
+      resetForm();
+      onClose();
+      toast({ title: "Song added!", status: "success", duration: 2000 });
+    } catch {
+      toast({ title: "Failed to add song", status: "error", duration: 3000 });
     } finally {
       setIsSubmitting(false);
     }
@@ -218,31 +195,21 @@ export default function Music() {
   const handleUpdateSong = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/songs/${editingSong._id}`, {
+      const res = await fetch(`/api/songs/${editingSong._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Song updated successfully!",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        fetchMusic();
-        resetForm();
-        onClose();
-      } else throw new Error("Failed to update song");
-    } catch (err) {
+      if (!res.ok) throw new Error("Failed to update song");
+      toast({ title: "Song updated!", status: "success", duration: 2000 });
+      fetchMusic();
+      resetForm();
+      onClose();
+    } catch {
       toast({
-        title: "Error",
-        description: "Failed to update song.",
+        title: "Failed to update song",
         status: "error",
         duration: 3000,
-        isClosable: true,
       });
     } finally {
       setIsSubmitting(false);
@@ -250,83 +217,65 @@ export default function Music() {
   };
 
   const handleDeleteSong = async (id) => {
-    if (window.confirm("Are you sure you want to delete this song?")) {
-      try {
-        const response = await fetch(`/api/songs/${id}`, { method: "DELETE" });
-
-        if (response.ok) {
-          toast({
-            title: "Deleted",
-            description: "Song deleted successfully!",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          fetchMusic();
-        } else throw new Error("Failed to delete song");
-      } catch (err) {
-        toast({
-          title: "Error",
-          description: "Failed to delete song.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+    if (!window.confirm("Are you sure?")) return;
+    try {
+      const res = await fetch(`/api/songs/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete song");
+      toast({ title: "Song deleted!", status: "success", duration: 2000 });
+      fetchMusic();
+    } catch {
+      toast({
+        title: "Failed to delete song",
+        status: "error",
+        duration: 3000,
+      });
     }
   };
 
-  const handleOpenAddModal = () => {
-    resetForm();
-    setIsEditing(false);
-    onOpen();
-  };
-
-  const handleOpenFullScreenLyrics = () => {
-    onFullScreenOpen();
-  };
-
   return (
-    <Box
-      minH="100vh"
-      bgGradient={bg}
-      textAlign="center"
-      py={{ base: 16, md: 24 }}
-    >
-      <VStack spacing={8} maxW="4xl" mx="auto" px={{ base: 4, md: 8 }}>
-        <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
-          <Heading color={textColor}>Song Line Up</Heading>
-          <Text
-            fontFamily="monospace"
-            color={subTextColor}
-            mt={4}
-            fontSize="lg"
-          >
-            Song Line Ups Database
+    <Box minH="100vh" bgGradient={bgGradient} py={16}>
+      <VStack spacing={10} maxW="5xl" mx="auto" px={4}>
+        {/* Header */}
+        <Box
+          bg={sectionBg}
+          p={10}
+          borderRadius="2xl"
+          shadow="xl"
+          textAlign="center"
+        >
+          <Heading color={textColor} fontFamily="monospace">
+            Song Line Up
+          </Heading>
+          <Text color={subTextColor} mt={3} fontFamily="monospace">
+            Manage all your song line-ups elegantly
           </Text>
         </Box>
 
-        <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
+        {/* Controls */}
+        <Box bg={sectionBg} p={6} borderRadius="2xl" shadow="md" w="100%">
           <HStack justify="space-between" mb={4}>
-            <Heading size="md" color={textColor}>
+            <Heading size="md" color={textColor} fontFamily="monospace">
               Our Song Line Ups
             </Heading>
             <HStack spacing={2}>
               <Button
-                bg="white"
-                color="black"
-                border="1px solid black"
-                _hover={{ bg: "black", color: "white" }}
-                onClick={handleOpenAddModal}
+                bg="black"
+                color="white"
+                _hover={{ bg: "gray.800" }}
+                onClick={() => {
+                  resetForm();
+                  onOpen();
+                }}
+                fontFamily="monospace"
               >
-                Add New Song
+                + Add New Song
               </Button>
               <Button
-                bg="white"
-                color="black"
-                border="1px solid black"
-                _hover={{ bg: "black", color: "white" }}
+                bg="gray.700"
+                color="white"
+                _hover={{ bg: "gray.500" }}
                 onClick={openSingerModal}
+                fontFamily="monospace"
               >
                 + Singer
               </Button>
@@ -334,112 +283,108 @@ export default function Music() {
           </HStack>
 
           <Input
-            placeholder="Search by song, artist, album, genre, or date..."
+            placeholder="Search by song, artist, album, genre..."
             mb={4}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            bg={useColorModeValue("white", "gray.700")}
+            bg={useColorModeValue("gray.50", "gray.700")}
+            fontFamily="monospace"
           />
 
           {loading ? (
-            <Spinner size="xl" color="gray.500" mt={8} />
+            <Spinner size="xl" color={accent} mt={8} />
           ) : (
             <Accordion allowToggle>
               {filteredSongs.length === 0 && (
-                <Text color={subTextColor}>No songs found.</Text>
+                <Text color={subTextColor} mt={4}>
+                  No songs found.
+                </Text>
               )}
               {filteredSongs.map((song) => (
                 <AccordionItem
                   key={song._id}
                   border="1px solid"
-                  borderColor={subTextColor}
+                  borderColor={accent}
                   borderRadius="md"
-                  mb={2}
+                  mb={3}
+                  shadow="sm"
+                  _hover={{ shadow: "md" }}
                 >
-                  <h2>
-                    <AccordionButton _expanded={{ bg: sectionBg }}>
-                      <Box flex="1" textAlign="left" color={textColor}>
-                        {song.songName}{" "}
+                  <AccordionButton _expanded={{ bg: sectionBg }}>
+                    <Box flex="1" textAlign="left" fontFamily="monospace">
+                      {song.songName}{" "}
+                      <Text as="span" fontSize="sm" color={subTextColor} ml={2}>
+                        (
+                        {song.dateTime
+                          ? new Date(song.dateTime).toLocaleString("en-PH", {
+                              year: "numeric",
+                              month: "short",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "-"}
+                        )
+                      </Text>
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <VStack align="start" spacing={1}>
+                      <Text fontFamily="monospace" color={subTextColor}>
+                        Artist: {song.artist}
+                      </Text>
+                      <Text fontFamily="monospace" color={subTextColor}>
+                        Album: {song.album}
+                      </Text>
+                      <Text fontFamily="monospace" color={subTextColor}>
+                        Genre: {song.genre}
+                      </Text>
+                      <Text fontFamily="monospace" color={subTextColor}>
+                        Singer: {song.SingerFname || "N/A"}
+                      </Text>
+                      {song.lyricsAndChords && (
                         <Text
-                          as="span"
-                          fontSize="sm"
+                          fontFamily="monospace"
                           color={subTextColor}
-                          ml={2}
+                          mt={2}
+                          whiteSpace="pre-wrap"
                         >
-                          (
-                          {song.dateTime
-                            ? new Date(song.dateTime).toLocaleString("en-PH", {
-                                year: "numeric",
-                                month: "short",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })
-                            : "-"}
-                          )
+                          Lyrics & Chords: {song.lyricsAndChords}
                         </Text>
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4} textAlign="left">
-                    <Text fontFamily="monospace" color={subTextColor}>
-                      Artist: {song.artist}
-                    </Text>
-                    <Text fontFamily="monospace" color={subTextColor}>
-                      Album: {song.album}
-                    </Text>
-                    <Text fontFamily="monospace" color={subTextColor}>
-                      Genre: {song.genre}
-                    </Text>
-                    <Text fontFamily="monospace" color={subTextColor}>
-                      Singer: {song.SingerFname || "N/A"}
-                    </Text>
-
-                    {song.lyricsAndChords && (
-                      <Text
-                        fontFamily="monospace"
-                        color={subTextColor}
-                        mt={2}
-                        whiteSpace="pre-wrap"
-                      >
-                        Lyrics & Chords: {song.lyricsAndChords}
-                      </Text>
-                    )}
-
-                    {song.notes && (
-                      <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
-                        Notes: {song.notes}
-                      </Text>
-                    )}
-
-                    {song.url && (
-                      <Text fontFamily="monospace" color={textColor} mt={2}>
-                        <a
-                          href={song.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Listen
-                        </a>
-                      </Text>
-                    )}
-
-                    <HStack spacing={2} mt={2}>
+                      )}
+                      {song.notes && (
+                        <Text color={subTextColor} mt={2} whiteSpace="pre-wrap">
+                          Notes: {song.notes}
+                        </Text>
+                      )}
+                      {song.url && (
+                        <Text fontFamily="monospace" color={textColor}>
+                          <a
+                            href={song.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Listen
+                          </a>
+                        </Text>
+                      )}
+                    </VStack>
+                    <HStack spacing={2} mt={3}>
                       <Button
-                        bg="white"
-                        color="black"
-                        border="1px solid black"
-                        _hover={{ bg: "black", color: "white" }}
+                        bg="black"
+                        color="white"
+                        _hover={{ bg: "gray.800" }}
+                        fontFamily="monospace"
                         onClick={() => handleEditSong(song)}
                       >
                         Edit
                       </Button>
                       <Button
-                        bg="white"
-                        color="black"
-                        border="1px solid black"
-                        _hover={{ bg: "black", color: "white" }}
+                        bg="gray.700"
+                        color="white"
+                        _hover={{ bg: "gray.500" }}
+                        fontFamily="monospace"
                         onClick={() => handleDeleteSong(song._id)}
                       >
                         Delete
@@ -453,7 +398,7 @@ export default function Music() {
         </Box>
       </VStack>
 
-      {/* ✅ Add/Edit Song Modal */}
+      {/* Add/Edit Song Modal */}
       <AddSongModal
         isOpen={isOpen}
         onClose={onClose}
@@ -462,7 +407,7 @@ export default function Music() {
         handleInputChange={handleInputChange}
         handleAddSong={handleAddSong}
         handleUpdateSong={handleUpdateSong}
-        handleOpenFullScreenLyrics={handleOpenFullScreenLyrics}
+        handleOpenFullScreenLyrics={onFullScreenOpen}
         isSubmitting={isSubmitting}
         singers={singers}
       />
@@ -471,25 +416,29 @@ export default function Music() {
       <Modal isOpen={isFullScreenOpen} onClose={onFullScreenClose} size="full">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Lyrics & Chords - Full Screen</ModalHeader>
+          <ModalHeader fontFamily="monospace">
+            Lyrics & Chords - Full Screen
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody p={4}>
             <Textarea
               fontFamily="monospace"
               value={formData.lyricsAndChords}
               onChange={handleInputChange}
               name="lyricsAndChords"
-              rows={20}
               h="80vh"
+              resize="vertical"
+              overflowY="auto"
+              p={4}
             />
           </ModalBody>
           <ModalFooter>
             <Button
               onClick={onFullScreenClose}
-              bg="white"
-              color="black"
-              border="1px solid black"
-              _hover={{ bg: "black", color: "white" }}
+              bg="black"
+              color="white"
+              _hover={{ bg: "gray.800" }}
+              fontFamily="monospace"
             >
               Close
             </Button>

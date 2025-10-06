@@ -17,8 +17,17 @@ import {
   VStack,
   Link,
   Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import {
+  HamburgerIcon,
+  MoonIcon,
+  SunIcon,
+  ChevronDownIcon,
+} from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 
 export default function Navbar() {
@@ -34,7 +43,6 @@ export default function Navbar() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Glass background & color palette
   const bg = useColorModeValue(
     scrolled ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
     scrolled ? "rgba(26, 32, 44, 0.6)" : "rgba(26, 32, 44, 0.3)"
@@ -45,7 +53,7 @@ export default function Navbar() {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
-    { label: "Music", href: "/music" },
+    { label: "Music", href: "/music", hasDropdown: true },
     { label: "Events", href: "/events" },
     { label: "Contact", href: "/contact" },
   ];
@@ -85,31 +93,54 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <HStack spacing={8} display={{ base: "none", md: "flex" }}>
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                onClick={() => router.push(item.href)}
-                position="relative"
-                color={isActive(item.href) ? accent : color}
-                _hover={{ color: accent }}
-                fontWeight={isActive(item.href) ? "bold" : "medium"}
-                transition="color 0.2s"
-              >
-                {item.label}
-                {isActive(item.href) && (
-                  <Box
-                    position="absolute"
-                    bottom={-1}
-                    left="50%"
-                    transform="translateX(-50%)"
-                    w="60%"
-                    h="2px"
-                    bg={accent}
-                    borderRadius="full"
-                  />
-                )}
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.hasDropdown ? (
+                <Menu key={item.label} isLazy>
+                  <MenuButton
+                    as={Button}
+                    rightIcon={<ChevronDownIcon />}
+                    variant="ghost"
+                    color={isActive(item.href) ? accent : color}
+                    _hover={{ color: accent }}
+                    fontWeight={isActive(item.href) ? "bold" : "medium"}
+                  >
+                    {item.label}
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem onClick={() => router.push("/music/lineup")}>
+                      Song Line Up
+                    </MenuItem>
+                    <MenuItem onClick={() => router.push("/music/composition")}>
+                      Song Composition
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              ) : (
+                <Link
+                  key={item.href}
+                  onClick={() => router.push(item.href)}
+                  position="relative"
+                  color={isActive(item.href) ? accent : color}
+                  _hover={{ color: accent }}
+                  fontWeight={isActive(item.href) ? "bold" : "medium"}
+                  transition="color 0.2s"
+                >
+                  {item.label}
+                  {isActive(item.href) && (
+                    <Box
+                      position="absolute"
+                      bottom={-1}
+                      left="50%"
+                      transform="translateX(-50%)"
+                      w="60%"
+                      h="2px"
+                      bg={accent}
+                      borderRadius="full"
+                    />
+                  )}
+                </Link>
+              )
+            )}
 
             <Button
               size="sm"
@@ -155,21 +186,50 @@ export default function Navbar() {
           <DrawerCloseButton />
           <DrawerBody mt={12}>
             <VStack spacing={6} align="start">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  onClick={() => {
-                    router.push(item.href);
-                    onClose();
-                  }}
-                  w="100%"
-                  fontSize="lg"
-                  color={color}
-                  _hover={{ color: accent }}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) =>
+                item.hasDropdown ? (
+                  <VStack key={item.label} align="start" spacing={2}>
+                    <Text fontWeight="bold" color={color}>
+                      {item.label}
+                    </Text>
+                    <Link
+                      onClick={() => {
+                        router.push("/music/lineup");
+                        onClose();
+                      }}
+                      color={color}
+                      _hover={{ color: accent }}
+                    >
+                      Song Line Up
+                    </Link>
+                    <Link
+                      onClick={() => {
+                        router.push("/music/composition");
+                        onClose();
+                      }}
+                      color={color}
+                      _hover={{ color: accent }}
+                    >
+                      Song Composition
+                    </Link>
+                  </VStack>
+                ) : (
+                  <Link
+                    key={item.href}
+                    onClick={() => {
+                      router.push(item.href);
+                      onClose();
+                    }}
+                    w="100%"
+                    fontSize="lg"
+                    color={color}
+                    _hover={{ color: accent }}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
+
               <Button
                 w="full"
                 variant="outline"
