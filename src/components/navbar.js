@@ -58,7 +58,7 @@ export default function Navbar() {
     { label: "About", href: "/about" },
     { label: "Music", href: "/music", hasDropdown: true },
     { label: "Events", href: "/events" },
-    { label: "Chat", href: "/chat" },
+
     { label: "Contact", href: "/contact" },
   ];
 
