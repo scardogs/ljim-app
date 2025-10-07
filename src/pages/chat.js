@@ -9,10 +9,10 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, ChatIcon } from "@chakra-ui/icons";
-
+import Navbar from "../components/navbar";
 export default function ChatPage() {
   const [messages, setMessages] = useState([
-    { role: "model", content: "Hi! I'm Gemini. How can I help?" },
+    { role: "model", content: "Hi! How can I help?" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -76,96 +76,99 @@ export default function ChatPage() {
   };
 
   return (
-    <Flex pt={24} justify="center" px={4}>
-      <Box
-        w={{ base: "100%", md: "720px" }}
-        bg={containerBg}
-        borderRadius="lg"
-        boxShadow="lg"
-        overflow="hidden"
-      >
-        <Flex
-          align="center"
-          justify="space-between"
-          px={4}
-          py={3}
-          borderBottom="1px solid"
-          borderColor={useColorModeValue("gray.300", "gray.700")}
+    <>
+      <Navbar />
+      <Flex pt={24} justify="center" px={4}>
+        <Box
+          w={{ base: "100%", md: "720px" }}
+          bg={containerBg}
+          borderRadius="lg"
+          boxShadow="lg"
+          overflow="hidden"
         >
-          <Flex align="center" gap={2}>
-            <ChatIcon />
-            <Text fontWeight="bold">Support & Bible Chat</Text>
-          </Flex>
-        </Flex>
-
-        <VStack
-          ref={scrollRef}
-          align="stretch"
-          spacing={3}
-          maxH="60vh"
-          overflowY="auto"
-          px={4}
-          py={4}
-        >
-          {messages.map((m, idx) => (
-            <Flex
-              key={idx}
-              justify={m.role === "user" ? "flex-end" : "flex-start"}
-            >
-              <Box
-                bg={m.role === "user" ? bubbleUser : bubbleModel}
-                color={m.role === "user" ? userTextColor : modelTextColor}
-                px={4}
-                py={2}
-                borderRadius="lg"
-                maxW="80%"
-                whiteSpace="pre-wrap"
-              >
-                {m.content}
-              </Box>
-            </Flex>
-          ))}
-          {isTyping && (
-            <Flex justify="flex-start">
-              <Box
-                bg={bubbleModel}
-                color={modelTextColor}
-                px={4}
-                py={2}
-                borderRadius="lg"
-                maxW="60%"
-                fontStyle="italic"
-              >
-                Typing{typingDots}
-              </Box>
-            </Flex>
-          )}
-        </VStack>
-
-        <Flex
-          gap={2}
-          px={4}
-          py={4}
-          borderTop="1px solid"
-          borderColor={useColorModeValue("gray.300", "gray.700")}
-        >
-          <Input
-            placeholder="Type your message..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
-            isDisabled={loading}
-          />
-          <Button
-            rightIcon={<ArrowForwardIcon />}
-            onClick={sendMessage}
-            isLoading={loading}
-            colorScheme="gray"
+          <Flex
+            align="center"
+            justify="space-between"
+            px={4}
+            py={3}
+            borderBottom="1px solid"
+            borderColor={useColorModeValue("gray.300", "gray.700")}
           >
-            Send
-          </Button>
-        </Flex>
-      </Box>
-    </Flex>
+            <Flex align="center" gap={2}>
+              <ChatIcon />
+              <Text fontWeight="bold">Support & Bible Chat</Text>
+            </Flex>
+          </Flex>
+
+          <VStack
+            ref={scrollRef}
+            align="stretch"
+            spacing={3}
+            maxH="60vh"
+            overflowY="auto"
+            px={4}
+            py={4}
+          >
+            {messages.map((m, idx) => (
+              <Flex
+                key={idx}
+                justify={m.role === "user" ? "flex-end" : "flex-start"}
+              >
+                <Box
+                  bg={m.role === "user" ? bubbleUser : bubbleModel}
+                  color={m.role === "user" ? userTextColor : modelTextColor}
+                  px={4}
+                  py={2}
+                  borderRadius="lg"
+                  maxW="80%"
+                  whiteSpace="pre-wrap"
+                >
+                  {m.content}
+                </Box>
+              </Flex>
+            ))}
+            {isTyping && (
+              <Flex justify="flex-start">
+                <Box
+                  bg={bubbleModel}
+                  color={modelTextColor}
+                  px={4}
+                  py={2}
+                  borderRadius="lg"
+                  maxW="60%"
+                  fontStyle="italic"
+                >
+                  Typing{typingDots}
+                </Box>
+              </Flex>
+            )}
+          </VStack>
+
+          <Flex
+            gap={2}
+            px={4}
+            py={4}
+            borderTop="1px solid"
+            borderColor={useColorModeValue("gray.300", "gray.700")}
+          >
+            <Input
+              placeholder="Type your message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={onKeyDown}
+              isDisabled={loading}
+            />
+            <Button
+              rightIcon={<ArrowForwardIcon />}
+              onClick={sendMessage}
+              isLoading={loading}
+              colorScheme="gray"
+            >
+              Send
+            </Button>
+          </Flex>
+        </Box>
+      </Flex>
+    </>
   );
 }

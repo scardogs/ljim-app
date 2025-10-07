@@ -5,11 +5,11 @@ import {
   Flex,
   IconButton,
   Input,
-  Text,
   VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { ArrowForwardIcon, CloseIcon } from "@chakra-ui/icons";
+import ReactMarkdown from "react-markdown";
 
 export default function FloatingChatWidget({ isOpen, onClose }) {
   const [messages, setMessages] = useState([
@@ -19,12 +19,14 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [typingDots, setTypingDots] = useState(".");
+
   const containerBg = useColorModeValue("white", "gray.900");
   const border = useColorModeValue("gray.300", "gray.700");
   const bubbleUser = useColorModeValue("gray.900", "gray.100");
   const bubbleModel = useColorModeValue("gray.200", "gray.800");
   const userTextColor = useColorModeValue("white", "black");
   const modelTextColor = useColorModeValue("black", "white");
+
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -41,18 +43,18 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
     return () => clearInterval(id);
   }, [isTyping]);
 
-  // No API key UI; backend should be configured via environment
-
   if (!isOpen) return null;
 
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || loading) return;
+
     setInput("");
     const newMessages = [...messages, { role: "user", content: text }];
     setMessages(newMessages);
     setLoading(true);
     setIsTyping(true);
+
     try {
       const res = await fetch("/api/chat/gemini", {
         method: "POST",
@@ -65,7 +67,7 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
         setMessages((prev) => [...prev, { role: "model", content: reply }]);
       }
     } catch (e) {
-      // Swallow errors; no error bubble shown
+      console.error(e);
     } finally {
       setLoading(false);
       setIsTyping(false);
@@ -95,7 +97,10 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
         overflow="hidden"
         borderWidth="1px"
         borderColor={border}
+        display="flex"
+        flexDirection="column"
       >
+        {/* Header */}
         <Flex
           align="center"
           justify="space-between"
@@ -104,7 +109,7 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
           borderBottom="1px solid"
           borderColor={border}
         >
-          <Text fontWeight="bold">Support & Bible Chat</Text>
+          <Box fontWeight="bold">Support & Bible Chat</Box>
           <IconButton
             aria-label="Close chat"
             icon={<CloseIcon boxSize={3} />}
@@ -114,11 +119,13 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
           />
         </Flex>
 
+        {/* Messages */}
         <VStack
           ref={scrollRef}
           align="stretch"
           spacing={3}
-          h={{ base: "calc(60vh - 100px)", md: "calc(520px - 100px)" }}
+          flex="1"
+          minH="0"
           overflowY="auto"
           px={3}
           py={3}
@@ -135,10 +142,26 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
                 py={2}
                 borderRadius="lg"
                 maxW="85%"
-                whiteSpace="pre-wrap"
                 fontSize="sm"
+                wordBreak="break-word"
+                whiteSpace="pre-wrap"
               >
-                {m.content}
+                <ReactMarkdown
+                  components={{
+                    ul: ({ node, ...props }) => (
+                      <Box as="ul" pl={4} mb={2} {...props} />
+                    ),
+                    ol: ({ node, ...props }) => (
+                      <Box as="ol" pl={4} mb={2} {...props} />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <Box as="li" mb={1} {...props} />
+                    ),
+                    p: ({ node, ...props }) => <Box as="p" mb={2} {...props} />,
+                  }}
+                >
+                  {m.content}
+                </ReactMarkdown>
               </Box>
             </Flex>
           ))}
@@ -160,6 +183,7 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
           )}
         </VStack>
 
+        {/* Input */}
         <Flex gap={2} px={3} py={3} borderTop="1px solid" borderColor={border}>
           <Input
             placeholder="Type your message..."
@@ -180,8 +204,6 @@ export default function FloatingChatWidget({ isOpen, onClose }) {
           </Button>
         </Flex>
       </Box>
-
-      {/* API key controls removed from UI */}
     </Box>
   );
 }

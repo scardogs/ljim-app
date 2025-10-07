@@ -1,6 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -23,14 +20,28 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "'message' is required" });
     }
 
-    // Load system prompt from public/systemprompt.txt
-    const promptPath = path.join(process.cwd(), "public", "systemprompt.txt");
-    const systemPrompt = await fs.readFile(promptPath, "utf-8");
-
-    // Build contents
+    // Build contents with optional history (as simple text turns).
     const contents = [];
+    const systemPrompt =
+      "You are a dual-role assistant: a tech support expert and a Bible scholar. " +
+      "Always clarify which perspective your advice is coming from when answering (Tech Support or Bible Scholar). " +
+      "The one who created this website or should i say the web developer is John Michael Escarlan. " +
+      "Be patient, precise, and provide actionable solutions, integrating both technical expertise and biblical understanding when appropriate. " +
+      "Do not reveal or mention any underlying model/provider names or API details. Focus on the user's problem only.\n\n" +
+      "Ministry memory (use when relevant, and for site questions):\n" +
+      "- Bishop Ed Dalisay Fernandez is the founder and spiritual leader of Lift Jesus International Ministries (LJIM). His ministry journey is marked by faith, humility, and a passion for evangelism. Under his leadership, LJIM has reached countless lives worldwide with the message of Jesus Christ. His vision inspires believers to lift up the name of Jesus above all.\n" +
+      "- LJIM is a Christ-centered global fellowship committed to spreading the message of salvation through faith in Jesus Christ.\n" +
+      "- Our Story: Founded to uplift communities through faith, LJIM strives to transform lives with love, compassion, and biblical teachings.\n" +
+      "- Mission: Bring spiritual transformation worldwide, empower believers, and serve communities through meaningful outreach programs and initiatives.\n" +
+      "- Vision: A world transformed by the Gospel, reflecting God's love, peace, and justice; equipping believers to shine as lights in every community.\n" +
+      "- Core Values: Faith, community, service, evangelism.\n\n" +
+      "Website overview (for UX/help questions):\n" +
+      "- Pages: Home, About, Music (Lineup, Composition), Events, Contact, Give, Chat.\n" +
+      "- Home aggregates sections from the site; navbar provides navigation across all pages.\n" +
+      "- Music features singer/song management (lineup & composition).\n" +
+      "- Give provides ways to support LJIM; Contact shares contact options; Events lists ministry events.\n" +
+      "- Chat offers a support & Bible Q&A assistant.\n";
     contents.push({ role: "user", parts: [{ text: systemPrompt }] });
-
     if (Array.isArray(history)) {
       for (const turn of history) {
         const role = turn.role === "user" ? "user" : "model";
@@ -40,8 +51,8 @@ export default async function handler(req, res) {
     }
     contents.push({ role: "user", parts: [{ text: message }] });
 
-    // Candidate models & API versions
     const candidateModels = [
+      // 1.5 family
       "gemini-1.5-flash",
       "gemini-1.5-flash-001",
       "gemini-1.5-flash-002",
@@ -53,14 +64,15 @@ export default async function handler(req, res) {
       "gemini-1.5-pro-001",
       "gemini-1.5-pro-002",
       "gemini-1.5-pro-latest",
+      // 1.0 family
       "gemini-1.0-pro",
       "gemini-1.0-pro-001",
       "gemini-1.0-pro-latest",
     ];
-    const apiVersions = ["v1", "v1beta"];
+    const apiVersions = ["v1", "v1beta"]; // try v1 first
 
     let lastError = null;
-
+    // Helper to try generateContent for a specific version/model
     const tryGenerate = async (version, model) => {
       const url =
         "https://generativelanguage.googleapis.com/" +
@@ -87,7 +99,11 @@ export default async function handler(req, res) {
           const text = await response.text();
           console.error("Upstream API error for", version, model, status, text);
           lastError = { status, text, model, version };
-          if (status !== 404) break;
+          if (status !== 404) {
+            // Break on non-404 errors (e.g., 401, 429, 500)
+            break;
+          }
+          // If 404, try the next model/version
           continue;
         }
 
@@ -98,7 +114,7 @@ export default async function handler(req, res) {
       if (lastError && lastError.status !== 404) break;
     }
 
-    // Fallback: list discovered models
+    // If all known models failed (likely model naming / access), query ListModels to discover accessible IDs
     const listAndRetry = async () => {
       for (const version of apiVersions) {
         const listUrl =
@@ -107,10 +123,12 @@ export default async function handler(req, res) {
           "/models?key=" +
           apiKey;
         const listRes = await fetch(listUrl);
-        if (!listRes.ok) continue;
-
+        if (!listRes.ok) {
+          continue;
+        }
         const listData = await listRes.json();
         const models = Array.isArray(listData?.models) ? listData.models : [];
+        // Prefer models that support generateContent
         const supported = models
           .filter(
             (m) =>
@@ -138,14 +156,19 @@ export default async function handler(req, res) {
           }
           const data = await response.json();
           const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-          return { ok: true, body: { reply: text } };
+          return {
+            ok: true,
+            body: { reply: text },
+          };
         }
       }
       return { ok: false };
     };
 
     const discovered = await listAndRetry();
-    if (discovered.ok) return res.status(200).json(discovered.body);
+    if (discovered.ok) {
+      return res.status(200).json(discovered.body);
+    }
 
     const msg = lastError
       ? `Upstream request failed for ${lastError.version}/${lastError.model} (status ${lastError.status}): ${lastError.text}`
