@@ -92,6 +92,14 @@ export default function UserManagement() {
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const statBg = useColorModeValue("gray.50", "gray.800");
 
+  // Button colors
+  const outlineButtonBorderColor = useColorModeValue("gray.700", "gray.300");
+  const outlineButtonColor = useColorModeValue("gray.700", "gray.300");
+  const outlineButtonHoverBg = useColorModeValue("gray.100", "gray.700");
+  const primaryButtonBg = useColorModeValue("gray.900", "gray.100");
+  const primaryButtonColor = useColorModeValue("white", "gray.900");
+  const primaryButtonHoverBg = useColorModeValue("gray.800", "gray.200");
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -383,18 +391,18 @@ export default function UserManagement() {
         <HStack>
           <Button
             variant="outline"
-            borderColor={useColorModeValue("gray.700", "gray.300")}
-            color={useColorModeValue("gray.700", "gray.300")}
-            _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+            borderColor={outlineButtonBorderColor}
+            color={outlineButtonColor}
+            _hover={{ bg: outlineButtonHoverBg }}
             onClick={fetchUsers}
           >
             Refresh
           </Button>
           <Button
             leftIcon={<AddIcon />}
-            bg={useColorModeValue("gray.900", "gray.100")}
-            color={useColorModeValue("white", "gray.900")}
-            _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+            bg={primaryButtonBg}
+            color={primaryButtonColor}
+            _hover={{ bg: primaryButtonHoverBg }}
             onClick={handleCreateClick}
           >
             Add New User
@@ -625,9 +633,9 @@ export default function UserManagement() {
               Cancel
             </Button>
             <Button
-              bg={useColorModeValue("gray.900", "gray.100")}
-              color={useColorModeValue("white", "gray.900")}
-              _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+              bg={primaryButtonBg}
+              color={primaryButtonColor}
+              _hover={{ bg: primaryButtonHoverBg }}
               onClick={handleCreateSubmit}
               isLoading={isCreating}
             >
@@ -716,9 +724,9 @@ export default function UserManagement() {
               Cancel
             </Button>
             <Button
-              bg={useColorModeValue("gray.900", "gray.100")}
-              color={useColorModeValue("white", "gray.900")}
-              _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+              bg={primaryButtonBg}
+              color={primaryButtonColor}
+              _hover={{ bg: primaryButtonHoverBg }}
               onClick={handleUpdateSubmit}
               isLoading={isCreating}
             >

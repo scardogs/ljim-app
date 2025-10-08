@@ -54,6 +54,20 @@ export default function HomepageContentEditor() {
   const hoverBg = useColorModeValue("gray.50", "gray.600");
   const sectionBg = useColorModeValue("gray.50", "gray.800");
 
+  // Header colors
+  const headerBg = useColorModeValue("white", "gray.900");
+  const buttonBg = useColorModeValue("gray.900", "gray.100");
+  const buttonColor = useColorModeValue("white", "gray.900");
+  const buttonHoverBg = useColorModeValue("gray.800", "gray.200");
+
+  // Button colors
+  const addButtonBorderColor = useColorModeValue("gray.700", "gray.300");
+  const addButtonColor = useColorModeValue("gray.700", "gray.300");
+  const addButtonHoverBg = useColorModeValue("gray.100", "gray.700");
+
+  // Card header colors
+  const cardHeaderBg = useColorModeValue("white", "gray.700");
+
   const fetchContent = React.useCallback(async () => {
     try {
       const response = await fetch("/api/admin/homepage");
@@ -200,7 +214,7 @@ export default function HomepageContentEditor() {
       <Flex
         position="sticky"
         top={0}
-        bg={useColorModeValue("white", "gray.900")}
+        bg={headerBg}
         zIndex={10}
         p={{ base: 4, md: 6 }}
         borderBottom="1px"
@@ -222,10 +236,10 @@ export default function HomepageContentEditor() {
           </Text>
         </VStack>
         <Button
-          bg={useColorModeValue("gray.900", "gray.100")}
-          color={useColorModeValue("white", "gray.900")}
+          bg={buttonBg}
+          color={buttonColor}
           _hover={{
-            bg: useColorModeValue("gray.800", "gray.200"),
+            bg: buttonHoverBg,
           }}
           onClick={handleSave}
           isLoading={isSaving}
@@ -455,13 +469,10 @@ export default function HomepageContentEditor() {
                           leftIcon={<AddIcon />}
                           onClick={() => addArrayItem("mainRotatingTexts", "")}
                           variant="outline"
-                          borderColor={useColorModeValue(
-                            "gray.700",
-                            "gray.300"
-                          )}
-                          color={useColorModeValue("gray.700", "gray.300")}
+                          borderColor={addButtonBorderColor}
+                          color={addButtonColor}
                           _hover={{
-                            bg: useColorModeValue("gray.100", "gray.700"),
+                            bg: addButtonHoverBg,
                           }}
                           size="sm"
                         >
@@ -550,7 +561,7 @@ export default function HomepageContentEditor() {
                       bg={sectionBg}
                     >
                       <CardHeader
-                        bg={useColorModeValue("white", "gray.700")}
+                        bg={cardHeaderBg}
                         borderBottom="1px"
                         borderColor={borderColor}
                       >
@@ -654,9 +665,9 @@ export default function HomepageContentEditor() {
                       })
                     }
                     variant="outline"
-                    borderColor={useColorModeValue("gray.700", "gray.300")}
-                    color={useColorModeValue("gray.700", "gray.300")}
-                    _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+                    borderColor={addButtonBorderColor}
+                    color={addButtonColor}
+                    _hover={{ bg: addButtonHoverBg }}
                     size="lg"
                   >
                     Add New Card
@@ -692,7 +703,7 @@ export default function HomepageContentEditor() {
                       bg={sectionBg}
                     >
                       <CardHeader
-                        bg={useColorModeValue("white", "gray.700")}
+                        bg={cardHeaderBg}
                         borderBottom="1px"
                         borderColor={borderColor}
                       >
@@ -781,9 +792,9 @@ export default function HomepageContentEditor() {
                       })
                     }
                     variant="outline"
-                    borderColor={useColorModeValue("gray.700", "gray.300")}
-                    color={useColorModeValue("gray.700", "gray.300")}
-                    _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+                    borderColor={addButtonBorderColor}
+                    color={addButtonColor}
+                    _hover={{ bg: addButtonHoverBg }}
                     size="lg"
                   >
                     Add New Ministry
@@ -914,7 +925,7 @@ export default function HomepageContentEditor() {
                       bg={sectionBg}
                     >
                       <CardHeader
-                        bg={useColorModeValue("white", "gray.700")}
+                        bg={cardHeaderBg}
                         borderBottom="1px"
                         borderColor={borderColor}
                       >
@@ -1002,9 +1013,9 @@ export default function HomepageContentEditor() {
                     })
                   }
                   variant="outline"
-                  borderColor={useColorModeValue("gray.700", "gray.300")}
-                  color={useColorModeValue("gray.700", "gray.300")}
-                  _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+                  borderColor={addButtonBorderColor}
+                  color={addButtonColor}
+                  _hover={{ bg: addButtonHoverBg }}
                   size="lg"
                   mt={4}
                   w="full"
@@ -1026,9 +1037,9 @@ export default function HomepageContentEditor() {
         display={{ base: "block", md: "none" }}
       >
         <Button
-          bg={useColorModeValue("gray.900", "gray.100")}
-          color={useColorModeValue("white", "gray.900")}
-          _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+          bg={buttonBg}
+          color={buttonColor}
+          _hover={{ bg: buttonHoverBg }}
           onClick={handleSave}
           isLoading={isSaving}
           size="lg"
