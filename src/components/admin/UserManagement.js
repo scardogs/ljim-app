@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   VStack,
@@ -100,11 +100,7 @@ export default function UserManagement() {
   const primaryButtonColor = useColorModeValue("white", "gray.900");
   const primaryButtonHoverBg = useColorModeValue("gray.800", "gray.200");
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch("/api/admin/users", {
@@ -132,7 +128,11 @@ export default function UserManagement() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleDeleteClick = (userId) => {
     setDeleteUserId(userId);

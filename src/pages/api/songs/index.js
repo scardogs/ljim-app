@@ -1,15 +1,14 @@
 import connectToDatabase from "../../../lib/mongodb";
 import Song from "../../../../models/Songs";
+import { authMiddleware } from "../../../utils/auth";
 
-// 🚀 Use a persistent DB connection and lean queries for performance
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     await connectToDatabase();
 
     switch (req.method) {
       case "GET": {
-        // ✅ use .lean() to return plain JS objects (no Mongoose overhead)
-        const songs = await Song.find().lean();
+        const songs = await Song.find().sort({ dateTime: -1 }).lean();
         return res.status(200).json(songs);
       }
 
@@ -25,5 +24,14 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Error in /api/songs:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+// For GET requests, allow public access. For POST, require authentication
+export default async function songsHandler(req, res) {
+  if (req.method === "GET") {
+    return handler(req, res);
+  } else {
+    return authMiddleware(handler)(req, res);
   }
 }

@@ -10,6 +10,8 @@ import {
 } from "@chakra-ui/react";
 
 export default function Give() {
+  const [content, setContent] = useState(null);
+
   const bg = useColorModeValue(
     "linear(to-b, white, gray.100)",
     "linear(to-b, gray.900, black)"
@@ -22,11 +24,19 @@ export default function Give() {
   );
 
   const [showQR, setShowQR] = useState(false);
-  const [timer, setTimer] = useState(0); // start at 0 so button is enabled
+  const [timer, setTimer] = useState(0);
+
+  // Fetch content from database
+  useEffect(() => {
+    fetch("/api/admin/give")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching give content:", err));
+  }, []);
 
   const handleGiveClick = () => {
     setShowQR(true);
-    setTimer(60); // Reset timer
+    setTimer(content?.qrCodeTimeout || 60);
   };
 
   useEffect(() => {
@@ -41,6 +51,20 @@ export default function Give() {
     return () => clearInterval(interval);
   }, [showQR, timer]);
 
+  // Show loading state
+  if (!content) {
+    return (
+      <Box
+        minH="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
+
   return (
     <Box
       minH="100vh"
@@ -50,18 +74,20 @@ export default function Give() {
     >
       <VStack spacing={8} maxW="4xl" mx="auto" px={{ base: 4, md: 8 }}>
         <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
-          <Heading color={textColor}>Give</Heading>
+          <Heading color={textColor}>{content.title || "Give"}</Heading>
           <Text color={subTextColor} mt={4} fontSize="lg">
-            Support our ministry through your generous contributions.
+            {content.subtitle ||
+              "Support our ministry through your generous contributions."}
           </Text>
         </Box>
 
         <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
           <Heading size="md" color={textColor} mb={2}>
-            How to Give
+            {content.howToGiveTitle || "How to Give"}
           </Heading>
           <Text color={subTextColor} mb={4}>
-            You can give online or in person during our services.
+            {content.howToGiveDescription ||
+              "You can give online or in person during our services."}
           </Text>
 
           <Button
@@ -71,15 +97,17 @@ export default function Give() {
             _hover={{ bg: "black", color: "white" }}
             size="md"
             onClick={handleGiveClick}
-            isDisabled={showQR && timer > 0} // disable while timer is running
+            isDisabled={showQR && timer > 0}
           >
-            {showQR && timer > 0 ? `Please wait (${timer}s)` : "Give Now"}
+            {showQR && timer > 0
+              ? `Please wait (${timer}s)`
+              : content.buttonText || "Give Now"}
           </Button>
 
           {showQR && (
             <VStack mt={4}>
               <Image
-                src="/images/qrcode.png"
+                src={content.qrCodeImage || "/images/qrcode.png"}
                 alt="QR Code"
                 width={{ base: "250px", md: "300px" }}
                 objectFit="contain"
@@ -92,6 +120,43 @@ export default function Give() {
             </VStack>
           )}
         </Box>
+
+        {/* Additional Payment Info */}
+        {(content.bankDetails || content.otherPaymentMethods) && (
+          <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
+            {content.bankDetails && (
+              <Box mb={4}>
+                <Heading size="sm" color={textColor} mb={2}>
+                  Bank Transfer
+                </Heading>
+                <Text
+                  color={subTextColor}
+                  fontFamily="monospace"
+                  fontSize="sm"
+                  whiteSpace="pre-wrap"
+                >
+                  {content.bankDetails}
+                </Text>
+              </Box>
+            )}
+
+            {content.otherPaymentMethods && (
+              <Box>
+                <Heading size="sm" color={textColor} mb={2}>
+                  Other Payment Methods
+                </Heading>
+                <Text
+                  color={subTextColor}
+                  fontFamily="monospace"
+                  fontSize="sm"
+                  whiteSpace="pre-wrap"
+                >
+                  {content.otherPaymentMethods}
+                </Text>
+              </Box>
+            )}
+          </Box>
+        )}
       </VStack>
     </Box>
   );

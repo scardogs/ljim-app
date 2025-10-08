@@ -12,6 +12,8 @@ import {
 } from "@chakra-ui/react";
 
 export default function Contact() {
+  const [content, setContent] = useState(null);
+
   const bg = useColorModeValue(
     "linear(to-b, white, gray.100)",
     "linear(to-b, gray.900, black)"
@@ -27,6 +29,14 @@ export default function Contact() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const toast = useToast();
+
+  // Fetch content from database
+  React.useEffect(() => {
+    fetch("/api/admin/contact")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching contact content:", err));
+  }, []);
 
   const handleSend = () => {
     if (!email || !message) {
@@ -53,6 +63,20 @@ export default function Contact() {
     setMessage("");
   };
 
+  // Show loading state
+  if (!content) {
+    return (
+      <Box
+        minH="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
+
   return (
     <Box
       minH="100vh"
@@ -63,25 +87,43 @@ export default function Contact() {
       <VStack spacing={8} maxW="4xl" mx="auto">
         {/* Contact Heading */}
         <Box bg={sectionBg} p={8} borderRadius="xl" w="100%">
-          <Heading color={textColor}>Contact Us</Heading>
+          <Heading color={textColor}>{content.title || "Contact Us"}</Heading>
           <Text
             fontFamily="monospace"
             color={subTextColor}
             mt={4}
             fontSize="lg"
           >
-            Reach out to us with questions, prayer requests, or feedback.
+            {content.subtitle ||
+              "Reach out to us with questions, prayer requests, or feedback."}
           </Text>
         </Box>
 
         {/* Contact Info */}
         <Box bg={sectionBg} p={6} borderRadius="xl" w="100%">
           <Heading size="md" color={textColor} mb={2}>
-            Get in Touch
+            {content.contactInfoTitle || "Get in Touch"}
           </Heading>
           <Text fontFamily="monospace" color={subTextColor} mb={4}>
-            Email: johnmichael.escarlan14@gmail.com <br />
-            Phone: +639 946760366
+            {content.email && (
+              <>
+                Email: {content.email}
+                <br />
+              </>
+            )}
+            {content.phone && (
+              <>
+                Phone: {content.phone}
+                <br />
+              </>
+            )}
+            {content.address && (
+              <>
+                Address: {content.address}
+                <br />
+              </>
+            )}
+            {content.officeHours && <>Office Hours: {content.officeHours}</>}
           </Text>
 
           {/* Contact Form */}

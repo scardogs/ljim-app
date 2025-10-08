@@ -1,17 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Heading,
   Text,
   VStack,
   SimpleGrid,
-  Input,
-  Button,
   useColorModeValue,
   Badge,
+  Spinner,
+  Center,
+  Icon,
+  HStack,
+  Image,
 } from "@chakra-ui/react";
+import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 
 export default function Events() {
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const bgGradient = useColorModeValue(
     "linear(to-b, white, gray.100)",
     "linear(to-b, gray.900, black)"
@@ -23,25 +30,24 @@ export default function Events() {
     "rgba(0,0,0,0.45)"
   );
   const cardBg = useColorModeValue("whiteAlpha.800", "blackAlpha.400");
-  const inputBg = useColorModeValue("gray.200", "gray.700");
   const accentLine = useColorModeValue("blackAlpha.200", "whiteAlpha.200");
 
-  const [events, setEvents] = useState([
-    { date: "2025-10-10", title: "Sunday Worship Service" },
-    { date: "2025-10-12", title: "Community Outreach" },
-  ]);
-  const [newEventTitle, setNewEventTitle] = useState("");
-  const [newEventDate, setNewEventDate] = useState("");
+  // Fetch events from database
+  useEffect(() => {
+    fetch("/api/admin/events")
+      .then((res) => res.json())
+      .then((data) => {
+        setEvents(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching events:", err);
+        setIsLoading(false);
+      });
+  }, []);
 
-  const handleAddEvent = () => {
-    if (newEventTitle && newEventDate) {
-      setEvents([...events, { title: newEventTitle, date: newEventDate }]);
-      setNewEventTitle("");
-      setNewEventDate("");
-    }
-  };
-
-  const today = new Date().toDateString();
+  const today = new Date();
+  const upcomingEvents = events.filter((e) => new Date(e.date) >= today);
 
   return (
     <Box
@@ -77,7 +83,7 @@ export default function Events() {
           position="relative"
         >
           <Heading color={textColor} fontFamily="monospace">
-            Events
+            Upcoming Events
           </Heading>
           <Text
             color={subTextColor}
@@ -85,111 +91,130 @@ export default function Events() {
             mt={4}
             fontSize="lg"
           >
-            Stay up-to-date with upcoming events and schedule new ones.
+            Join us for our upcoming ministry events and gatherings
           </Text>
         </Box>
 
-        {/* Schedule Event Form */}
-        <Box
-          bg={sectionBg}
-          p={6}
-          borderRadius="2xl"
-          w="100%"
-          shadow="md"
-          border="1px solid"
-          borderColor={accentLine}
-          position="relative"
-        >
-          <Heading size="md" color={textColor} mb={4}>
-            Schedule a New Event
-          </Heading>
-          <VStack spacing={4}>
-            <Input
-              fontFamily="monospace"
-              placeholder="Event Title"
-              value={newEventTitle}
-              onChange={(e) => setNewEventTitle(e.target.value)}
-              bg={inputBg}
-              color={textColor}
-              borderRadius="lg"
-              border="1px solid"
-              borderColor={accentLine}
-            />
-            <Input
-              type="date"
-              value={newEventDate}
-              onChange={(e) => setNewEventDate(e.target.value)}
-              bg={inputBg}
-              color={textColor}
-              borderRadius="lg"
-              border="1px solid"
-              borderColor={accentLine}
-            />
-            <Button
-              bg="black"
-              color="white"
-              _hover={{ bg: "gray.800" }}
-              w="100%"
-              borderRadius="lg"
-              fontFamily="monospace"
-              onClick={handleAddEvent}
-              transition="all 0.3s ease"
-            >
-              Add Event
-            </Button>
-          </VStack>
-        </Box>
+        {/* Loading State */}
+        {isLoading && (
+          <Center w="100%" py={10}>
+            <VStack spacing={4}>
+              <Spinner size="xl" color="gray.600" thickness="4px" />
+              <Text color={subTextColor}>Loading events...</Text>
+            </VStack>
+          </Center>
+        )}
 
-        {/* Calendar Grid */}
-        <Box
-          bg={sectionBg}
-          p={6}
-          borderRadius="2xl"
-          w="100%"
-          shadow="md"
-          border="1px solid"
-          borderColor={accentLine}
-          position="relative"
-        >
-          <Heading size="md" color={textColor} mb={4}>
-            Upcoming Events
-          </Heading>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            {events.map((event, idx) => {
-              const isToday = new Date(event.date).toDateString() === today;
-              return (
-                <Box
-                  key={idx}
-                  bg={cardBg}
-                  p={4}
-                  borderRadius="xl"
-                  boxShadow="md"
-                  borderLeft={`5px solid ${isToday ? "teal" : "gray"}`}
-                  _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
-                  transition="all 0.3s ease"
-                >
-                  <Badge
-                    colorScheme={isToday ? "teal" : "gray"}
-                    mb={2}
-                    p={1}
-                    borderRadius="md"
-                    fontSize="0.8rem"
+        {/* Events Grid */}
+        {!isLoading && upcomingEvents.length > 0 && (
+          <Box
+            bg={sectionBg}
+            p={6}
+            borderRadius="2xl"
+            w="100%"
+            shadow="md"
+            border="1px solid"
+            borderColor={accentLine}
+            position="relative"
+          >
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+              {upcomingEvents.map((event, idx) => {
+                const eventDate = new Date(event.date);
+                const isToday =
+                  eventDate.toDateString() === today.toDateString();
+                return (
+                  <Box
+                    key={idx}
+                    bg={cardBg}
+                    borderRadius="xl"
+                    boxShadow="lg"
+                    borderLeft={`5px solid`}
+                    borderLeftColor={isToday ? "purple.500" : "teal.500"}
+                    _hover={{ transform: "translateY(-5px)", boxShadow: "xl" }}
+                    transition="all 0.3s ease"
+                    overflow="hidden"
                   >
-                    {new Date(event.date).toDateString()}
-                  </Badge>
-                  <Text
-                    fontWeight="bold"
-                    fontFamily="monospace"
-                    color={textColor}
-                    fontSize="lg"
-                  >
-                    {event.title}
-                  </Text>
-                </Box>
-              );
-            })}
-          </SimpleGrid>
-        </Box>
+                    {event.image && (
+                      <Image
+                        src={event.image}
+                        alt={event.title}
+                        w="100%"
+                        h="150px"
+                        objectFit="cover"
+                      />
+                    )}
+                    <VStack align="stretch" p={5} spacing={3}>
+                      <Badge
+                        colorScheme={isToday ? "purple" : "teal"}
+                        alignSelf="flex-start"
+                        px={2}
+                        py={1}
+                        borderRadius="md"
+                        fontSize="0.75rem"
+                      >
+                        {eventDate.toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </Badge>
+                      <Heading
+                        size="md"
+                        fontFamily="monospace"
+                        color={textColor}
+                        noOfLines={2}
+                      >
+                        {event.title}
+                      </Heading>
+                      {event.time && (
+                        <HStack fontSize="sm" color={subTextColor}>
+                          <Icon as={FiClock} />
+                          <Text>{event.time}</Text>
+                        </HStack>
+                      )}
+                      {event.location && (
+                        <HStack fontSize="sm" color={subTextColor}>
+                          <Icon as={FiMapPin} />
+                          <Text noOfLines={1}>{event.location}</Text>
+                        </HStack>
+                      )}
+                      {event.description && (
+                        <Text
+                          fontSize="sm"
+                          color={subTextColor}
+                          noOfLines={3}
+                          fontFamily="monospace"
+                        >
+                          {event.description}
+                        </Text>
+                      )}
+                    </VStack>
+                  </Box>
+                );
+              })}
+            </SimpleGrid>
+          </Box>
+        )}
+
+        {/* No Events State */}
+        {!isLoading && upcomingEvents.length === 0 && (
+          <Box
+            bg={sectionBg}
+            p={10}
+            borderRadius="2xl"
+            w="100%"
+            shadow="md"
+            textAlign="center"
+          >
+            <Icon as={FiCalendar} boxSize={16} color="gray.400" mb={4} />
+            <Heading size="md" color={textColor} mb={2}>
+              No Upcoming Events
+            </Heading>
+            <Text color={subTextColor} fontFamily="monospace">
+              Check back soon for new events and gatherings
+            </Text>
+          </Box>
+        )}
       </VStack>
     </Box>
   );

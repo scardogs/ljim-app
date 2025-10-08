@@ -26,11 +26,24 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, ChevronDownIcon, SettingsIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import { FiHome, FiInfo, FiCalendar, FiMail, FiUsers } from "react-icons/fi";
+import {
+  FiHome,
+  FiInfo,
+  FiCalendar,
+  FiMail,
+  FiUsers,
+  FiDollarSign,
+  FiMusic,
+} from "react-icons/fi";
 
 // Import admin section components
 import HomepageContentEditor from "../../components/admin/HomepageContentEditor";
 import UserManagement from "../../components/admin/UserManagement";
+import AboutContentEditor from "../../components/admin/AboutContentEditor";
+import EventsEditor from "../../components/admin/EventsEditor";
+import GiveContentEditor from "../../components/admin/GiveContentEditor";
+import ContactContentEditor from "../../components/admin/ContactContentEditor";
+import MusicLineupEditor from "../../components/admin/MusicLineupEditor";
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -84,6 +97,8 @@ export default function AdminDashboard() {
     { id: "users", label: "User Management", icon: FiUsers },
     { id: "about", label: "About", icon: FiInfo },
     { id: "events", label: "Events", icon: FiCalendar },
+    { id: "music", label: "Music Lineup", icon: FiMusic },
+    { id: "give", label: "Give", icon: FiDollarSign },
     { id: "contact", label: "Contact", icon: FiMail },
   ];
 
@@ -94,32 +109,15 @@ export default function AdminDashboard() {
       case "users":
         return <UserManagement />;
       case "about":
-        return (
-          <Box p={6}>
-            <Heading size="lg" mb={4}>
-              About Section Editor
-            </Heading>
-            <Text color="gray.500">Coming soon...</Text>
-          </Box>
-        );
+        return <AboutContentEditor />;
       case "events":
-        return (
-          <Box p={6}>
-            <Heading size="lg" mb={4}>
-              Events Editor
-            </Heading>
-            <Text color="gray.500">Coming soon...</Text>
-          </Box>
-        );
+        return <EventsEditor />;
+      case "music":
+        return <MusicLineupEditor />;
+      case "give":
+        return <GiveContentEditor />;
       case "contact":
-        return (
-          <Box p={6}>
-            <Heading size="lg" mb={4}>
-              Contact Section Editor
-            </Heading>
-            <Text color="gray.500">Coming soon...</Text>
-          </Box>
-        );
+        return <ContactContentEditor />;
       default:
         return <HomepageContentEditor />;
     }

@@ -1,7 +1,8 @@
 import connectToDatabase from "../../../lib/mongodb";
 import Song from "../../../../models/Songs";
+import { authMiddleware } from "../../../utils/auth";
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     await connectToDatabase();
     const { id } = req.query;
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
       case "PUT": {
         const updatedSong = await Song.findByIdAndUpdate(id, req.body, {
           new: true,
-          lean: true, // 🚀 even faster response
+          lean: true,
         });
         if (!updatedSong)
           return res.status(404).json({ message: "Song not found" });
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
 
       case "DELETE": {
         await Song.findByIdAndDelete(id);
-        return res.status(204).end();
+        return res.status(200).json({ message: "Song deleted successfully" });
       }
 
       default:
@@ -34,5 +35,14 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Error in /api/songs/[id]:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+// For GET requests, allow public access. For PUT/DELETE, require authentication
+export default async function songHandler(req, res) {
+  if (req.method === "GET") {
+    return handler(req, res);
+  } else {
+    return authMiddleware(handler)(req, res);
   }
 }

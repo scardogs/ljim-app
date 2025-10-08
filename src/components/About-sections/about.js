@@ -16,6 +16,8 @@ import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 
 export default function About() {
+  const [content, setContent] = React.useState(null);
+
   const bg = useColorModeValue(
     "linear(to-b, white, gray.100)",
     "linear(to-b, gray.900, black)"
@@ -30,7 +32,30 @@ export default function About() {
     "linear(to-r, gray.400, gray.600, black)",
     "linear(to-r, gray.300, gray.500, white)"
   );
+  const dividerBorderColor = useColorModeValue("gray.300", "gray.700");
   const fontFamily = "monospace";
+
+  // Fetch content from database
+  React.useEffect(() => {
+    fetch("/api/admin/about")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching about content:", err));
+  }, []);
+
+  // Show loading state
+  if (!content) {
+    return (
+      <Box
+        minH="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -59,8 +84,8 @@ export default function About() {
             align="center"
           >
             <Image
-              src="/images/ed-fernandez.jpg"
-              alt="Bishop Ed Dalisay Fernandez"
+              src={content.founderImage || "/images/ed-fernandez.jpg"}
+              alt={content.founderName || "Bishop Ed Dalisay Fernandez"}
               borderRadius="full"
               boxSize={{ base: "150px", md: "200px" }}
               objectFit="cover"
@@ -74,15 +99,11 @@ export default function About() {
                 mb={3}
                 fontFamily={fontFamily}
               >
-                Bishop Ed Dalisay Fernandez
+                {content.founderName || "Bishop Ed Dalisay Fernandez"}
               </Heading>
               <Text color={subTextColor} fontSize={{ base: "md", md: "lg" }}>
-                Bishop Ed Dalisay Fernandez is the founder and spiritual leader
-                of Lift Jesus International Ministries. His ministry journey is
-                marked by faith, humility, and a passion for evangelism. Through
-                his leadership, LJIM has reached countless lives worldwide with
-                the message of Jesus Christ. His vision continues to inspire
-                believers to lift up the name of Jesus above all.
+                {content.founderBio ||
+                  "Bishop Ed Dalisay Fernandez is the founder and spiritual leader of Lift Jesus International Ministries."}
               </Text>
             </Box>
           </HStack>
@@ -107,12 +128,11 @@ export default function About() {
             mb={4}
             fontFamily={fontFamily}
           >
-            About LJWM
+            {content.aboutTitle || "About LJIM"}
           </Heading>
           <Text color={subTextColor} fontSize={{ base: "md", md: "lg" }}>
-            Lift Jesus International Ministries (LJIM) is a Christ-centered
-            global fellowship committed to spreading the message of salvation
-            through faith in Jesus Christ.
+            {content.aboutDescription ||
+              "Lift Jesus International Ministries (LJIM) is a Christ-centered global fellowship committed to spreading the message of salvation through faith in Jesus Christ."}
           </Text>
         </MotionBox>
 
@@ -140,11 +160,11 @@ export default function About() {
               mb={3}
               fontFamily={fontFamily}
             >
-              Our Story
+              {content.storyTitle || "Our Story"}
             </Heading>
             <Text color={subTextColor} fontSize="md">
-              Founded to uplift communities through faith, LJWM strives to
-              transform lives with love, compassion, and biblical teachings.
+              {content.storyContent ||
+                "Founded to uplift communities through faith, LJIM strives to transform lives with love, compassion, and biblical teachings."}
             </Text>
           </MotionBox>
 
@@ -165,12 +185,11 @@ export default function About() {
               mb={3}
               fontFamily={fontFamily}
             >
-              Our Mission
+              {content.missionTitle || "Our Mission"}
             </Heading>
             <Text color={subTextColor} fontSize="md">
-              To bring spiritual transformation worldwide, empower believers,
-              and serve communities through meaningful outreach programs and
-              initiatives.
+              {content.missionContent ||
+                "To bring spiritual transformation worldwide, empower believers, and serve communities through meaningful outreach programs and initiatives."}
             </Text>
           </MotionBox>
 
@@ -191,12 +210,11 @@ export default function About() {
               mb={3}
               fontFamily={fontFamily}
             >
-              Our Vision
+              {content.visionTitle || "Our Vision"}
             </Heading>
             <Text color={subTextColor} fontSize="md">
-              A world transformed by the Gospel, reflecting God&apos;s love,
-              peace, and justice. Equipping believers to shine as lights in
-              every community.
+              {content.visionContent ||
+                "A world transformed by the Gospel, reflecting God's love, peace, and justice. Equipping believers to shine as lights in every community."}
             </Text>
           </MotionBox>
 
@@ -217,17 +235,16 @@ export default function About() {
               mb={3}
               fontFamily={fontFamily}
             >
-              Core Values
+              {content.valuesTitle || "Core Values"}
             </Heading>
             <Text color={subTextColor} fontSize="md">
-              Faith, community, service, and evangelism. These values guide our
-              ministry as we spread the message of salvation and serve the
-              world.
+              {content.valuesContent ||
+                "Faith, community, service, and evangelism. These values guide our ministry as we spread the message of salvation and serve the world."}
             </Text>
           </MotionBox>
         </SimpleGrid>
 
-        <Divider borderColor={useColorModeValue("gray.300", "gray.700")} />
+        <Divider borderColor={dividerBorderColor} />
         <Text color={subTextColor} fontSize="sm">
           © {new Date().getFullYear()} Lift Jesus Worldwide Ministries. All
           Rights Reserved.
