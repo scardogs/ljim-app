@@ -26,10 +26,11 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, ChevronDownIcon, SettingsIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
-import { FiHome, FiInfo, FiCalendar, FiMail } from "react-icons/fi";
+import { FiHome, FiInfo, FiCalendar, FiMail, FiUsers } from "react-icons/fi";
 
 // Import admin section components
 import HomepageContentEditor from "../../components/admin/HomepageContentEditor";
+import UserManagement from "../../components/admin/UserManagement";
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -80,6 +81,7 @@ export default function AdminDashboard() {
 
   const sidebarItems = [
     { id: "home", label: "Home Content", icon: FiHome },
+    { id: "users", label: "User Management", icon: FiUsers },
     { id: "about", label: "About", icon: FiInfo },
     { id: "events", label: "Events", icon: FiCalendar },
     { id: "contact", label: "Contact", icon: FiMail },
@@ -89,6 +91,8 @@ export default function AdminDashboard() {
     switch (currentSection) {
       case "home":
         return <HomepageContentEditor />;
+      case "users":
+        return <UserManagement />;
       case "about":
         return (
           <Box p={6}>

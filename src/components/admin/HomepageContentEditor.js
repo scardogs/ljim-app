@@ -17,16 +17,27 @@ import {
   CardBody,
   IconButton,
   HStack,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
   Spinner,
   Center,
   useColorModeValue,
+  Badge,
+  Flex,
+  Icon,
 } from "@chakra-ui/react";
-import { DeleteIcon, AddIcon } from "@chakra-ui/icons";
+import { DeleteIcon, AddIcon, StarIcon } from "@chakra-ui/icons";
+import {
+  FiImage,
+  FiFileText,
+  FiAward,
+  FiUsers,
+  FiTarget,
+  FiMusic,
+} from "react-icons/fi";
 import ImageUpload from "./ImageUpload";
 import ColorPicker from "./ColorPicker";
 import DebouncedInput from "./DebouncedInput";
@@ -41,6 +52,7 @@ export default function HomepageContentEditor() {
   const cardBg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const hoverBg = useColorModeValue("gray.50", "gray.600");
+  const sectionBg = useColorModeValue("gray.50", "gray.800");
 
   const fetchContent = React.useCallback(async () => {
     try {
@@ -154,7 +166,10 @@ export default function HomepageContentEditor() {
   if (isLoading) {
     return (
       <Center p={10}>
-        <Spinner size="xl" color="gray.600" />
+        <VStack spacing={4}>
+          <Spinner size="xl" color="gray.600" thickness="4px" />
+          <Text color="gray.500">Loading content...</Text>
+        </VStack>
       </Center>
     );
   }
@@ -167,557 +182,765 @@ export default function HomepageContentEditor() {
     );
   }
 
+  const SectionHeader = ({ icon, title, count }) => (
+    <Flex align="center" gap={3} mb={4}>
+      <Icon as={icon} boxSize={6} color="gray.600" />
+      <Heading size="md">{title}</Heading>
+      {count !== undefined && (
+        <Badge colorScheme="gray" fontSize="sm">
+          {count} {count === 1 ? "item" : "items"}
+        </Badge>
+      )}
+    </Flex>
+  );
+
   return (
-    <Box maxW="1200px" mx="auto">
-      <VStack spacing={6} align="stretch">
-        <HStack justify="space-between">
-          <Heading size="lg">Homepage Content Editor</Heading>
-          <Button
-            bg={useColorModeValue("gray.900", "gray.100")}
-            color={useColorModeValue("white", "gray.900")}
-            _hover={{
-              bg: useColorModeValue("gray.800", "gray.200"),
-            }}
-            onClick={handleSave}
-            isLoading={isSaving}
-            loadingText="Saving..."
-            size="lg"
-          >
-            Save Changes
-          </Button>
-        </HStack>
+    <Box maxW="1400px" mx="auto">
+      {/* Header with Save Button */}
+      <Flex
+        position="sticky"
+        top={0}
+        bg={useColorModeValue("white", "gray.900")}
+        zIndex={10}
+        p={6}
+        borderBottom="1px"
+        borderColor={borderColor}
+        justify="space-between"
+        align="center"
+        mb={6}
+      >
+        <VStack align="start" spacing={1}>
+          <Heading size="lg">Homepage Content</Heading>
+          <Text fontSize="sm" color="gray.500">
+            Manage all sections of your homepage
+          </Text>
+        </VStack>
+        <Button
+          bg={useColorModeValue("gray.900", "gray.100")}
+          color={useColorModeValue("white", "gray.900")}
+          _hover={{
+            bg: useColorModeValue("gray.800", "gray.200"),
+          }}
+          onClick={handleSave}
+          isLoading={isSaving}
+          loadingText="Saving..."
+          size="lg"
+          leftIcon={<Icon as={StarIcon} />}
+        >
+          Save Changes
+        </Button>
+      </Flex>
 
-        <Accordion allowMultiple defaultIndex={[0]}>
-          {/* Hero Section */}
-          <AccordionItem
-            border="1px"
-            borderColor={borderColor}
-            borderRadius="md"
-            mb={4}
-          >
-            <AccordionButton bg={cardBg} _hover={{ bg: hoverBg }}>
-              <Box flex="1" textAlign="left" fontWeight="bold" fontSize="lg">
-                Hero Section
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel pb={4} bg={cardBg}>
-              <VStack spacing={4}>
-                <FormControl>
-                  <FormLabel>Hero Title</FormLabel>
-                  <DebouncedInput
-                    value={content.heroTitle || ""}
-                    onChange={(value) => updateField("heroTitle", value)}
-                    size="lg"
+      <Tabs variant="soft-rounded" colorScheme="gray" px={6}>
+        <TabList mb={8} flexWrap="wrap" gap={2}>
+          <Tab _selected={{ bg: "gray.700", color: "white" }}>
+            <Icon as={FiImage} mr={2} />
+            Hero
+          </Tab>
+          <Tab _selected={{ bg: "gray.700", color: "white" }}>
+            <Icon as={FiFileText} mr={2} />
+            Main Content
+          </Tab>
+          <Tab _selected={{ bg: "gray.700", color: "white" }}>
+            <Icon as={FiAward} mr={2} />
+            Mission & Values
+          </Tab>
+          <Tab _selected={{ bg: "gray.700", color: "white" }}>
+            <Icon as={FiUsers} mr={2} />
+            Ministries
+          </Tab>
+          <Tab _selected={{ bg: "gray.700", color: "white" }}>
+            <Icon as={FiTarget} mr={2} />
+            Call to Action
+          </Tab>
+          <Tab _selected={{ bg: "gray.700", color: "white" }}>
+            <Icon as={FiMusic} mr={2} />
+            Worship Leaders
+          </Tab>
+        </TabList>
+
+        <TabPanels>
+          {/* Hero Section Tab */}
+          <TabPanel>
+            <Card bg={cardBg} shadow="lg" borderRadius="xl">
+              <CardBody p={8}>
+                <SectionHeader icon={FiImage} title="Hero Section" />
+                <VStack spacing={6} align="stretch">
+                  <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Hero Title</FormLabel>
+                      <DebouncedInput
+                        value={content.heroTitle || ""}
+                        onChange={(value) => updateField("heroTitle", value)}
+                        size="lg"
+                        placeholder="Lift Jesus International Ministries"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Button Text</FormLabel>
+                      <DebouncedInput
+                        value={content.heroButtonText || ""}
+                        onChange={(value) =>
+                          updateField("heroButtonText", value)
+                        }
+                        size="lg"
+                        placeholder="Learn More"
+                      />
+                    </FormControl>
+                  </SimpleGrid>
+
+                  <FormControl>
+                    <FormLabel fontWeight="semibold">Hero Subtitle</FormLabel>
+                    <Text fontSize="xs" color="gray.500" mb={2}>
+                      This text will appear with a typing animation effect
+                    </Text>
+                    <DebouncedTextarea
+                      value={content.heroSubtitle || ""}
+                      onChange={(value) => updateField("heroSubtitle", value)}
+                      rows={3}
+                      placeholder="Exalting the name of Jesus..."
+                    />
+                  </FormControl>
+
+                  <Divider />
+
+                  <ImageUpload
+                    label="Hero Background Image"
+                    value={content.heroImage || ""}
+                    onChange={(value) => updateField("heroImage", value)}
+                    placeholder="/images/your-image.png"
                   />
-                </FormControl>
+                </VStack>
+              </CardBody>
+            </Card>
+          </TabPanel>
 
-                <FormControl>
-                  <FormLabel>Hero Subtitle</FormLabel>
-                  <DebouncedTextarea
-                    value={content.heroSubtitle || ""}
-                    onChange={(value) => updateField("heroSubtitle", value)}
-                    rows={3}
+          {/* Main Content Tab */}
+          <TabPanel>
+            <VStack spacing={6} align="stretch">
+              {/* Main Title */}
+              <Card bg={cardBg} shadow="lg" borderRadius="xl">
+                <CardBody p={8}>
+                  <SectionHeader
+                    icon={FiFileText}
+                    title="Main Content Section"
                   />
-                </FormControl>
+                  <VStack spacing={6} align="stretch">
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Section Title</FormLabel>
+                      <DebouncedInput
+                        value={content.mainTitle || ""}
+                        onChange={(value) => updateField("mainTitle", value)}
+                        size="lg"
+                        placeholder="Lift Jesus International Ministries"
+                      />
+                    </FormControl>
 
-                <FormControl>
-                  <FormLabel>Hero Button Text</FormLabel>
-                  <DebouncedInput
-                    value={content.heroButtonText || ""}
-                    onChange={(value) => updateField("heroButtonText", value)}
-                  />
-                </FormControl>
+                    <Divider />
 
-                <ImageUpload
-                  label="Hero Background Image"
-                  value={content.heroImage || ""}
-                  onChange={(value) => updateField("heroImage", value)}
-                  placeholder="/images/your-image.png"
-                />
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
-
-          {/* Main Content Section */}
-          <AccordionItem
-            border="1px"
-            borderColor={borderColor}
-            borderRadius="md"
-            mb={4}
-          >
-            <AccordionButton bg={cardBg} _hover={{ bg: hoverBg }}>
-              <Box flex="1" textAlign="left" fontWeight="bold" fontSize="lg">
-                Main Content Section
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel pb={4} bg={cardBg}>
-              <VStack spacing={4}>
-                <FormControl>
-                  <FormLabel>Main Title</FormLabel>
-                  <DebouncedInput
-                    value={content.mainTitle || ""}
-                    onChange={(value) => updateField("mainTitle", value)}
-                    size="lg"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Rotating Texts</FormLabel>
-                  <VStack spacing={2} align="stretch">
-                    {content.mainRotatingTexts?.map((text, index) => (
-                      <HStack key={index}>
-                        <DebouncedTextarea
-                          value={text}
-                          onChange={(value) =>
-                            updateArrayField("mainRotatingTexts", index, value)
-                          }
-                          rows={2}
-                        />
-                        <IconButton
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
-                          onClick={() =>
-                            removeArrayItem("mainRotatingTexts", index)
-                          }
-                          aria-label="Delete text"
-                        />
-                      </HStack>
-                    ))}
-                    <Button
-                      leftIcon={<AddIcon />}
-                      onClick={() => addArrayItem("mainRotatingTexts", "")}
-                      variant="outline"
-                      borderColor={useColorModeValue("gray.700", "gray.300")}
-                      color={useColorModeValue("gray.700", "gray.300")}
-                      _hover={{
-                        bg: useColorModeValue("gray.100", "gray.700"),
-                      }}
-                      size="sm"
-                    >
-                      Add Rotating Text
-                    </Button>
-                  </VStack>
-                </FormControl>
-
-                <Divider />
-
-                <FormControl>
-                  <FormLabel>Philippines Title</FormLabel>
-                  <DebouncedInput
-                    value={content.philippinesTitle || ""}
-                    onChange={(value) => updateField("philippinesTitle", value)}
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Philippines Description</FormLabel>
-                  <DebouncedTextarea
-                    value={content.philippinesDescription || ""}
-                    onChange={(value) =>
-                      updateField("philippinesDescription", value)
-                    }
-                    rows={4}
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Philippines Bible Verse</FormLabel>
-                  <DebouncedTextarea
-                    value={content.philippinesBibleVerse || ""}
-                    onChange={(value) =>
-                      updateField("philippinesBibleVerse", value)
-                    }
-                    rows={3}
-                  />
-                </FormControl>
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
-
-          {/* Mission & Values Section */}
-          <AccordionItem
-            border="1px"
-            borderColor={borderColor}
-            borderRadius="md"
-            mb={4}
-          >
-            <AccordionButton bg={cardBg} _hover={{ bg: hoverBg }}>
-              <Box flex="1" textAlign="left" fontWeight="bold" fontSize="lg">
-                Mission & Values (Carousel)
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel pb={4} bg={cardBg}>
-              <VStack spacing={4}>
-                {content.missionValues?.map((item, index) => (
-                  <Card key={index} w="full" variant="outline">
-                    <CardHeader>
-                      <HStack justify="space-between">
-                        <Text fontWeight="bold">Card {index + 1}</Text>
-                        <IconButton
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
+                    <Box>
+                      <FormLabel fontWeight="semibold">
+                        Rotating Text Messages
+                      </FormLabel>
+                      <Text fontSize="xs" color="gray.500" mb={3}>
+                        These texts will rotate with smooth animations
+                      </Text>
+                      <VStack spacing={3} align="stretch">
+                        {content.mainRotatingTexts?.map((text, index) => (
+                          <Card key={index} variant="outline" size="sm">
+                            <CardBody>
+                              <HStack align="start">
+                                <Badge colorScheme="gray">{index + 1}</Badge>
+                                <DebouncedTextarea
+                                  value={text}
+                                  onChange={(value) =>
+                                    updateArrayField(
+                                      "mainRotatingTexts",
+                                      index,
+                                      value
+                                    )
+                                  }
+                                  rows={2}
+                                  flex={1}
+                                />
+                                <IconButton
+                                  icon={<DeleteIcon />}
+                                  colorScheme="red"
+                                  variant="ghost"
+                                  onClick={() =>
+                                    removeArrayItem("mainRotatingTexts", index)
+                                  }
+                                  aria-label="Delete text"
+                                />
+                              </HStack>
+                            </CardBody>
+                          </Card>
+                        ))}
+                        <Button
+                          leftIcon={<AddIcon />}
+                          onClick={() => addArrayItem("mainRotatingTexts", "")}
+                          variant="outline"
+                          borderColor={useColorModeValue(
+                            "gray.700",
+                            "gray.300"
+                          )}
+                          color={useColorModeValue("gray.700", "gray.300")}
+                          _hover={{
+                            bg: useColorModeValue("gray.100", "gray.700"),
+                          }}
                           size="sm"
-                          onClick={() =>
-                            removeArrayItem("missionValues", index)
-                          }
-                          aria-label="Delete card"
-                        />
-                      </HStack>
-                    </CardHeader>
-                    <CardBody>
-                      <VStack spacing={3}>
-                        <FormControl>
-                          <FormLabel>Title</FormLabel>
-                          <DebouncedInput
-                            value={item.title}
-                            onChange={(value) =>
-                              updateMissionValue(index, "title", value)
+                        >
+                          Add Rotating Text
+                        </Button>
+                      </VStack>
+                    </Box>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              {/* Philippines Section */}
+              <Card bg={cardBg} shadow="lg" borderRadius="xl">
+                <CardBody p={8}>
+                  <Heading size="sm" mb={4}>
+                    Philippines Section
+                  </Heading>
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Section Title</FormLabel>
+                      <DebouncedInput
+                        value={content.philippinesTitle || ""}
+                        onChange={(value) =>
+                          updateField("philippinesTitle", value)
+                        }
+                        placeholder="LJIM – Philippines"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Description</FormLabel>
+                      <DebouncedTextarea
+                        value={content.philippinesDescription || ""}
+                        onChange={(value) =>
+                          updateField("philippinesDescription", value)
+                        }
+                        rows={4}
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Bible Verse</FormLabel>
+                      <DebouncedTextarea
+                        value={content.philippinesBibleVerse || ""}
+                        onChange={(value) =>
+                          updateField("philippinesBibleVerse", value)
+                        }
+                        rows={2}
+                      />
+                    </FormControl>
+                  </VStack>
+                </CardBody>
+              </Card>
+            </VStack>
+          </TabPanel>
+
+          {/* Mission & Values Tab */}
+          <TabPanel>
+            <Card bg={cardBg} shadow="lg" borderRadius="xl">
+              <CardBody p={8}>
+                <SectionHeader
+                  icon={FiAward}
+                  title="Mission & Values Carousel"
+                  count={content.missionValues?.length}
+                />
+                <Text fontSize="sm" color="gray.500" mb={6}>
+                  These cards will appear in a rotating carousel on your
+                  homepage
+                </Text>
+
+                <VStack spacing={4} align="stretch">
+                  {content.missionValues?.map((item, index) => (
+                    <Card
+                      key={index}
+                      variant="outline"
+                      borderWidth="2px"
+                      borderColor={borderColor}
+                      bg={sectionBg}
+                    >
+                      <CardHeader
+                        bg={useColorModeValue("white", "gray.700")}
+                        borderBottom="1px"
+                        borderColor={borderColor}
+                      >
+                        <HStack justify="space-between">
+                          <HStack>
+                            <Badge
+                              colorScheme="gray"
+                              fontSize="md"
+                              px={3}
+                              py={1}
+                            >
+                              Card {index + 1}
+                            </Badge>
+                            <Text
+                              fontWeight="bold"
+                              fontSize="sm"
+                              color="gray.500"
+                            >
+                              {item.title || "Untitled"}
+                            </Text>
+                          </HStack>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              removeArrayItem("missionValues", index)
                             }
+                            aria-label="Delete card"
                           />
-                        </FormControl>
-                        <FormControl>
-                          <FormLabel>Description</FormLabel>
-                          <DebouncedTextarea
-                            value={item.description}
-                            onChange={(value) =>
-                              updateMissionValue(index, "description", value)
-                            }
-                            rows={3}
-                          />
-                        </FormControl>
-                        <SimpleGrid columns={2} spacing={3} w="full">
+                        </HStack>
+                      </CardHeader>
+                      <CardBody p={6}>
+                        <VStack spacing={4}>
+                          <SimpleGrid
+                            columns={{ base: 1, md: 2 }}
+                            spacing={4}
+                            w="full"
+                          >
+                            <FormControl>
+                              <FormLabel fontSize="sm" fontWeight="semibold">
+                                Title
+                              </FormLabel>
+                              <DebouncedInput
+                                value={item.title}
+                                onChange={(value) =>
+                                  updateMissionValue(index, "title", value)
+                                }
+                                placeholder="Excellence in Faith"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel fontSize="sm" fontWeight="semibold">
+                                Icon Name
+                              </FormLabel>
+                              <DebouncedInput
+                                value={item.icon}
+                                onChange={(value) =>
+                                  updateMissionValue(index, "icon", value)
+                                }
+                                placeholder="StarIcon"
+                              />
+                            </FormControl>
+                          </SimpleGrid>
+
                           <FormControl>
-                            <FormLabel>Icon (Chakra Icon Name)</FormLabel>
-                            <DebouncedInput
-                              value={item.icon}
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Description
+                            </FormLabel>
+                            <DebouncedTextarea
+                              value={item.description}
                               onChange={(value) =>
-                                updateMissionValue(index, "icon", value)
+                                updateMissionValue(index, "description", value)
                               }
-                              placeholder="StarIcon"
+                              rows={3}
+                              placeholder="We strive for spiritual excellence..."
                             />
                           </FormControl>
+
                           <ColorPicker
-                            label="Color"
+                            label="Card Color"
                             value={item.color}
                             onChange={(value) =>
                               updateMissionValue(index, "color", value)
                             }
                           />
-                        </SimpleGrid>
-                      </VStack>
-                    </CardBody>
-                  </Card>
-                ))}
-                <Button
-                  leftIcon={<AddIcon />}
-                  onClick={() =>
-                    addArrayItem("missionValues", {
-                      title: "",
-                      description: "",
-                      icon: "StarIcon",
-                      color: "gray.600",
-                    })
-                  }
-                  variant="outline"
-                  borderColor={useColorModeValue("gray.700", "gray.300")}
-                  color={useColorModeValue("gray.700", "gray.300")}
-                  _hover={{
-                    bg: useColorModeValue("gray.100", "gray.700"),
-                  }}
-                >
-                  Add Mission/Value Card
-                </Button>
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
 
-          {/* Ministries Section */}
-          <AccordionItem
-            border="1px"
-            borderColor={borderColor}
-            borderRadius="md"
-            mb={4}
-          >
-            <AccordionButton bg={cardBg} _hover={{ bg: hoverBg }}>
-              <Box flex="1" textAlign="left" fontWeight="bold" fontSize="lg">
-                Ministries Section
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel pb={4} bg={cardBg}>
-              <VStack spacing={4}>
-                {content.ministries?.map((item, index) => (
-                  <Card key={index} w="full" variant="outline">
-                    <CardHeader>
-                      <HStack justify="space-between">
-                        <Text fontWeight="bold">Ministry {index + 1}</Text>
-                        <IconButton
-                          icon={<DeleteIcon />}
-                          colorScheme="red"
-                          size="sm"
-                          onClick={() => removeArrayItem("ministries", index)}
-                          aria-label="Delete ministry"
-                        />
-                      </HStack>
-                    </CardHeader>
-                    <CardBody>
-                      <VStack spacing={3}>
-                        <FormControl>
-                          <FormLabel>Title</FormLabel>
-                          <DebouncedInput
-                            value={item.title}
-                            onChange={(value) =>
-                              updateMinistry(index, "title", value)
-                            }
-                          />
-                        </FormControl>
-                        <FormControl>
-                          <FormLabel>Description</FormLabel>
-                          <DebouncedTextarea
-                            value={item.description}
-                            onChange={(value) =>
-                              updateMinistry(index, "description", value)
-                            }
-                            rows={2}
-                          />
-                        </FormControl>
-                        <FormControl>
-                          <FormLabel>Icon</FormLabel>
-                          <DebouncedInput
-                            value={item.icon}
-                            onChange={(value) =>
-                              updateMinistry(index, "icon", value)
-                            }
-                            placeholder="MusicNote"
-                          />
-                        </FormControl>
-                      </VStack>
-                    </CardBody>
-                  </Card>
-                ))}
-                <Button
-                  leftIcon={<AddIcon />}
-                  onClick={() =>
-                    addArrayItem("ministries", {
-                      title: "",
-                      description: "",
-                      icon: "MusicNote",
-                    })
-                  }
-                  variant="outline"
-                  borderColor={useColorModeValue("gray.700", "gray.300")}
-                  color={useColorModeValue("gray.700", "gray.300")}
-                  _hover={{
-                    bg: useColorModeValue("gray.100", "gray.700"),
-                  }}
-                >
-                  Add Ministry
-                </Button>
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
-
-          {/* Call to Action Section */}
-          <AccordionItem
-            border="1px"
-            borderColor={borderColor}
-            borderRadius="md"
-            mb={4}
-          >
-            <AccordionButton bg={cardBg} _hover={{ bg: hoverBg }}>
-              <Box flex="1" textAlign="left" fontWeight="bold" fontSize="lg">
-                Call to Action Section
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel pb={4} bg={cardBg}>
-              <VStack spacing={4}>
-                <FormControl>
-                  <FormLabel>CTA Title</FormLabel>
-                  <DebouncedInput
-                    value={content.ctaTitle || ""}
-                    onChange={(value) => updateField("ctaTitle", value)}
-                    size="lg"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>CTA Description</FormLabel>
-                  <DebouncedTextarea
-                    value={content.ctaDescription || ""}
-                    onChange={(value) => updateField("ctaDescription", value)}
-                    rows={2}
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>CTA Button Text</FormLabel>
-                  <DebouncedInput
-                    value={content.ctaButtonText || ""}
-                    onChange={(value) => updateField("ctaButtonText", value)}
-                  />
-                </FormControl>
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
-
-          {/* Singers Section */}
-          <AccordionItem
-            border="1px"
-            borderColor={borderColor}
-            borderRadius="md"
-            mb={4}
-          >
-            <AccordionButton bg={cardBg} _hover={{ bg: hoverBg }}>
-              <Box flex="1" textAlign="left" fontWeight="bold" fontSize="lg">
-                Worship Leaders / Singers Section
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel pb={4} bg={cardBg}>
-              <VStack spacing={4}>
-                <FormControl>
-                  <FormLabel>Section Title</FormLabel>
-                  <DebouncedInput
-                    value={content.singersTitle || ""}
-                    onChange={(value) => updateField("singersTitle", value)}
-                    size="lg"
-                  />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel>Section Description</FormLabel>
-                  <DebouncedTextarea
-                    value={content.singersDescription || ""}
-                    onChange={(value) =>
-                      updateField("singersDescription", value)
+                  <Button
+                    leftIcon={<AddIcon />}
+                    onClick={() =>
+                      addArrayItem("missionValues", {
+                        title: "",
+                        description: "",
+                        icon: "StarIcon",
+                        color: "gray.600",
+                      })
                     }
-                    rows={2}
-                  />
-                </FormControl>
+                    variant="outline"
+                    borderColor={useColorModeValue("gray.700", "gray.300")}
+                    color={useColorModeValue("gray.700", "gray.300")}
+                    _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+                    size="lg"
+                  >
+                    Add New Card
+                  </Button>
+                </VStack>
+              </CardBody>
+            </Card>
+          </TabPanel>
 
-                <FormControl>
-                  <FormLabel>Singers</FormLabel>
-                  <VStack spacing={4} align="stretch">
-                    {content.singers?.map((singer, index) => (
-                      <Card key={index} variant="outline">
-                        <CardHeader>
-                          <HStack justify="space-between">
-                            <Text fontWeight="bold">Singer {index + 1}</Text>
-                            <IconButton
-                              icon={<DeleteIcon />}
-                              colorScheme="red"
-                              size="sm"
-                              onClick={() => removeArrayItem("singers", index)}
-                              aria-label="Delete singer"
-                            />
+          {/* Ministries Tab */}
+          <TabPanel>
+            <Card bg={cardBg} shadow="lg" borderRadius="xl">
+              <CardBody p={8}>
+                <SectionHeader
+                  icon={FiUsers}
+                  title="Ministries Section"
+                  count={content.ministries?.length}
+                />
+                <Text fontSize="sm" color="gray.500" mb={6}>
+                  Showcase your church ministries and programs
+                </Text>
+
+                <VStack spacing={4} align="stretch">
+                  {content.ministries?.map((item, index) => (
+                    <Card
+                      key={index}
+                      variant="outline"
+                      borderWidth="2px"
+                      bg={sectionBg}
+                    >
+                      <CardHeader
+                        bg={useColorModeValue("white", "gray.700")}
+                        borderBottom="1px"
+                        borderColor={borderColor}
+                      >
+                        <HStack justify="space-between">
+                          <HStack>
+                            <Badge
+                              colorScheme="gray"
+                              fontSize="md"
+                              px={3}
+                              py={1}
+                            >
+                              #{index + 1}
+                            </Badge>
+                            <Text
+                              fontWeight="bold"
+                              fontSize="sm"
+                              color="gray.500"
+                            >
+                              {item.title || "Untitled Ministry"}
+                            </Text>
                           </HStack>
-                        </CardHeader>
-                        <CardBody>
-                          <VStack spacing={3}>
-                            <FormControl>
-                              <FormLabel>Name</FormLabel>
-                              <DebouncedInput
-                                value={singer.name}
-                                onChange={(value) =>
-                                  updateArrayField("singers", index, {
-                                    ...singer,
-                                    name: value,
-                                  })
-                                }
-                              />
-                            </FormControl>
-                            <FormControl>
-                              <FormLabel>Tagline</FormLabel>
-                              <DebouncedTextarea
-                                value={singer.tagline}
-                                onChange={(value) =>
-                                  updateArrayField("singers", index, {
-                                    ...singer,
-                                    tagline: value,
-                                  })
-                                }
-                                rows={2}
-                              />
-                            </FormControl>
-                            <ImageUpload
-                              label="Singer Photo"
-                              value={singer.image}
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeArrayItem("ministries", index)}
+                            aria-label="Delete ministry"
+                          />
+                        </HStack>
+                      </CardHeader>
+                      <CardBody p={6}>
+                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Ministry Title
+                            </FormLabel>
+                            <DebouncedInput
+                              value={item.title}
+                              onChange={(value) =>
+                                updateMinistry(index, "title", value)
+                              }
+                              placeholder="Worship Ministry"
+                            />
+                          </FormControl>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Icon
+                            </FormLabel>
+                            <DebouncedInput
+                              value={item.icon}
+                              onChange={(value) =>
+                                updateMinistry(index, "icon", value)
+                              }
+                              placeholder="MusicNote"
+                            />
+                          </FormControl>
+                          <FormControl gridColumn={{ base: "1", md: "1 / -1" }}>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Description
+                            </FormLabel>
+                            <DebouncedTextarea
+                              value={item.description}
+                              onChange={(value) =>
+                                updateMinistry(index, "description", value)
+                              }
+                              rows={2}
+                              placeholder="Leading believers into the presence of God..."
+                            />
+                          </FormControl>
+                        </SimpleGrid>
+                      </CardBody>
+                    </Card>
+                  ))}
+
+                  <Button
+                    leftIcon={<AddIcon />}
+                    onClick={() =>
+                      addArrayItem("ministries", {
+                        title: "",
+                        description: "",
+                        icon: "MusicNote",
+                      })
+                    }
+                    variant="outline"
+                    borderColor={useColorModeValue("gray.700", "gray.300")}
+                    color={useColorModeValue("gray.700", "gray.300")}
+                    _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+                    size="lg"
+                  >
+                    Add New Ministry
+                  </Button>
+                </VStack>
+              </CardBody>
+            </Card>
+          </TabPanel>
+
+          {/* Call to Action Tab */}
+          <TabPanel>
+            <Card bg={cardBg} shadow="lg" borderRadius="xl">
+              <CardBody p={8}>
+                <SectionHeader icon={FiTarget} title="Call to Action" />
+                <Text fontSize="sm" color="gray.500" mb={6}>
+                  Encourage visitors to take action with a prominent CTA button
+                </Text>
+
+                <VStack spacing={6} align="stretch">
+                  <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">CTA Title</FormLabel>
+                      <DebouncedInput
+                        value={content.ctaTitle || ""}
+                        onChange={(value) => updateField("ctaTitle", value)}
+                        size="lg"
+                        placeholder="Join Us in Lifting Jesus Higher"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Button Text</FormLabel>
+                      <DebouncedInput
+                        value={content.ctaButtonText || ""}
+                        onChange={(value) =>
+                          updateField("ctaButtonText", value)
+                        }
+                        size="lg"
+                        placeholder="Get Connected"
+                      />
+                    </FormControl>
+                  </SimpleGrid>
+
+                  <FormControl>
+                    <FormLabel fontWeight="semibold">Description</FormLabel>
+                    <DebouncedTextarea
+                      value={content.ctaDescription || ""}
+                      onChange={(value) => updateField("ctaDescription", value)}
+                      rows={2}
+                      placeholder="Be part of a community..."
+                    />
+                  </FormControl>
+                </VStack>
+              </CardBody>
+            </Card>
+          </TabPanel>
+
+          {/* Worship Leaders Tab */}
+          <TabPanel>
+            <VStack spacing={6} align="stretch">
+              {/* Section Info */}
+              <Card bg={cardBg} shadow="lg" borderRadius="xl">
+                <CardBody p={8}>
+                  <SectionHeader
+                    icon={FiMusic}
+                    title="Worship Leaders Section"
+                    count={content.singers?.length}
+                  />
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Section Title</FormLabel>
+                      <DebouncedInput
+                        value={content.singersTitle || ""}
+                        onChange={(value) => updateField("singersTitle", value)}
+                        size="lg"
+                        placeholder="Worship Leaders"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">
+                        Section Description
+                      </FormLabel>
+                      <DebouncedTextarea
+                        value={content.singersDescription || ""}
+                        onChange={(value) =>
+                          updateField("singersDescription", value)
+                        }
+                        rows={2}
+                        placeholder="Voices united in harmony..."
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Bible Verse</FormLabel>
+                      <DebouncedTextarea
+                        value={content.singersBibleVerse || ""}
+                        onChange={(value) =>
+                          updateField("singersBibleVerse", value)
+                        }
+                        rows={2}
+                        placeholder='"Sing to Him..." — 1 Chronicles 16:9'
+                      />
+                    </FormControl>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              {/* Singers List */}
+              <Box>
+                <Text fontSize="lg" fontWeight="bold" mb={4}>
+                  Worship Leaders
+                </Text>
+                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
+                  {content.singers?.map((singer, index) => (
+                    <Card
+                      key={index}
+                      variant="outline"
+                      borderWidth="2px"
+                      bg={sectionBg}
+                    >
+                      <CardHeader
+                        bg={useColorModeValue("white", "gray.700")}
+                        borderBottom="1px"
+                        borderColor={borderColor}
+                      >
+                        <HStack justify="space-between">
+                          <HStack>
+                            <Badge
+                              colorScheme="gray"
+                              fontSize="md"
+                              px={3}
+                              py={1}
+                            >
+                              {index + 1}
+                            </Badge>
+                            <Text fontWeight="bold">
+                              {singer.name || "Unnamed Singer"}
+                            </Text>
+                          </HStack>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeArrayItem("singers", index)}
+                            aria-label="Delete singer"
+                          />
+                        </HStack>
+                      </CardHeader>
+                      <CardBody p={4}>
+                        <VStack spacing={4}>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Name
+                            </FormLabel>
+                            <DebouncedInput
+                              value={singer.name}
                               onChange={(value) =>
                                 updateArrayField("singers", index, {
                                   ...singer,
-                                  image: value,
+                                  name: value,
                                 })
                               }
-                              placeholder="/images/singer-name.jpg"
+                              placeholder="Joshua"
                             />
-                          </VStack>
-                        </CardBody>
-                      </Card>
-                    ))}
-                    <Button
-                      leftIcon={<AddIcon />}
-                      onClick={() =>
-                        addArrayItem("singers", {
-                          name: "",
-                          tagline: "",
-                          image: "/images/",
-                        })
-                      }
-                      variant="outline"
-                      borderColor={useColorModeValue("gray.700", "gray.300")}
-                      color={useColorModeValue("gray.700", "gray.300")}
-                      _hover={{
-                        bg: useColorModeValue("gray.100", "gray.700"),
-                      }}
-                    >
-                      Add Singer
-                    </Button>
-                  </VStack>
-                </FormControl>
+                          </FormControl>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Tagline
+                            </FormLabel>
+                            <DebouncedTextarea
+                              value={singer.tagline}
+                              onChange={(value) =>
+                                updateArrayField("singers", index, {
+                                  ...singer,
+                                  tagline: value,
+                                })
+                              }
+                              rows={2}
+                              placeholder="Leading hearts into worship..."
+                            />
+                          </FormControl>
+                          <ImageUpload
+                            label="Singer Photo"
+                            value={singer.image}
+                            onChange={(value) =>
+                              updateArrayField("singers", index, {
+                                ...singer,
+                                image: value,
+                              })
+                            }
+                            placeholder="/images/singer-name.jpg"
+                          />
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </SimpleGrid>
 
-                <FormControl>
-                  <FormLabel>Bible Verse</FormLabel>
-                  <DebouncedTextarea
-                    value={content.singersBibleVerse || ""}
-                    onChange={(value) =>
-                      updateField("singersBibleVerse", value)
-                    }
-                    rows={2}
-                  />
-                </FormControl>
-              </VStack>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
+                <Button
+                  leftIcon={<AddIcon />}
+                  onClick={() =>
+                    addArrayItem("singers", {
+                      name: "",
+                      tagline: "",
+                      image: "/images/",
+                    })
+                  }
+                  variant="outline"
+                  borderColor={useColorModeValue("gray.700", "gray.300")}
+                  color={useColorModeValue("gray.700", "gray.300")}
+                  _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+                  size="lg"
+                  mt={4}
+                  w="full"
+                >
+                  Add New Singer
+                </Button>
+              </Box>
+            </VStack>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
 
-        <Box
-          position="sticky"
-          bottom={0}
-          bg={cardBg}
-          p={4}
-          borderTop="1px"
-          borderColor={borderColor}
+      {/* Floating Save Button */}
+      <Box
+        position="fixed"
+        bottom={6}
+        right={6}
+        zIndex={20}
+        display={{ base: "block", md: "none" }}
+      >
+        <Button
+          bg={useColorModeValue("gray.900", "gray.100")}
+          color={useColorModeValue("white", "gray.900")}
+          _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+          onClick={handleSave}
+          isLoading={isSaving}
+          size="lg"
+          shadow="2xl"
+          leftIcon={<Icon as={StarIcon} />}
         >
-          <Button
-            bg={useColorModeValue("gray.900", "gray.100")}
-            color={useColorModeValue("white", "gray.900")}
-            _hover={{
-              bg: useColorModeValue("gray.800", "gray.200"),
-            }}
-            onClick={handleSave}
-            isLoading={isSaving}
-            loadingText="Saving..."
-            size="lg"
-            w="full"
-          >
-            Save All Changes
-          </Button>
-        </Box>
-      </VStack>
+          Save
+        </Button>
+      </Box>
     </Box>
   );
 }
