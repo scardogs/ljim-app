@@ -195,23 +195,29 @@ export default function HomepageContentEditor() {
   );
 
   return (
-    <Box maxW="1400px" mx="auto">
+    <Box maxW="1400px" mx="auto" pb={{ base: 20, md: 6 }}>
       {/* Header with Save Button */}
       <Flex
         position="sticky"
         top={0}
         bg={useColorModeValue("white", "gray.900")}
         zIndex={10}
-        p={6}
+        p={{ base: 4, md: 6 }}
         borderBottom="1px"
         borderColor={borderColor}
         justify="space-between"
-        align="center"
-        mb={6}
+        align={{ base: "start", md: "center" }}
+        direction={{ base: "column", md: "row" }}
+        gap={{ base: 3, md: 0 }}
+        mb={{ base: 4, md: 6 }}
       >
         <VStack align="start" spacing={1}>
-          <Heading size="lg">Homepage Content</Heading>
-          <Text fontSize="sm" color="gray.500">
+          <Heading size={{ base: "md", md: "lg" }}>Homepage Content</Heading>
+          <Text
+            fontSize="sm"
+            color="gray.500"
+            display={{ base: "none", sm: "block" }}
+          >
             Manage all sections of your homepage
           </Text>
         </VStack>
@@ -224,46 +230,110 @@ export default function HomepageContentEditor() {
           onClick={handleSave}
           isLoading={isSaving}
           loadingText="Saving..."
-          size="lg"
+          size={{ base: "md", md: "lg" }}
+          w={{ base: "full", md: "auto" }}
           leftIcon={<Icon as={StarIcon} />}
         >
           Save Changes
         </Button>
       </Flex>
 
-      <Tabs variant="soft-rounded" colorScheme="gray" px={6}>
-        <TabList mb={8} flexWrap="wrap" gap={2}>
-          <Tab _selected={{ bg: "gray.700", color: "white" }}>
-            <Icon as={FiImage} mr={2} />
-            Hero
+      <Tabs variant="soft-rounded" colorScheme="gray" px={{ base: 2, md: 6 }}>
+        <TabList
+          mb={{ base: 4, md: 8 }}
+          flexWrap="wrap"
+          gap={2}
+          overflowX="auto"
+        >
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiImage}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Hero</Text>
           </Tab>
-          <Tab _selected={{ bg: "gray.700", color: "white" }}>
-            <Icon as={FiFileText} mr={2} />
-            Main Content
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiFileText}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Main</Text>
           </Tab>
-          <Tab _selected={{ bg: "gray.700", color: "white" }}>
-            <Icon as={FiAward} mr={2} />
-            Mission & Values
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiAward}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Mission</Text>
           </Tab>
-          <Tab _selected={{ bg: "gray.700", color: "white" }}>
-            <Icon as={FiUsers} mr={2} />
-            Ministries
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiUsers}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Ministries</Text>
           </Tab>
-          <Tab _selected={{ bg: "gray.700", color: "white" }}>
-            <Icon as={FiTarget} mr={2} />
-            Call to Action
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiTarget}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>CTA</Text>
           </Tab>
-          <Tab _selected={{ bg: "gray.700", color: "white" }}>
-            <Icon as={FiMusic} mr={2} />
-            Worship Leaders
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiMusic}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Leaders</Text>
           </Tab>
         </TabList>
 
         <TabPanels>
           {/* Hero Section Tab */}
-          <TabPanel>
-            <Card bg={cardBg} shadow="lg" borderRadius="xl">
-              <CardBody p={8}>
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <Card
+              bg={cardBg}
+              shadow="lg"
+              borderRadius={{ base: "lg", md: "xl" }}
+            >
+              <CardBody p={{ base: 4, md: 8 }}>
                 <SectionHeader icon={FiImage} title="Hero Section" />
                 <VStack spacing={6} align="stretch">
                   <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
@@ -317,11 +387,15 @@ export default function HomepageContentEditor() {
           </TabPanel>
 
           {/* Main Content Tab */}
-          <TabPanel>
-            <VStack spacing={6} align="stretch">
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <VStack spacing={{ base: 4, md: 6 }} align="stretch">
               {/* Main Title */}
-              <Card bg={cardBg} shadow="lg" borderRadius="xl">
-                <CardBody p={8}>
+              <Card
+                bg={cardBg}
+                shadow="lg"
+                borderRadius={{ base: "lg", md: "xl" }}
+              >
+                <CardBody p={{ base: 4, md: 8 }}>
                   <SectionHeader
                     icon={FiFileText}
                     title="Main Content Section"
@@ -400,8 +474,12 @@ export default function HomepageContentEditor() {
               </Card>
 
               {/* Philippines Section */}
-              <Card bg={cardBg} shadow="lg" borderRadius="xl">
-                <CardBody p={8}>
+              <Card
+                bg={cardBg}
+                shadow="lg"
+                borderRadius={{ base: "lg", md: "xl" }}
+              >
+                <CardBody p={{ base: 4, md: 8 }}>
                   <Heading size="sm" mb={4}>
                     Philippines Section
                   </Heading>
@@ -445,9 +523,13 @@ export default function HomepageContentEditor() {
           </TabPanel>
 
           {/* Mission & Values Tab */}
-          <TabPanel>
-            <Card bg={cardBg} shadow="lg" borderRadius="xl">
-              <CardBody p={8}>
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <Card
+              bg={cardBg}
+              shadow="lg"
+              borderRadius={{ base: "lg", md: "xl" }}
+            >
+              <CardBody p={{ base: 4, md: 8 }}>
                 <SectionHeader
                   icon={FiAward}
                   title="Mission & Values Carousel"
@@ -502,11 +584,11 @@ export default function HomepageContentEditor() {
                           />
                         </HStack>
                       </CardHeader>
-                      <CardBody p={6}>
-                        <VStack spacing={4}>
+                      <CardBody p={{ base: 3, md: 6 }}>
+                        <VStack spacing={{ base: 3, md: 4 }}>
                           <SimpleGrid
                             columns={{ base: 1, md: 2 }}
-                            spacing={4}
+                            spacing={{ base: 3, md: 4 }}
                             w="full"
                           >
                             <FormControl>
@@ -585,9 +667,13 @@ export default function HomepageContentEditor() {
           </TabPanel>
 
           {/* Ministries Tab */}
-          <TabPanel>
-            <Card bg={cardBg} shadow="lg" borderRadius="xl">
-              <CardBody p={8}>
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <Card
+              bg={cardBg}
+              shadow="lg"
+              borderRadius={{ base: "lg", md: "xl" }}
+            >
+              <CardBody p={{ base: 4, md: 8 }}>
                 <SectionHeader
                   icon={FiUsers}
                   title="Ministries Section"
@@ -638,8 +724,11 @@ export default function HomepageContentEditor() {
                           />
                         </HStack>
                       </CardHeader>
-                      <CardBody p={6}>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                      <CardBody p={{ base: 3, md: 6 }}>
+                        <SimpleGrid
+                          columns={{ base: 1, md: 2 }}
+                          spacing={{ base: 3, md: 4 }}
+                        >
                           <FormControl>
                             <FormLabel fontSize="sm" fontWeight="semibold">
                               Ministry Title
@@ -705,9 +794,13 @@ export default function HomepageContentEditor() {
           </TabPanel>
 
           {/* Call to Action Tab */}
-          <TabPanel>
-            <Card bg={cardBg} shadow="lg" borderRadius="xl">
-              <CardBody p={8}>
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <Card
+              bg={cardBg}
+              shadow="lg"
+              borderRadius={{ base: "lg", md: "xl" }}
+            >
+              <CardBody p={{ base: 4, md: 8 }}>
                 <SectionHeader icon={FiTarget} title="Call to Action" />
                 <Text fontSize="sm" color="gray.500" mb={6}>
                   Encourage visitors to take action with a prominent CTA button
@@ -753,11 +846,15 @@ export default function HomepageContentEditor() {
           </TabPanel>
 
           {/* Worship Leaders Tab */}
-          <TabPanel>
-            <VStack spacing={6} align="stretch">
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <VStack spacing={{ base: 4, md: 6 }} align="stretch">
               {/* Section Info */}
-              <Card bg={cardBg} shadow="lg" borderRadius="xl">
-                <CardBody p={8}>
+              <Card
+                bg={cardBg}
+                shadow="lg"
+                borderRadius={{ base: "lg", md: "xl" }}
+              >
+                <CardBody p={{ base: 4, md: 8 }}>
                   <SectionHeader
                     icon={FiMusic}
                     title="Worship Leaders Section"
@@ -845,8 +942,8 @@ export default function HomepageContentEditor() {
                           />
                         </HStack>
                       </CardHeader>
-                      <CardBody p={4}>
-                        <VStack spacing={4}>
+                      <CardBody p={{ base: 3, md: 4 }}>
+                        <VStack spacing={{ base: 3, md: 4 }}>
                           <FormControl>
                             <FormLabel fontSize="sm" fontWeight="semibold">
                               Name

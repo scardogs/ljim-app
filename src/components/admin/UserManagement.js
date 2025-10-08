@@ -7,7 +7,6 @@ import {
   Badge,
   Card,
   CardBody,
-  CardHeader,
   Heading,
   IconButton,
   useToast,
@@ -30,15 +29,62 @@ import {
   useDisclosure,
   Flex,
   Icon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Select,
 } from "@chakra-ui/react";
-import { DeleteIcon, EmailIcon } from "@chakra-ui/icons";
+import {
+  DeleteIcon,
+  EmailIcon,
+  EditIcon,
+  AddIcon,
+  ViewIcon,
+  ViewOffIcon,
+} from "@chakra-ui/icons";
 import { FiUsers, FiClock, FiShield } from "react-icons/fi";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteUserId, setDeleteUserId] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editUser, setEditUser] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "admin",
+  });
+
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+  const {
+    isOpen: isCreateOpen,
+    onOpen: onCreateOpen,
+    onClose: onCreateClose,
+  } = useDisclosure();
+
   const cancelRef = React.useRef();
   const toast = useToast();
 
@@ -82,7 +128,7 @@ export default function UserManagement() {
 
   const handleDeleteClick = (userId) => {
     setDeleteUserId(userId);
-    onOpen();
+    onDeleteOpen();
   };
 
   const handleDeleteConfirm = async () => {
@@ -107,7 +153,6 @@ export default function UserManagement() {
           duration: 3000,
           isClosable: true,
         });
-        // Refresh users list
         fetchUsers();
       } else {
         throw new Error(data.error);
@@ -121,8 +166,168 @@ export default function UserManagement() {
         isClosable: true,
       });
     } finally {
-      onClose();
+      onDeleteClose();
       setDeleteUserId(null);
+    }
+  };
+
+  const handleEditClick = (user) => {
+    setEditUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      password: "",
+      role: user.role || "admin",
+    });
+    onEditOpen();
+  };
+
+  const handleCreateClick = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      role: "admin",
+    });
+    onCreateOpen();
+  };
+
+  const handleCreateSubmit = async () => {
+    if (!formData.name || !formData.email || !formData.password) {
+      toast({
+        title: "Validation Error",
+        description: "Name, email, and password are required",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Weak Password",
+        description: "Password must be at least 6 characters",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "New admin user created successfully",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        fetchUsers();
+        onCreateClose();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create user",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    if (!formData.name || !formData.email) {
+      toast({
+        title: "Validation Error",
+        description: "Name and email are required",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (formData.password && formData.password.length < 6) {
+      toast({
+        title: "Weak Password",
+        description: "Password must be at least 6 characters",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const token = localStorage.getItem("adminToken");
+      const updatePayload = {
+        userId: editUser._id,
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+      };
+
+      // Only include password if it was changed
+      if (formData.password) {
+        updatePayload.password = formData.password;
+      }
+
+      const response = await fetch("/api/admin/users", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatePayload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "User updated successfully",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        fetchUsers();
+        onEditClose();
+        setEditUser(null);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update user",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -162,22 +367,39 @@ export default function UserManagement() {
   return (
     <Box maxW="1400px" mx="auto">
       {/* Header */}
-      <Flex mb={8} justify="space-between" align="center">
+      <Flex
+        mb={8}
+        justify="space-between"
+        align="center"
+        flexWrap="wrap"
+        gap={4}
+      >
         <VStack align="start" spacing={1}>
           <Heading size="lg">User Management</Heading>
           <Text fontSize="sm" color="gray.500">
             Manage admin accounts and permissions
           </Text>
         </VStack>
-        <Button
-          variant="outline"
-          borderColor={useColorModeValue("gray.700", "gray.300")}
-          color={useColorModeValue("gray.700", "gray.300")}
-          _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
-          onClick={fetchUsers}
-        >
-          Refresh
-        </Button>
+        <HStack>
+          <Button
+            variant="outline"
+            borderColor={useColorModeValue("gray.700", "gray.300")}
+            color={useColorModeValue("gray.700", "gray.300")}
+            _hover={{ bg: useColorModeValue("gray.100", "gray.700") }}
+            onClick={fetchUsers}
+          >
+            Refresh
+          </Button>
+          <Button
+            leftIcon={<AddIcon />}
+            bg={useColorModeValue("gray.900", "gray.100")}
+            color={useColorModeValue("white", "gray.900")}
+            _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+            onClick={handleCreateClick}
+          >
+            Add New User
+          </Button>
+        </HStack>
       </Flex>
 
       {/* Stats */}
@@ -289,10 +511,15 @@ export default function UserManagement() {
                   </VStack>
                 </HStack>
 
-                <VStack spacing={2}>
-                  <Badge colorScheme="gray" px={3} py={1} borderRadius="md">
-                    {user.role || "Admin"}
-                  </Badge>
+                <HStack spacing={2}>
+                  <IconButton
+                    icon={<EditIcon />}
+                    variant="ghost"
+                    colorScheme="gray"
+                    size="sm"
+                    onClick={() => handleEditClick(user)}
+                    aria-label="Edit user"
+                  />
 
                   {user._id !== currentUserId && (
                     <IconButton
@@ -304,7 +531,7 @@ export default function UserManagement() {
                       aria-label="Delete user"
                     />
                   )}
-                </VStack>
+                </HStack>
               </Flex>
             </CardBody>
           </Card>
@@ -320,11 +547,192 @@ export default function UserManagement() {
         )}
       </VStack>
 
+      {/* Create User Modal */}
+      <Modal isOpen={isCreateOpen} onClose={onCreateClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create New Admin User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel>Full Name</FormLabel>
+                <Input
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="John Doe"
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="admin@ljim.com"
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    placeholder="Min 6 characters"
+                  />
+                  <InputRightElement>
+                    <IconButton
+                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      onClick={() => setShowPassword(!showPassword)}
+                      variant="ghost"
+                      size="sm"
+                      aria-label="Toggle password"
+                    />
+                  </InputRightElement>
+                </InputGroup>
+                <Text fontSize="xs" color="gray.500" mt={1}>
+                  Minimum 6 characters
+                </Text>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  value={formData.role}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
+                >
+                  <option value="admin">Admin</option>
+                  <option value="super-admin">Super Admin</option>
+                  <option value="editor">Editor</option>
+                </Select>
+              </FormControl>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onCreateClose}>
+              Cancel
+            </Button>
+            <Button
+              bg={useColorModeValue("gray.900", "gray.100")}
+              color={useColorModeValue("white", "gray.900")}
+              _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+              onClick={handleCreateSubmit}
+              isLoading={isCreating}
+            >
+              Create User
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Edit User Modal */}
+      <Modal isOpen={isEditOpen} onClose={onEditClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Admin User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel>Full Name</FormLabel>
+                <Input
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="John Doe"
+                />
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="admin@ljim.com"
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>New Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    placeholder="Leave blank to keep current password"
+                  />
+                  <InputRightElement>
+                    <IconButton
+                      icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                      onClick={() => setShowPassword(!showPassword)}
+                      variant="ghost"
+                      size="sm"
+                      aria-label="Toggle password"
+                    />
+                  </InputRightElement>
+                </InputGroup>
+                <Text fontSize="xs" color="gray.500" mt={1}>
+                  Leave blank to keep current password. Minimum 6 characters if
+                  changing.
+                </Text>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Role</FormLabel>
+                <Select
+                  value={formData.role}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
+                >
+                  <option value="admin">Admin</option>
+                  <option value="super-admin">Super Admin</option>
+                  <option value="editor">Editor</option>
+                </Select>
+              </FormControl>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onEditClose}>
+              Cancel
+            </Button>
+            <Button
+              bg={useColorModeValue("gray.900", "gray.100")}
+              color={useColorModeValue("white", "gray.900")}
+              _hover={{ bg: useColorModeValue("gray.800", "gray.200") }}
+              onClick={handleUpdateSubmit}
+              isLoading={isCreating}
+            >
+              Update User
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {/* Delete Confirmation Dialog */}
       <AlertDialog
-        isOpen={isOpen}
+        isOpen={isDeleteOpen}
         leastDestructiveRef={cancelRef}
-        onClose={onClose}
+        onClose={onDeleteClose}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
@@ -338,7 +746,7 @@ export default function UserManagement() {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose} variant="ghost">
+              <Button ref={cancelRef} onClick={onDeleteClose} variant="ghost">
                 Cancel
               </Button>
               <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>

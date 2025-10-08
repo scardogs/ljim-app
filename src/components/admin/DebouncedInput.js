@@ -39,5 +39,13 @@ export default function DebouncedInput({
     };
   }, []);
 
-  return <Input {...props} value={localValue || ""} onChange={handleChange} />;
+  return (
+    <Input 
+      {...props} 
+      value={localValue || ""} 
+      onChange={handleChange}
+      fontSize={{ base: "md", md: props.size === "lg" ? "lg" : "md" }}
+      h={{ base: props.size === "lg" ? "48px" : "44px", md: "auto" }}
+    />
+  );
 }

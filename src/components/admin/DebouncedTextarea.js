@@ -40,6 +40,12 @@ export default function DebouncedTextarea({
   }, []);
 
   return (
-    <Textarea {...props} value={localValue || ""} onChange={handleChange} />
+    <Textarea 
+      {...props} 
+      value={localValue || ""} 
+      onChange={handleChange}
+      fontSize={{ base: "md", md: "md" }}
+      minH={{ base: "100px", md: "auto" }}
+    />
   );
 }
