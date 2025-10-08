@@ -1,6 +1,7 @@
 import connectToDatabase from "../../../lib/mongodb";
 import GiveContent from "../../../../models/GiveContent";
 import { authMiddleware } from "../../../utils/auth";
+import { deleteOldImageIfChanged } from "../../../utils/imageCleanup";
 
 async function handler(req, res) {
   await connectToDatabase();
@@ -24,13 +25,18 @@ async function handler(req, res) {
 
       let content = await GiveContent.findOne();
 
-      if (!content) {
-        content = await GiveContent.create(updates);
-      } else {
+      if (content) {
+        // Clean up old QR code image if changed
+        if (content.qrCodeImage && updates.qrCodeImage) {
+          deleteOldImageIfChanged(content.qrCodeImage, updates.qrCodeImage);
+        }
+
         content = await GiveContent.findByIdAndUpdate(content._id, updates, {
           new: true,
           runValidators: true,
         });
+      } else {
+        content = await GiveContent.create(updates);
       }
 
       res.status(200).json({

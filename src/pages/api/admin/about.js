@@ -1,6 +1,10 @@
 import connectToDatabase from "../../../lib/mongodb";
 import AboutContent from "../../../../models/AboutContent";
 import { authMiddleware } from "../../../utils/auth";
+import {
+  deleteImageFile,
+  deleteOldImageIfChanged,
+} from "../../../utils/imageCleanup";
 
 async function handler(req, res) {
   await connectToDatabase();
@@ -26,13 +30,31 @@ async function handler(req, res) {
       // Find existing content or create new
       let content = await AboutContent.findOne();
 
-      if (!content) {
-        content = await AboutContent.create(updates);
-      } else {
+      if (content) {
+        // Clean up old team member images if they were deleted or changed
+        const oldTeamMembers = content.teamMembers || [];
+        const newTeamMembers = updates.teamMembers || [];
+
+        oldTeamMembers.forEach((oldMember, index) => {
+          const newMember = newTeamMembers[index];
+
+          if (!newMember) {
+            // Team member was deleted
+            if (oldMember.image) {
+              deleteImageFile(oldMember.image);
+            }
+          } else if (oldMember.image && newMember.image) {
+            // Check if image was changed
+            deleteOldImageIfChanged(oldMember.image, newMember.image);
+          }
+        });
+
         content = await AboutContent.findByIdAndUpdate(content._id, updates, {
           new: true,
           runValidators: true,
         });
+      } else {
+        content = await AboutContent.create(updates);
       }
 
       res.status(200).json({

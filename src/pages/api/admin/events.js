@@ -1,6 +1,10 @@
 import connectToDatabase from "../../../lib/mongodb";
 import Event from "../../../../models/Event";
 import { authMiddleware } from "../../../utils/auth";
+import {
+  deleteImageFile,
+  deleteOldImageIfChanged,
+} from "../../../utils/imageCleanup";
 
 async function handler(req, res) {
   await connectToDatabase();
@@ -28,6 +32,15 @@ async function handler(req, res) {
   } else if (req.method === "PUT") {
     try {
       const { _id, ...updates } = req.body;
+
+      // Get the old event to check for image changes
+      const oldEvent = await Event.findById(_id);
+
+      if (oldEvent && oldEvent.image && updates.image) {
+        // Delete old image if it was changed
+        deleteOldImageIfChanged(oldEvent.image, updates.image);
+      }
+
       const event = await Event.findByIdAndUpdate(_id, updates, {
         new: true,
         runValidators: true,
@@ -48,11 +61,21 @@ async function handler(req, res) {
   } else if (req.method === "DELETE") {
     try {
       const { id } = req.query;
-      const event = await Event.findByIdAndDelete(id);
+
+      // Get the event first to delete its image
+      const event = await Event.findById(id);
 
       if (!event) {
         return res.status(404).json({ error: "Event not found" });
       }
+
+      // Delete the event's image if it exists
+      if (event.image) {
+        deleteImageFile(event.image);
+      }
+
+      // Now delete the event
+      await Event.findByIdAndDelete(id);
 
       res.status(200).json({
         message: "Event deleted successfully",

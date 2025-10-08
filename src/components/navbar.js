@@ -17,6 +17,7 @@ import {
   VStack,
   Link,
   Button,
+  Image,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -33,11 +34,20 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [navbarContent, setNavbarContent] = useState(null);
 
   // Check authentication status
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     setIsAuthenticated(!!token);
+  }, []);
+
+  // Fetch navbar content
+  useEffect(() => {
+    fetch("/api/navbar/content")
+      .then((res) => res.json())
+      .then((data) => setNavbarContent(data))
+      .catch((err) => console.error("Error fetching navbar content:", err));
   }, []);
 
   // Scroll effect
@@ -66,7 +76,8 @@ export default function Navbar() {
     { label: "About", href: "/about" },
     { label: "Music", href: "/music", hasDropdown: true },
     { label: "Events", href: "/events" },
-
+    { label: "Shop", href: "/shop" },
+    { label: "Prayer", href: "/prayer-requests" },
     { label: "Contact", href: "/contact" },
   ];
 
@@ -89,17 +100,30 @@ export default function Navbar() {
         transition="all 0.3s ease"
       >
         <Flex align="center">
-          {/* Logo */}
-          <Text
-            fontSize="2xl"
-            fontWeight="bold"
+          {/* Logo/Brand */}
+          <Flex
+            align="center"
+            gap={3}
             cursor="pointer"
             onClick={() => router.push("/")}
-            color={color}
-            letterSpacing="wide"
           >
-            LJIM
-          </Text>
+            {navbarContent?.showLogo && navbarContent?.logo && (
+              <Image
+                src={navbarContent.logo}
+                alt="Logo"
+                width={`${navbarContent.logoWidth || 40}px`}
+                objectFit="contain"
+              />
+            )}
+            <Text
+              fontSize={navbarContent?.fontSize || "2xl"}
+              fontWeight="bold"
+              color={color}
+              letterSpacing="wide"
+            >
+              {navbarContent?.brandText || "LJIM"}
+            </Text>
+          </Flex>
 
           <Spacer />
 

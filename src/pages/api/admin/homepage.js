@@ -1,6 +1,7 @@
 import connectToDatabase from "../../../lib/mongodb";
 import HomepageContent from "../../../../models/HomepageContent";
 import { authMiddleware } from "../../../utils/auth";
+import { deleteOldImageIfChanged } from "../../../utils/imageCleanup";
 
 async function handler(req, res) {
   await connectToDatabase();
@@ -26,14 +27,30 @@ async function handler(req, res) {
       // Find existing content or create new
       let content = await HomepageContent.findOne();
 
-      if (!content) {
-        content = await HomepageContent.create(updates);
-      } else {
+      if (content) {
+        // Clean up old images if they were changed
+        if (content.heroImage && updates.heroImage) {
+          deleteOldImageIfChanged(content.heroImage, updates.heroImage);
+        }
+
+        // Clean up ministry images if changed
+        const oldMinistries = content.ministries || [];
+        const newMinistries = updates.ministries || [];
+
+        oldMinistries.forEach((oldMinistry, index) => {
+          const newMinistry = newMinistries[index];
+          if (newMinistry && oldMinistry.image && newMinistry.image) {
+            deleteOldImageIfChanged(oldMinistry.image, newMinistry.image);
+          }
+        });
+
         content = await HomepageContent.findByIdAndUpdate(
           content._id,
           updates,
           { new: true, runValidators: true }
         );
+      } else {
+        content = await HomepageContent.create(updates);
       }
 
       res.status(200).json({

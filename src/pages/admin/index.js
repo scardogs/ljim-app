@@ -34,6 +34,9 @@ import {
   FiUsers,
   FiDollarSign,
   FiMusic,
+  FiShoppingBag,
+  FiHeart,
+  FiLayout,
 } from "react-icons/fi";
 
 // Import admin section components
@@ -44,6 +47,9 @@ import EventsEditor from "../../components/admin/EventsEditor";
 import GiveContentEditor from "../../components/admin/GiveContentEditor";
 import ContactContentEditor from "../../components/admin/ContactContentEditor";
 import MusicLineupEditor from "../../components/admin/MusicLineupEditor";
+import ShopContentEditor from "../../components/admin/ShopContentEditor";
+import PrayerRequestsEditor from "../../components/admin/PrayerRequestsEditor";
+import NavbarEditor from "../../components/admin/NavbarEditor";
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -95,10 +101,13 @@ export default function AdminDashboard() {
   const sidebarItems = [
     { id: "home", label: "Home Content", icon: FiHome },
     { id: "users", label: "User Management", icon: FiUsers },
+    { id: "navbar", label: "Navbar Settings", icon: FiLayout },
     { id: "about", label: "About", icon: FiInfo },
     { id: "events", label: "Events", icon: FiCalendar },
     { id: "music", label: "Music Lineup", icon: FiMusic },
     { id: "give", label: "Give", icon: FiDollarSign },
+    { id: "shop", label: "Shop", icon: FiShoppingBag },
+    { id: "prayer", label: "Prayer Requests", icon: FiHeart },
     { id: "contact", label: "Contact", icon: FiMail },
   ];
 
@@ -108,6 +117,8 @@ export default function AdminDashboard() {
         return <HomepageContentEditor />;
       case "users":
         return <UserManagement />;
+      case "navbar":
+        return <NavbarEditor />;
       case "about":
         return <AboutContentEditor />;
       case "events":
@@ -116,6 +127,10 @@ export default function AdminDashboard() {
         return <MusicLineupEditor />;
       case "give":
         return <GiveContentEditor />;
+      case "shop":
+        return <ShopContentEditor />;
+      case "prayer":
+        return <PrayerRequestsEditor />;
       case "contact":
         return <ContactContentEditor />;
       default:
