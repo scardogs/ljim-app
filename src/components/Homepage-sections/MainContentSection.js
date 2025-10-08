@@ -21,28 +21,43 @@ const shimmer = keyframes`
 const MotionText = motion(Text);
 
 export default function IntroSection() {
+  const [content, setContent] = useState(null);
+  const [index, setIndex] = useState(0);
+
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
   const mapImage = useColorModeValue(
     "/images/map-ph.png",
     "/images/white-map-ph.png"
   );
+  const verseColor = useColorModeValue("gray.700", "gray.300");
 
-  const textVariants = [
-    "A fellowship of believers devoted to exalting Jesus Christ, preaching His Word, and transforming lives through worship, discipleship, and service.",
-    "Together, we lift His name higher in every nation and glorify Him through unity and love.",
-    "Empowered by the Spirit, we reach out to the world with faith, hope, and compassion.",
-    "Our mission: to shine the light of Christ and make His presence known in every generation.",
-  ];
-
-  const [index, setIndex] = useState(0);
-
+  // Fetch content from database
   useEffect(() => {
+    fetch("/api/admin/homepage")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching homepage content:", err));
+  }, []);
+
+  // Rotate through texts
+  useEffect(() => {
+    if (!content?.mainRotatingTexts?.length) return;
+
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % textVariants.length);
+      setIndex((prev) => (prev + 1) % content.mainRotatingTexts.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [textVariants.length]);
+  }, [content?.mainRotatingTexts?.length]);
+
+  // Show loading state
+  if (!content) {
+    return (
+      <Flex justify="center" align="center" minH="400px">
+        <Text>Loading...</Text>
+      </Flex>
+    );
+  }
 
   return (
     <Flex
@@ -99,7 +114,7 @@ export default function IntroSection() {
                 ease: [0.25, 0.1, 0.25, 1.0],
               }}
             >
-              {textVariants[index]}
+              {content.mainRotatingTexts?.[index] || ""}
             </MotionText>
           </AnimatePresence>
         </Box>
@@ -112,7 +127,7 @@ export default function IntroSection() {
             bgGradient="linear(to-r, silver, gray.400, black)"
             bgClip="text"
           >
-            LJIM – Philippines
+            {content.philippinesTitle || "LJIM – Philippines"}
           </Heading>
 
           <Text
@@ -121,23 +136,19 @@ export default function IntroSection() {
             lineHeight="1.8"
             fontFamily="monospace"
           >
-            In the heart of the Philippines, Lift Jesus International Ministries
-            stands as a beacon of hope — spreading the Gospel, building
-            communities of faith, and raising generations of believers devoted
-            to Christ. From city streets to remote villages, the message of His
-            love continues to transform lives.
+            {content.philippinesDescription ||
+              "In the heart of the Philippines, Lift Jesus International Ministries stands as a beacon of hope — spreading the Gospel, building communities of faith, and raising generations of believers devoted to Christ."}
           </Text>
 
           <Text
             fontStyle="italic"
             fontFamily="monospace"
-            color={useColorModeValue("gray.700", "gray.300")}
+            color={verseColor}
             fontSize="sm"
             mt={2}
           >
-            “From him the whole body, joined and held together by every
-            supporting ligament, grows and builds itself up in love, as each
-            part does its work.” — <b>Ephesians 4:16, NIV</b>
+            {content.philippinesBibleVerse ||
+              '"From him the whole body, joined and held together by every supporting ligament, grows and builds itself up in love, as each part does its work." — Ephesians 4:16, NIV'}
           </Text>
         </VStack>
       </VStack>

@@ -27,33 +27,46 @@ const bgShift = keyframes`
   100% { background-position: 0% 0%; }
 `;
 
-const ministries = [
-  { name: "Worship", tagline: "Lift God in Spirit and Truth" },
-  { name: "Word", tagline: "Teaching the Living Word" },
-  { name: "Outreach", tagline: "Serving with Love and Compassion" },
-  { name: "Discipleship", tagline: "Growing Strong in Faith" },
-  { name: "Prayer", tagline: "Interceding for the Nations" },
-  { name: "Youth", tagline: "Empowering the Next Generation" },
-  { name: "Media", tagline: "Proclaiming the Gospel Creatively" },
-  { name: "Community", tagline: "Building Faith and Family Together" },
-];
-
 export default function MinistriesSection() {
+  const [content, setContent] = React.useState(null);
+
   const subText = useColorModeValue("gray.600", "gray.400");
   const glassBg = useColorModeValue(
     "rgba(255,255,255,0.85)",
     "rgba(0,0,0,0.45)"
   );
   const borderColor = useColorModeValue("gray.200", "gray.700");
+  const verseColor = useColorModeValue("gray.700", "gray.300");
+  const bgGradient = useColorModeValue(
+    "linear(to-b, gray.100, white)",
+    "linear(to-b, gray.800, black)"
+  );
+
+  // Fetch content from database
+  React.useEffect(() => {
+    fetch("/api/admin/homepage")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching homepage content:", err));
+  }, []);
+
+  // Get ministries from content or use defaults
+  const ministries = content?.ministries || [];
+
+  // Show loading state
+  if (!content) {
+    return (
+      <Box w="100vw" py={24} textAlign="center">
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
       w="100vw"
       py={{ base: 16, md: 24 }}
-      bgGradient={useColorModeValue(
-        "linear(to-b, gray.100, white)",
-        "linear(to-b, gray.800, black)"
-      )}
+      bgGradient={bgGradient}
       backgroundSize="400% 400%"
       animation={`${bgShift} 20s ease infinite`}
       textAlign="center"
@@ -70,8 +83,8 @@ export default function MinistriesSection() {
           Our Ministries
         </Heading>
         <Text fontSize="lg" color={subText} maxW="3xl">
-          Each ministry is a reflection of God’s heart — reaching, teaching, and
-          transforming lives through His Word and Spirit.
+          Each ministry is a reflection of God&apos;s heart — reaching,
+          teaching, and transforming lives through His Word and Spirit.
         </Text>
         <Divider
           w="80px"
@@ -94,7 +107,7 @@ export default function MinistriesSection() {
       >
         {ministries.map((m, index) => (
           <MotionBox
-            key={m.name}
+            key={index}
             bg={glassBg}
             borderWidth="1px"
             borderColor={borderColor}
@@ -118,10 +131,10 @@ export default function MinistriesSection() {
               fontFamily="monospace"
               animation={`${shimmer} 3s linear infinite`}
             >
-              {m.name}
+              {m.title}
             </Text>
             <Text fontSize="md" color={subText}>
-              {m.tagline}
+              {m.description}
             </Text>
           </MotionBox>
         ))}
@@ -133,16 +146,14 @@ export default function MinistriesSection() {
           fontSize="lg"
           fontStyle="italic"
           fontFamily={"monospace"}
-          color={useColorModeValue("gray.700", "gray.300")}
+          color={verseColor}
           maxW="3xl"
         >
-          “Each of you should use whatever gift you have received to serve
-          others, as faithful stewards of God’s grace in its various forms.”
+          &ldquo;Each of you should use whatever gift you have received to serve
+          others, as faithful stewards of God&apos;s grace in its various
+          forms.&rdquo;
         </Text>
-        <Text
-          fontWeight="bold"
-          color={useColorModeValue("gray.800", "gray.400")}
-        >
+        <Text fontWeight="bold" color={verseColor}>
           — 1 Peter 4:10 (NIV)
         </Text>
       </VStack>

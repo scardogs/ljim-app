@@ -18,6 +18,7 @@ import {
 export default function MissionValuesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [content, setContent] = useState(null);
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
@@ -26,71 +27,8 @@ export default function MissionValuesSection() {
     "rgba(0,0,0,0.45)"
   );
   const borderColor = useColorModeValue("gray.200", "gray.700");
-
-  const cards = [
-    {
-      icon: StarIcon,
-      title: "Excellence in Faith",
-      description:
-        "We strive for spiritual excellence, encouraging every member to grow deeper in their relationship with God through prayer, study, and authentic worship.",
-      color: "gray.600",
-    },
-    {
-      icon: SunIcon,
-      title: "Light in Darkness",
-      description:
-        "We are called to be the light of the world, bringing hope, healing, and transformation to those who are lost, broken, and searching for truth.",
-      color: "gray.700",
-    },
-    {
-      icon: ChatIcon,
-      title: "Community & Fellowship",
-      description:
-        "We believe in the power of genuine Christian community where believers support, encourage, and challenge one another to live out their faith daily.",
-      color: "gray.600",
-    },
-    {
-      icon: CheckCircleIcon,
-      title: "Faithful Stewardship",
-      description:
-        "We are committed to using our time, talents, and resources wisely to advance God's kingdom and serve those in need with integrity and love.",
-      color: "gray.700",
-    },
-  ];
-
-  const nextSlide = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setCurrentIndex((prev) => (prev + 1) % cards.length);
-      setTimeout(() => setIsAnimating(false), 500);
-    }
-  };
-
-  const prevSlide = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
-      setTimeout(() => setIsAnimating(false), 500);
-    }
-  };
-
-  useEffect(() => {
-    const interval = setInterval(nextSlide, 2500);
-    return () => clearInterval(interval);
-  }, [isAnimating]);
-
-  const currentCard = cards[currentIndex];
-  const IconComponent = currentCard.icon;
-
-  return (
-    <Box
-      w="100vw"
-      h="50vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      bg={useColorModeValue(
-        `
+  const bgPattern = useColorModeValue(
+    `
     repeating-linear-gradient(
       0deg,
       white,
@@ -106,8 +44,76 @@ export default function MissionValuesSection() {
       black 10px
     )
   `,
-        "black" // Plain dark background instead of lines
-      )}
+    "black"
+  );
+
+  // Fetch content from database
+  useEffect(() => {
+    fetch("/api/admin/homepage")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching homepage content:", err));
+  }, []);
+
+  // Icon mapping
+  const iconMap = {
+    StarIcon: StarIcon,
+    SunIcon: SunIcon,
+    ChatIcon: ChatIcon,
+    CheckCircleIcon: CheckCircleIcon,
+  };
+
+  // Get cards from content or use defaults
+  const cards = content?.missionValues || [];
+
+  const nextSlide = React.useCallback(() => {
+    if (!isAnimating && cards.length > 0) {
+      setIsAnimating(true);
+      setCurrentIndex((prev) => (prev + 1) % cards.length);
+      setTimeout(() => setIsAnimating(false), 500);
+    }
+  }, [isAnimating, cards.length]);
+
+  const prevSlide = () => {
+    if (!isAnimating && cards.length > 0) {
+      setIsAnimating(true);
+      setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
+      setTimeout(() => setIsAnimating(false), 500);
+    }
+  };
+
+  useEffect(() => {
+    if (cards.length === 0) return;
+    const interval = setInterval(nextSlide, 2500);
+    return () => clearInterval(interval);
+  }, [nextSlide, cards.length]);
+
+  // Show loading state
+  if (!content || cards.length === 0) {
+    return (
+      <Box
+        w="100vw"
+        h="50vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
+
+  const currentCard = cards[currentIndex];
+  const IconComponent = iconMap[currentCard.icon] || StarIcon;
+
+  return (
+    <Box
+      w="100vw"
+      h="50vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      bg={bgPattern}
       p={4}
       position="relative"
     >

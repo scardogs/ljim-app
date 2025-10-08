@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Text,
@@ -28,45 +28,45 @@ const bgShift = keyframes`
   100% { background-position: 0% 0%; }
 `;
 
-const singers = [
-  {
-    name: "Joshua",
-    tagline: "Leading hearts into worship through powerful praise.",
-    image: "/images/joshua.jpg",
-  },
-  {
-    name: "Bea",
-    tagline: "Singing with grace and joy to glorify the King.",
-    image: "/images/bea.jpg",
-  },
-  {
-    name: "Hannah",
-    tagline: "Lifting her voice to inspire faith and devotion.",
-    image: "/images/hannah.jpg",
-  },
-  {
-    name: "Azaleah",
-    tagline: "Bringing melodies that touch the soul and uplift spirits.",
-    image: "/images/azaleah.jpg",
-  },
-];
-
 export default function SingersSection() {
+  const [content, setContent] = useState(null);
+
   const subText = useColorModeValue("gray.600", "gray.400");
   const cardBg = useColorModeValue(
     "rgba(255, 255, 255, 0.7)",
     "rgba(0, 0, 0, 0.45)"
   );
   const verseColor = useColorModeValue("gray.700", "gray.300");
+  const bgGradient = useColorModeValue(
+    "linear(to-b, gray.50, white)",
+    "linear(to-b, gray.900, black)"
+  );
+
+  // Fetch content from database
+  useEffect(() => {
+    fetch("/api/admin/homepage")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching homepage content:", err));
+  }, []);
+
+  // Get singers from content or use defaults
+  const singers = content?.singers || [];
+
+  // Show loading state
+  if (!content) {
+    return (
+      <Box w="100vw" py={24} textAlign="center">
+        <Text>Loading...</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
       w="100vw"
       py={{ base: 20, md: 28 }}
-      bgGradient={useColorModeValue(
-        "linear(to-b, gray.50, white)",
-        "linear(to-b, gray.900, black)"
-      )}
+      bgGradient={bgGradient}
       backgroundSize="400% 400%"
       animation={`${bgShift} 30s ease infinite`}
     >
@@ -80,11 +80,11 @@ export default function SingersSection() {
           bgClip="text"
           animation={`${shimmer} 6s ease-in-out infinite`}
         >
-          Worship Leaders
+          {content.singersTitle || "Worship Leaders"}
         </Heading>
         <Text fontSize="lg" fontFamily="monospace" color={subText} maxW="3xl">
-          Voices united in harmony — sharing their passion and faith through
-          music that touches the heart.
+          {content.singersDescription ||
+            "Voices united in harmony — sharing their passion and faith through music that touches the heart."}
         </Text>
         <Divider
           w="100px"
@@ -171,10 +171,8 @@ export default function SingersSection() {
           maxW="3xl"
           px={6}
         >
-          “Sing to Him, sing praise to Him; tell of all His wonderful acts.”
-        </Text>
-        <Text fontWeight="bold" color={verseColor}>
-          — 1 Chronicles 16:9 (NIV)
+          {content.singersBibleVerse ||
+            '"Sing to Him, sing praise to Him; tell of all His wonderful acts." — 1 Chronicles 16:9 (NIV)'}
         </Text>
       </VStack>
     </Box>

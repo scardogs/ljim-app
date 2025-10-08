@@ -23,6 +23,7 @@ import {
   MoonIcon,
   SunIcon,
   ChevronDownIcon,
+  LockIcon,
 } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 
@@ -31,6 +32,13 @@ export default function Navbar() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication status
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    setIsAuthenticated(!!token);
+  }, []);
 
   // Scroll effect
   useEffect(() => {
@@ -194,6 +202,31 @@ export default function Navbar() {
               Give
             </Button>
 
+            {!isAuthenticated ? (
+              <Button
+                size="sm"
+                variant="solid"
+                bg={accent}
+                color="white"
+                leftIcon={<LockIcon />}
+                _hover={{ bg: "gray.600" }}
+                onClick={() => router.push("/login")}
+              >
+                Login
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant="solid"
+                bg="green.500"
+                color="white"
+                _hover={{ bg: "green.600" }}
+                onClick={() => router.push("/admin")}
+              >
+                Admin
+              </Button>
+            )}
+
             <IconButton
               aria-label="Toggle color mode"
               icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -281,6 +314,46 @@ export default function Navbar() {
               >
                 Give
               </Button>
+
+              {!isAuthenticated ? (
+                <Button
+                  w="full"
+                  variant="solid"
+                  bg={accent}
+                  color="white"
+                  leftIcon={<LockIcon />}
+                  _hover={{ bg: "gray.600" }}
+                  onClick={() => {
+                    router.push("/login");
+                    onClose();
+                  }}
+                >
+                  Login
+                </Button>
+              ) : (
+                <Button
+                  w="full"
+                  variant="solid"
+                  bg="green.500"
+                  color="white"
+                  _hover={{ bg: "green.600" }}
+                  onClick={() => {
+                    router.push("/admin");
+                    onClose();
+                  }}
+                >
+                  Admin
+                </Button>
+              )}
+
+              <IconButton
+                aria-label="Toggle color mode"
+                icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
+                variant="ghost"
+                color={color}
+                w="full"
+              />
             </VStack>
           </DrawerBody>
         </DrawerContent>

@@ -4,19 +4,48 @@ import { useRouter } from "next/router";
 
 export default function HeroSection() {
   const router = useRouter();
-  const fullText =
-    "Exalting the name of Jesus, preaching the Word, and transforming lives through worship, discipleship, and outreach.";
+  const [content, setContent] = useState(null);
   const [displayedText, setDisplayedText] = useState("");
 
+  // Fetch content from database
   useEffect(() => {
+    fetch("/api/admin/homepage")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching homepage content:", err));
+  }, []);
+
+  // Typing animation effect
+  useEffect(() => {
+    if (!content?.heroSubtitle) return;
+
     let index = 0;
+    setDisplayedText(""); // Reset text
     const interval = setInterval(() => {
-      setDisplayedText(fullText.slice(0, index));
+      setDisplayedText(content.heroSubtitle.slice(0, index));
       index++;
-      if (index > fullText.length) clearInterval(interval);
+      if (index > content.heroSubtitle.length) clearInterval(interval);
     }, 40); // typing speed (ms per letter)
     return () => clearInterval(interval);
-  }, []);
+  }, [content?.heroSubtitle]);
+
+  // Show loading state while fetching
+  if (!content) {
+    return (
+      <Box
+        position="relative"
+        width="100%"
+        height="calc(100vh - 80px)"
+        mt="80px"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bg="gray.900"
+      >
+        <Text color="white">Loading...</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -24,7 +53,7 @@ export default function HeroSection() {
       width="100%"
       height="calc(100vh - 80px)" // full height minus navbar
       mt="80px"
-      bgImage="url('/images/Untitled design.png')" // ✅ correct image path
+      bgImage={`url('${content.heroImage || "/images/Untitled design.png"}')`}
       bgPosition="center"
       bgRepeat="no-repeat"
       bgSize="cover"
@@ -54,7 +83,7 @@ export default function HeroSection() {
             fontWeight="bold"
             textShadow="2px 2px 10px rgba(0,0,0,0.8)"
           >
-            Lift Jesus International Ministries
+            {content.heroTitle || "Lift Jesus International Ministries"}
           </Heading>
         </Fade>
 
@@ -86,7 +115,7 @@ export default function HeroSection() {
           _hover={{ bg: "gray.200" }}
           onClick={() => router.push("/about")}
         >
-          Learn More
+          {content.heroButtonText || "Learn More"}
         </Button>
       </VStack>
     </Box>
