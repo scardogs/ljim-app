@@ -154,7 +154,7 @@ export default function HomepageContentEditor() {
   if (isLoading) {
     return (
       <Center p={10}>
-        <Spinner size="xl" color="blue.500" />
+        <Spinner size="xl" color="gray.600" />
       </Center>
     );
   }
@@ -173,7 +173,11 @@ export default function HomepageContentEditor() {
         <HStack justify="space-between">
           <Heading size="lg">Homepage Content Editor</Heading>
           <Button
-            colorScheme="blue"
+            bg={useColorModeValue("gray.900", "gray.100")}
+            color={useColorModeValue("white", "gray.900")}
+            _hover={{
+              bg: useColorModeValue("gray.800", "gray.200"),
+            }}
             onClick={handleSave}
             isLoading={isSaving}
             loadingText="Saving..."
@@ -285,6 +289,11 @@ export default function HomepageContentEditor() {
                       leftIcon={<AddIcon />}
                       onClick={() => addArrayItem("mainRotatingTexts", "")}
                       variant="outline"
+                      borderColor={useColorModeValue("gray.700", "gray.300")}
+                      color={useColorModeValue("gray.700", "gray.300")}
+                      _hover={{
+                        bg: useColorModeValue("gray.100", "gray.700"),
+                      }}
                       size="sm"
                     >
                       Add Rotating Text
@@ -413,7 +422,11 @@ export default function HomepageContentEditor() {
                     })
                   }
                   variant="outline"
-                  colorScheme="blue"
+                  borderColor={useColorModeValue("gray.700", "gray.300")}
+                  color={useColorModeValue("gray.700", "gray.300")}
+                  _hover={{
+                    bg: useColorModeValue("gray.100", "gray.700"),
+                  }}
                 >
                   Add Mission/Value Card
                 </Button>
@@ -495,7 +508,11 @@ export default function HomepageContentEditor() {
                     })
                   }
                   variant="outline"
-                  colorScheme="blue"
+                  borderColor={useColorModeValue("gray.700", "gray.300")}
+                  color={useColorModeValue("gray.700", "gray.300")}
+                  _hover={{
+                    bg: useColorModeValue("gray.100", "gray.700"),
+                  }}
                 >
                   Add Ministry
                 </Button>
@@ -651,7 +668,11 @@ export default function HomepageContentEditor() {
                         })
                       }
                       variant="outline"
-                      colorScheme="blue"
+                      borderColor={useColorModeValue("gray.700", "gray.300")}
+                      color={useColorModeValue("gray.700", "gray.300")}
+                      _hover={{
+                        bg: useColorModeValue("gray.100", "gray.700"),
+                      }}
                     >
                       Add Singer
                     </Button>
@@ -682,7 +703,11 @@ export default function HomepageContentEditor() {
           borderColor={borderColor}
         >
           <Button
-            colorScheme="blue"
+            bg={useColorModeValue("gray.900", "gray.100")}
+            color={useColorModeValue("white", "gray.900")}
+            _hover={{
+              bg: useColorModeValue("gray.800", "gray.200"),
+            }}
             onClick={handleSave}
             isLoading={isSaving}
             loadingText="Saving..."

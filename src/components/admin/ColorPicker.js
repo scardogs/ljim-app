@@ -250,7 +250,7 @@ export default function ColorPicker({ label, value, onChange }) {
           <PopoverArrow />
           <PopoverCloseButton />
           <PopoverBody p={4}>
-            <Tabs variant="enclosed" colorScheme="blue">
+            <Tabs variant="enclosed" colorScheme="gray">
               <TabList>
                 <Tab>Gray Scale</Tab>
                 <Tab>Chakra Colors</Tab>
@@ -309,10 +309,10 @@ export default function ColorPicker({ label, value, onChange }) {
                           borderRadius="md"
                           borderWidth="2px"
                           borderColor={
-                            grayShade === shade ? "blue.500" : "transparent"
+                            grayShade === shade ? "gray.900" : "transparent"
                           }
                           _hover={{
-                            borderColor: "blue.300",
+                            borderColor: "gray.600",
                             transform: "scale(1.05)",
                           }}
                           transition="all 0.2s"
@@ -372,10 +372,10 @@ export default function ColorPicker({ label, value, onChange }) {
                                 borderRadius="sm"
                                 borderWidth="2px"
                                 borderColor={
-                                  value === color ? "blue.500" : "transparent"
+                                  value === color ? "gray.900" : "transparent"
                                 }
                                 _hover={{
-                                  borderColor: "blue.300",
+                                  borderColor: "gray.600",
                                   transform: "scale(1.1)",
                                 }}
                                 transition="all 0.2s"
@@ -403,7 +403,11 @@ export default function ColorPicker({ label, value, onChange }) {
                           maxLength={7}
                         />
                         <Button
-                          colorScheme="blue"
+                          bg={useColorModeValue("gray.900", "gray.100")}
+                          color={useColorModeValue("white", "gray.900")}
+                          _hover={{
+                            bg: useColorModeValue("gray.800", "gray.200"),
+                          }}
                           onClick={() => handleHexChange(hexInput)}
                           isDisabled={!hexInput}
                         >
@@ -431,10 +435,10 @@ export default function ColorPicker({ label, value, onChange }) {
                             borderRadius="md"
                             borderWidth="2px"
                             borderColor={
-                              value === color ? "blue.500" : "gray.300"
+                              value === color ? "gray.900" : "gray.300"
                             }
                             _hover={{
-                              borderColor: "blue.400",
+                              borderColor: "gray.600",
                               transform: "scale(1.1)",
                             }}
                             transition="all 0.2s"

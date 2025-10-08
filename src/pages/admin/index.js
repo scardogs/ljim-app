@@ -124,7 +124,7 @@ export default function AdminDashboard() {
   if (isLoading) {
     return (
       <Center h="100vh" bg={bgColor}>
-        <Spinner size="xl" color="blue.500" />
+        <Spinner size="xl" color="gray.600" />
       </Center>
     );
   }
@@ -143,7 +143,11 @@ export default function AdminDashboard() {
             key={item.id}
             leftIcon={<Box as={item.icon} />}
             variant={currentSection === item.id ? "solid" : "ghost"}
-            colorScheme={currentSection === item.id ? "blue" : "gray"}
+            bg={currentSection === item.id ? "gray.700" : "transparent"}
+            color={currentSection === item.id ? "white" : textColor}
+            _hover={{
+              bg: currentSection === item.id ? "gray.600" : "gray.100",
+            }}
             justifyContent="flex-start"
             onClick={() => {
               setCurrentSection(item.id);

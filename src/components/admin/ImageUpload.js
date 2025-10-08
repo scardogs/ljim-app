@@ -12,6 +12,7 @@ import {
   useToast,
   IconButton,
   Spinner,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { AttachmentIcon, DeleteIcon, CheckIcon } from "@chakra-ui/icons";
 
@@ -223,7 +224,11 @@ export default function ImageUpload({ label, value, onChange, placeholder }) {
             isLoading={isUploading}
             loadingText="Uploading..."
             variant="outline"
-            colorScheme="blue"
+            borderColor={useColorModeValue("gray.700", "gray.300")}
+            color={useColorModeValue("gray.700", "gray.300")}
+            _hover={{
+              bg: useColorModeValue("gray.100", "gray.700"),
+            }}
             size="sm"
           >
             Upload New Image

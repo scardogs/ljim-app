@@ -31,6 +31,8 @@ export default function Login() {
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.900", "white");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const subTextColor = useColorModeValue("gray.600", "gray.400");
 
   useEffect(() => {
     // Redirect if already logged in
@@ -104,13 +106,13 @@ export default function Login() {
             borderRadius="xl"
             boxShadow="2xl"
             border="1px solid"
-            borderColor={useColorModeValue("gray.200", "gray.700")}
+            borderColor={borderColor}
           >
             <VStack spacing={6}>
               <Heading size="xl" color={textColor}>
                 Admin Login
               </Heading>
-              <Text color={useColorModeValue("gray.600", "gray.400")}>
+              <Text color={subTextColor}>
                 Sign in to access the admin dashboard
               </Text>
 
@@ -152,7 +154,11 @@ export default function Login() {
 
                   <Button
                     type="submit"
-                    colorScheme="blue"
+                    bg={useColorModeValue("gray.900", "gray.100")}
+                    color={useColorModeValue("white", "gray.900")}
+                    _hover={{
+                      bg: useColorModeValue("gray.800", "gray.200"),
+                    }}
                     size="lg"
                     width="full"
                     isLoading={isLoading}
@@ -163,12 +169,15 @@ export default function Login() {
                 </VStack>
               </form>
 
-              <Text
-                fontSize="sm"
-                color={useColorModeValue("gray.600", "gray.400")}
-              >
+              <Text fontSize="sm" color={subTextColor}>
                 Need an account?{" "}
-                <Link color="blue.500" onClick={() => router.push("/register")}>
+                <Link
+                  color={textColor}
+                  fontWeight="bold"
+                  textDecoration="underline"
+                  onClick={() => router.push("/register")}
+                  _hover={{ color: useColorModeValue("gray.700", "gray.300") }}
+                >
                   Register here
                 </Link>
               </Text>
