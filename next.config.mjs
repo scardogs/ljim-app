@@ -9,12 +9,11 @@ const nextConfig = {
       },
     ],
   },
-  // Increase API timeouts for file uploads
-  serverActions: {
-    bodySizeLimit: "10mb",
-  },
   experimental: {
     serverMinification: false,
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
   },
 };
 

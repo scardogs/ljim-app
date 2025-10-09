@@ -27,6 +27,8 @@ const TestCloudinaryPage = () => {
 
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const textColor = useColorModeValue("gray.800", "gray.100");
+  const boxBg = useColorModeValue("white", "gray.800");
+  const boxBorder = useColorModeValue("gray.200", "gray.700");
 
   const handleUploadSuccess = (imageData) => {
     setUploadedImage(imageData);
@@ -109,10 +111,10 @@ const TestCloudinaryPage = () => {
                   </Heading>
                   <Box
                     p={4}
-                    bg={useColorModeValue("white", "gray.800")}
+                    bg={boxBg}
                     borderRadius="md"
                     border="1px solid"
-                    borderColor={useColorModeValue("gray.200", "gray.700")}
+                    borderColor={boxBorder}
                   >
                     <CldImage
                       src={uploadedImage.publicId}

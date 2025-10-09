@@ -107,6 +107,11 @@ const BibleSearch = () => {
   const badgeColor = useColorModeValue("gray.700", "gray.300");
   const badgeHoverBg = useColorModeValue("gray.200", "gray.600");
   const resultCardBorder = useColorModeValue("gray.400", "gray.500");
+  const iconBoxBg = useColorModeValue("gray.100", "gray.800");
+  const errorBg = useColorModeValue("red.50", "red.900");
+  const errorColor = useColorModeValue("red.800", "red.200");
+  const copyButtonBg = useColorModeValue("gray.100", "gray.700");
+  const copyButtonHoverBg = useColorModeValue("gray.200", "gray.600");
 
   return (
     <Box py={16} bg={bgColor}>
@@ -116,7 +121,7 @@ const BibleSearch = () => {
             <Box
               p={3}
               borderRadius="xl"
-              bg={useColorModeValue("gray.100", "gray.800")}
+              bg={iconBoxBg}
               border="2px solid"
               borderColor={cardBorder}
             >
@@ -236,8 +241,8 @@ const BibleSearch = () => {
             <Alert
               status="error"
               borderRadius="md"
-              bg={useColorModeValue("red.50", "red.900")}
-              color={useColorModeValue("red.800", "red.200")}
+              bg={errorBg}
+              color={errorColor}
               borderLeft="4px solid"
               borderColor="red.500"
             >
@@ -270,10 +275,10 @@ const BibleSearch = () => {
                       <IconButton
                         icon={<FaCopy />}
                         onClick={handleCopy}
-                        bg={useColorModeValue("gray.100", "gray.700")}
+                        bg={copyButtonBg}
                         color={accentColor}
                         _hover={{
-                          bg: useColorModeValue("gray.200", "gray.600"),
+                          bg: copyButtonHoverBg,
                         }}
                         variant="ghost"
                         aria-label="Copy verse"

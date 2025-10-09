@@ -43,11 +43,18 @@ const FloatingVerseWidget = () => {
   const accentColor = useColorModeValue("#A0A0A0", "#C0C0C0");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const iconBg = useColorModeValue("gray.100", "gray.800");
+  const floatingButtonBorder = useColorModeValue("gray.300", "gray.600");
+  const verseBoxBg = useColorModeValue(
+    "rgba(0, 0, 0, 0.02)",
+    "rgba(255, 255, 255, 0.05)"
+  );
+  const actionButtonHoverBg = useColorModeValue("gray.200", "gray.700");
 
   useEffect(() => {
     if (isOpen && !verse) {
       fetchDailyVerse();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const fetchDailyVerse = async () => {
@@ -142,7 +149,7 @@ const FloatingVerseWidget = () => {
           transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
           aria-label="Open Verse of the Day"
           border="2px solid"
-          borderColor={useColorModeValue("gray.300", "gray.600")}
+          borderColor={floatingButtonBorder}
         />
       </Tooltip>
 
@@ -208,10 +215,7 @@ const FloatingVerseWidget = () => {
                 <Box
                   p={6}
                   borderRadius="xl"
-                  bg={useColorModeValue(
-                    "rgba(0, 0, 0, 0.02)",
-                    "rgba(255, 255, 255, 0.05)"
-                  )}
+                  bg={verseBoxBg}
                   border="1px solid"
                   borderColor={borderColor}
                   w="100%"
@@ -268,7 +272,7 @@ const FloatingVerseWidget = () => {
                     border="1px solid"
                     borderColor={borderColor}
                     _hover={{
-                      bg: useColorModeValue("gray.200", "gray.700"),
+                      bg: actionButtonHoverBg,
                       borderColor: accentColor,
                     }}
                     isLoading={loading}
@@ -287,7 +291,7 @@ const FloatingVerseWidget = () => {
                       border="1px solid"
                       borderColor={borderColor}
                       _hover={{
-                        bg: useColorModeValue("gray.200", "gray.700"),
+                        bg: actionButtonHoverBg,
                         borderColor: accentColor,
                       }}
                       flex={1}
@@ -304,7 +308,7 @@ const FloatingVerseWidget = () => {
                       border="1px solid"
                       borderColor={borderColor}
                       _hover={{
-                        bg: useColorModeValue("gray.200", "gray.700"),
+                        bg: actionButtonHoverBg,
                         borderColor: accentColor,
                       }}
                       flex={1}

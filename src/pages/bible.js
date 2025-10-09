@@ -43,6 +43,23 @@ const BiblePage = () => {
     "linear-gradient(135deg, #000000 0%, #1a1a1a 100%)"
   );
   const accentColor = useColorModeValue("#A0A0A0", "#C0C0C0");
+  const decorativeBlob1Bg = useColorModeValue(
+    "rgba(160, 160, 160, 0.1)",
+    "rgba(192, 192, 192, 0.05)"
+  );
+  const decorativeBlob2Bg = useColorModeValue(
+    "rgba(192, 192, 192, 0.08)",
+    "rgba(160, 160, 160, 0.03)"
+  );
+  const heroBadgeBg = useColorModeValue(
+    "rgba(255, 255, 255, 0.6)",
+    "rgba(255, 255, 255, 0.1)"
+  );
+  const heroBadgeBorder = useColorModeValue(
+    "rgba(160, 160, 160, 0.3)",
+    "rgba(192, 192, 192, 0.2)"
+  );
+  const featureIconBorder = useColorModeValue("gray.300", "gray.600");
 
   const features = [
     {
@@ -90,10 +107,7 @@ const BiblePage = () => {
           width="300px"
           height="300px"
           borderRadius="full"
-          bg={useColorModeValue(
-            "rgba(160, 160, 160, 0.1)",
-            "rgba(192, 192, 192, 0.05)"
-          )}
+          bg={decorativeBlob1Bg}
           filter="blur(80px)"
         />
         <Box
@@ -103,10 +117,7 @@ const BiblePage = () => {
           width="400px"
           height="400px"
           borderRadius="full"
-          bg={useColorModeValue(
-            "rgba(192, 192, 192, 0.08)",
-            "rgba(160, 160, 160, 0.03)"
-          )}
+          bg={decorativeBlob2Bg}
           filter="blur(100px)"
         />
 
@@ -117,16 +128,10 @@ const BiblePage = () => {
               px={4}
               py={2}
               borderRadius="full"
-              bg={useColorModeValue(
-                "rgba(255, 255, 255, 0.6)",
-                "rgba(255, 255, 255, 0.1)"
-              )}
+              bg={heroBadgeBg}
               backdropFilter="blur(10px)"
               border="1px solid"
-              borderColor={useColorModeValue(
-                "rgba(160, 160, 160, 0.3)",
-                "rgba(192, 192, 192, 0.2)"
-              )}
+              borderColor={heroBadgeBorder}
             >
               <Text
                 fontSize="sm"
@@ -228,7 +233,7 @@ const BiblePage = () => {
                         borderRadius="full"
                         bg={iconBg}
                         border="2px solid"
-                        borderColor={useColorModeValue("gray.300", "gray.600")}
+                        borderColor={featureIconBorder}
                         transition="all 0.3s"
                         _groupHover={{
                           borderColor: accentColor,

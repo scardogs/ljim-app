@@ -112,6 +112,18 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const iconBg = useColorModeValue("gray.100", "gray.800");
   const spinnerColor = useColorModeValue("gray.600", "gray.400");
+  const buttonBg = useColorModeValue("gray.800", "gray.200");
+  const buttonColor = useColorModeValue("white", "gray.900");
+  const buttonHoverBg = useColorModeValue("gray.700", "gray.300");
+  const decorativeBlob1Bg = useColorModeValue(
+    "rgba(160, 160, 160, 0.08)",
+    "rgba(192, 192, 192, 0.05)"
+  );
+  const decorativeBlob2Bg = useColorModeValue(
+    "rgba(192, 192, 192, 0.06)",
+    "rgba(160, 160, 160, 0.04)"
+  );
+  const iconButtonHoverBg = useColorModeValue("gray.200", "gray.700");
 
   if (loading) {
     return (
@@ -159,10 +171,10 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
               </Text>
               <Button
                 onClick={fetchDailyVerse}
-                bg={useColorModeValue("gray.800", "gray.200")}
-                color={useColorModeValue("white", "gray.900")}
+                bg={buttonBg}
+                color={buttonColor}
                 _hover={{
-                  bg: useColorModeValue("gray.700", "gray.300"),
+                  bg: buttonHoverBg,
                 }}
                 size="md"
               >
@@ -197,10 +209,7 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
               width="150px"
               height="150px"
               borderRadius="full"
-              bg={useColorModeValue(
-                "rgba(160, 160, 160, 0.08)",
-                "rgba(192, 192, 192, 0.05)"
-              )}
+              bg={decorativeBlob1Bg}
               filter="blur(40px)"
             />
             <Box
@@ -210,10 +219,7 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
               width="150px"
               height="150px"
               borderRadius="full"
-              bg={useColorModeValue(
-                "rgba(192, 192, 192, 0.06)",
-                "rgba(160, 160, 160, 0.04)"
-              )}
+              bg={decorativeBlob2Bg}
               filter="blur(40px)"
             />
 
@@ -298,7 +304,7 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
                         border="1px solid"
                         borderColor={borderColor}
                         _hover={{
-                          bg: useColorModeValue("gray.200", "gray.700"),
+                          bg: iconButtonHoverBg,
                           borderColor: accentColor,
                           transform: "translateY(-2px)",
                         }}
@@ -318,7 +324,7 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
                         border="1px solid"
                         borderColor={borderColor}
                         _hover={{
-                          bg: useColorModeValue("gray.200", "gray.700"),
+                          bg: iconButtonHoverBg,
                           borderColor: accentColor,
                           transform: "translateY(-2px)",
                         }}
@@ -337,7 +343,7 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
                         border="1px solid"
                         borderColor={borderColor}
                         _hover={{
-                          bg: useColorModeValue("gray.200", "gray.700"),
+                          bg: iconButtonHoverBg,
                           borderColor: accentColor,
                           transform: "translateY(-2px)",
                         }}

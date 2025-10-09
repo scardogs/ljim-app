@@ -42,6 +42,9 @@ const CloudinaryImageUpload = ({
   const cardBg = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const accentColor = useColorModeValue("#A0A0A0", "#C0C0C0");
+  const buttonBg = useColorModeValue("gray.800", "gray.200");
+  const buttonColor = useColorModeValue("white", "gray.900");
+  const buttonHoverBg = useColorModeValue("gray.700", "gray.300");
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -296,10 +299,10 @@ const CloudinaryImageUpload = ({
               <Button
                 leftIcon={<FaUpload />}
                 onClick={handleUpload}
-                bg={useColorModeValue("gray.800", "gray.200")}
-                color={useColorModeValue("white", "gray.900")}
+                bg={buttonBg}
+                color={buttonColor}
                 _hover={{
-                  bg: useColorModeValue("gray.700", "gray.300"),
+                  bg: buttonHoverBg,
                 }}
                 flex={1}
               >
