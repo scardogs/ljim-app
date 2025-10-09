@@ -1,6 +1,7 @@
 import connectToDatabase from "../../../../../lib/mongodb";
 import RegistrationRequest from "../../../../../../models/RegistrationRequest";
 import { verifyToken } from "../../../../../utils/auth";
+import { sendApprovalEmail } from "../../../../../utils/email";
 import crypto from "crypto";
 
 export default async function handler(req, res) {
@@ -52,13 +53,34 @@ export default async function handler(req, res) {
       req.headers["x-forwarded-host"] || req.headers.host || "localhost:3000";
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
 
-    // TODO: Send email notification with approval link
     const approvalLink = `${baseUrl}/register/complete?token=${approvalToken}`;
+
+    // Send email notification with approval link
+    let emailSent = false;
+    let emailError = null;
+
+    try {
+      await sendApprovalEmail({
+        to: request.email,
+        name: request.name,
+        approvalLink,
+      });
+      emailSent = true;
+      console.log(`Approval email sent to ${request.email}`);
+    } catch (error) {
+      emailError = error.message;
+      console.error("Failed to send approval email:", error);
+      // Don't fail the request if email fails - still return success
+    }
 
     res.status(200).json({
       success: true,
-      message: "Registration request approved successfully",
+      message: emailSent
+        ? "Registration request approved and email sent successfully"
+        : "Registration request approved (email failed to send)",
       approvalLink,
+      emailSent,
+      emailError: emailSent ? null : emailError,
       request: {
         id: request._id,
         name: request.name,

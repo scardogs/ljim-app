@@ -1,6 +1,7 @@
 import connectToDatabase from "../../../../../lib/mongodb";
 import RegistrationRequest from "../../../../../../models/RegistrationRequest";
 import { verifyToken } from "../../../../../utils/auth";
+import { sendRejectionEmail } from "../../../../../utils/email";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -40,11 +41,31 @@ export default async function handler(req, res) {
     request.rejectionReason = reason || "No reason provided";
     await request.save();
 
-    // TODO: Send email notification about rejection
+    // Send email notification about rejection
+    let emailSent = false;
+    let emailError = null;
+
+    try {
+      await sendRejectionEmail({
+        to: request.email,
+        name: request.name,
+        reason: request.rejectionReason,
+      });
+      emailSent = true;
+      console.log(`Rejection email sent to ${request.email}`);
+    } catch (error) {
+      emailError = error.message;
+      console.error("Failed to send rejection email:", error);
+      // Don't fail the request if email fails - still return success
+    }
 
     res.status(200).json({
       success: true,
-      message: "Registration request rejected",
+      message: emailSent
+        ? "Registration request rejected and email sent successfully"
+        : "Registration request rejected (email failed to send)",
+      emailSent,
+      emailError: emailSent ? null : emailError,
       request: {
         id: request._id,
         name: request.name,

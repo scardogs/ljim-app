@@ -143,11 +143,15 @@ export default function RegistrationRequestManager() {
       const data = await response.json();
 
       if (response.ok) {
+        const emailStatus = data.emailSent
+          ? "Email sent successfully to the user"
+          : "Approval link generated (email failed to send)";
+
         toast({
           title: "Request Approved",
-          description: "Registration request has been approved",
-          status: "success",
-          duration: 5000,
+          description: emailStatus,
+          status: data.emailSent ? "success" : "warning",
+          duration: 7000,
           isClosable: true,
         });
 
@@ -195,11 +199,15 @@ export default function RegistrationRequestManager() {
       const data = await response.json();
 
       if (response.ok) {
+        const emailStatus = data.emailSent
+          ? "Rejection email sent to the user"
+          : "Request rejected (email failed to send)";
+
         toast({
           title: "Request Rejected",
-          description: "Registration request has been rejected",
-          status: "info",
-          duration: 5000,
+          description: emailStatus,
+          status: data.emailSent ? "info" : "warning",
+          duration: 7000,
           isClosable: true,
         });
 
@@ -563,18 +571,22 @@ export default function RegistrationRequestManager() {
       <Modal isOpen={isApprovalOpen} onClose={onApprovalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Registration Approved</ModalHeader>
+          <ModalHeader>Registration Approved ✅</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4} align="stretch">
               <Text>
-                The registration request has been approved. Share this link with
-                the user to complete their registration:
+                The registration request has been approved and an email has been
+                sent to the user with the approval link.
+              </Text>
+              <Text fontSize="sm" color="gray.600" fontStyle="italic">
+                💌 The user will receive an email with instructions to complete
+                their registration.
               </Text>
               <FormControl>
-                <FormLabel>Approval Link</FormLabel>
+                <FormLabel>Backup Approval Link (Optional)</FormLabel>
                 <HStack>
-                  <Input value={approvalLink} isReadOnly />
+                  <Input value={approvalLink} isReadOnly fontSize="sm" />
                   <IconButton
                     icon={<CopyIcon />}
                     onClick={copyApprovalLink}
@@ -582,8 +594,9 @@ export default function RegistrationRequestManager() {
                   />
                 </HStack>
               </FormControl>
-              <Text fontSize="sm" color="gray.500">
-                This link will expire in 7 days.
+              <Text fontSize="xs" color="gray.500">
+                ⏰ This link will expire in 7 days. Share it manually if the
+                email doesn&apos;t arrive.
               </Text>
             </VStack>
           </ModalBody>

@@ -4,4 +4,7 @@ EMAIL_SERVICE=gmail
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password-here
 EMAIL_FROM_NAME=LJIM Admin
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# NEXT_PUBLIC_BASE_URL is OPTIONAL - auto-detected from request headers
+# Only uncomment if you need to override auto-detection
+# NEXT_PUBLIC_BASE_URL=http://localhost:3000
