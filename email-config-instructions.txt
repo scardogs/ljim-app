@@ -1,0 +1,7 @@
+# Add these lines to your .env.local file:
+
+EMAIL_SERVICE=gmail
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password-here
+EMAIL_FROM_NAME=LJIM Admin
+NEXT_PUBLIC_BASE_URL=http://localhost:3000

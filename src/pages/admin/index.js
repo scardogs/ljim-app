@@ -37,11 +37,13 @@ import {
   FiShoppingBag,
   FiHeart,
   FiLayout,
+  FiUserPlus,
 } from "react-icons/fi";
 
 // Import admin section components
 import HomepageContentEditor from "../../components/admin/HomepageContentEditor";
 import UserManagement from "../../components/admin/UserManagement";
+import RegistrationRequestManager from "../../components/admin/RegistrationRequestManager";
 import AboutContentEditor from "../../components/admin/AboutContentEditor";
 import EventsEditor from "../../components/admin/EventsEditor";
 import GiveContentEditor from "../../components/admin/GiveContentEditor";
@@ -101,6 +103,11 @@ export default function AdminDashboard() {
   const sidebarItems = [
     { id: "home", label: "Home Content", icon: FiHome },
     { id: "users", label: "User Management", icon: FiUsers },
+    {
+      id: "registration-requests",
+      label: "Registration Requests",
+      icon: FiUserPlus,
+    },
     { id: "navbar", label: "Navbar Settings", icon: FiLayout },
     { id: "about", label: "About", icon: FiInfo },
     { id: "events", label: "Events", icon: FiCalendar },
@@ -117,6 +124,8 @@ export default function AdminDashboard() {
         return <HomepageContentEditor />;
       case "users":
         return <UserManagement />;
+      case "registration-requests":
+        return <RegistrationRequestManager />;
       case "navbar":
         return <NavbarEditor />;
       case "about":

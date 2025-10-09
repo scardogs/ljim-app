@@ -11,24 +11,18 @@ import {
   Text,
   useColorModeValue,
   useToast,
-  InputGroup,
-  InputRightElement,
-  IconButton,
   Link,
   Alert,
   AlertIcon,
   AlertDescription,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
 import Navbar from "../components/navbar";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const toast = useToast();
@@ -50,21 +44,10 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
+    if (!name || !email) {
       toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (password.length < 6) {
-      toast({
-        title: "Weak Password",
-        description: "Password must be at least 6 characters long",
+        title: "Missing Information",
+        description: "Please provide your name and email",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -75,42 +58,46 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/registration-request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, message }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem("adminToken", data.token);
-        localStorage.setItem("adminUser", JSON.stringify(data.user));
-
         toast({
-          title: "Registration Successful",
-          description: `Welcome, ${data.user.name}!`,
+          title: "Request Submitted!",
+          description:
+            "Your registration request has been submitted. You will be notified when it is approved.",
           status: "success",
-          duration: 3000,
+          duration: 8000,
           isClosable: true,
         });
 
-        // Redirect to admin dashboard
-        router.push("/admin");
+        // Clear form
+        setName("");
+        setEmail("");
+        setMessage("");
+
+        // Redirect to home after 2 seconds
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } else {
         toast({
-          title: "Registration Failed",
-          description: data.error || "Unable to create account",
+          title: "Request Failed",
+          description: data.error || "Unable to submit registration request",
           status: "error",
           duration: 5000,
           isClosable: true,
         });
       }
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Registration request error:", error);
       toast({
         title: "Error",
         description: "An error occurred. Please try again.",
@@ -138,15 +125,15 @@ export default function Register() {
           >
             <VStack spacing={6}>
               <Heading size="xl" color={textColor}>
-                Admin Registration
+                Admin Access Request
               </Heading>
-              <Text color={subTextColor}>Create a new admin account</Text>
+              <Text color={subTextColor}>Request admin account access</Text>
 
-              <Alert status="warning" borderRadius="md">
+              <Alert status="info" borderRadius="md">
                 <AlertIcon />
                 <AlertDescription fontSize="sm">
-                  This registration is for admin accounts only. Contact your
-                  administrator if you need access.
+                  Submit a registration request. An existing admin will review
+                  and approve your request.
                 </AlertDescription>
               </Alert>
 
@@ -174,36 +161,13 @@ export default function Register() {
                     />
                   </FormControl>
 
-                  <FormControl isRequired>
-                    <FormLabel color={textColor}>Password</FormLabel>
-                    <InputGroup size="lg">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
-                      />
-                      <InputRightElement>
-                        <IconButton
-                          aria-label={
-                            showPassword ? "Hide password" : "Show password"
-                          }
-                          icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
-                          onClick={() => setShowPassword(!showPassword)}
-                          variant="ghost"
-                          size="sm"
-                        />
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel color={textColor}>Confirm Password</FormLabel>
+                  <FormControl>
+                    <FormLabel color={textColor}>Message (Optional)</FormLabel>
                     <Input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm your password"
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Why do you need admin access?"
                       size="lg"
                     />
                   </FormControl>
@@ -218,9 +182,9 @@ export default function Register() {
                     size="lg"
                     width="full"
                     isLoading={isLoading}
-                    loadingText="Creating account..."
+                    loadingText="Submitting request..."
                   >
-                    Register
+                    Submit Request
                   </Button>
                 </VStack>
               </form>
