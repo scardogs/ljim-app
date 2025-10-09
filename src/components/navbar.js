@@ -74,6 +74,7 @@ export default function Navbar() {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
+    { label: "Bible", href: "/bible" },
     { label: "Music", href: "/music", hasDropdown: true },
     { label: "Events", href: "/events" },
     { label: "Shop", href: "/shop" },

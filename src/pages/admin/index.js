@@ -38,6 +38,7 @@ import {
   FiHeart,
   FiLayout,
   FiUserPlus,
+  FiBook,
 } from "react-icons/fi";
 
 // Import admin section components
@@ -52,6 +53,7 @@ import MusicLineupEditor from "../../components/admin/MusicLineupEditor";
 import ShopContentEditor from "../../components/admin/ShopContentEditor";
 import PrayerRequestsEditor from "../../components/admin/PrayerRequestsEditor";
 import NavbarEditor from "../../components/admin/NavbarEditor";
+import BibleSettingsEditor from "../../components/admin/BibleSettingsEditor";
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -110,6 +112,7 @@ export default function AdminDashboard() {
     },
     { id: "navbar", label: "Navbar Settings", icon: FiLayout },
     { id: "about", label: "About", icon: FiInfo },
+    { id: "bible", label: "Bible Settings", icon: FiBook },
     { id: "events", label: "Events", icon: FiCalendar },
     { id: "music", label: "Music Lineup", icon: FiMusic },
     { id: "give", label: "Give", icon: FiDollarSign },
@@ -130,6 +133,8 @@ export default function AdminDashboard() {
         return <NavbarEditor />;
       case "about":
         return <AboutContentEditor />;
+      case "bible":
+        return <BibleSettingsEditor />;
       case "events":
         return <EventsEditor />;
       case "music":
