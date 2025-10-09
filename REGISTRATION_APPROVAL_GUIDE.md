@@ -523,8 +523,9 @@ Ensure these are set in `.env.local`:
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
 
-# For approval links
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+# For approval links (OPTIONAL - Auto-detected)
+# Only set if you need to override automatic URL detection
+# NEXT_PUBLIC_BASE_URL=https://your-domain.vercel.app
 
 # Optional (for email notifications)
 EMAIL_SERVICE=gmail
@@ -532,6 +533,31 @@ EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
 EMAIL_FROM_NAME=LJIM Admin
 ```
+
+### Dynamic URL Detection
+
+The system **automatically generates** the correct approval links for any environment:
+
+**How it works:**
+
+1. **Priority 1**: Uses `NEXT_PUBLIC_BASE_URL` if set in environment variables
+2. **Priority 2**: Auto-detects from request headers:
+   - Protocol: `x-forwarded-proto` (Vercel automatically provides `https`)
+   - Host: `x-forwarded-host` or `host` header
+3. **Priority 3**: Falls back to `http://localhost:3000` for development
+
+**What this means for you:**
+
+- ✅ **Local Development**: Links use `http://localhost:3000`
+- ✅ **Vercel Deployment**: Links automatically use `https://your-app.vercel.app`
+- ✅ **Custom Domain**: Links automatically use your custom domain
+- ✅ **No Configuration Needed**: Works out of the box on any platform
+
+**Example approval links:**
+
+- Development: `http://localhost:3000/register/complete?token=abc123...`
+- Vercel: `https://ljim-app.vercel.app/register/complete?token=abc123...`
+- Custom domain: `https://ljim.org/register/complete?token=abc123...`
 
 ---
 

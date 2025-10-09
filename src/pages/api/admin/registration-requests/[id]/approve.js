@@ -46,10 +46,14 @@ export default async function handler(req, res) {
     request.approvalExpires = approvalExpires;
     await request.save();
 
+    // Generate dynamic base URL from request headers
+    const protocol = req.headers["x-forwarded-proto"] || "http";
+    const host =
+      req.headers["x-forwarded-host"] || req.headers.host || "localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
+
     // TODO: Send email notification with approval link
-    const approvalLink = `${
-      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-    }/register/complete?token=${approvalToken}`;
+    const approvalLink = `${baseUrl}/register/complete?token=${approvalToken}`;
 
     res.status(200).json({
       success: true,

@@ -1,7 +1,6 @@
 import connectToDatabase from "../../../lib/mongodb";
 import RegistrationRequest from "../../../../models/RegistrationRequest";
 import { verifyToken } from "../../../utils/auth";
-import crypto from "crypto";
 
 export default async function handler(req, res) {
   try {
@@ -27,11 +26,26 @@ export default async function handler(req, res) {
         filter.status = status;
       }
 
-      const requests = await RegistrationRequest.find(filter)
-        .sort({ createdAt: -1 })
-        .populate("approvedBy", "name email");
+      // Safely fetch and populate requests
+      let requests = [];
+      try {
+        requests = await RegistrationRequest.find(filter)
+          .sort({ createdAt: -1 })
+          .populate("approvedBy", "name email")
+          .lean(); // Use lean() for better performance with read-only data
+      } catch (populateError) {
+        // If populate fails (e.g., Admin collection doesn't exist), fetch without populate
+        console.warn(
+          "Failed to populate approvedBy, fetching without:",
+          populateError.message
+        );
+        requests = await RegistrationRequest.find(filter)
+          .sort({ createdAt: -1 })
+          .lean();
+      }
 
-      return res.status(200).json({ requests });
+      // Ensure we always return an array
+      return res.status(200).json({ requests: requests || [] });
     }
 
     // DELETE - Delete a registration request

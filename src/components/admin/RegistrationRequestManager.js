@@ -92,8 +92,11 @@ export default function RegistrationRequestManager() {
 
       if (response.ok) {
         const data = await response.json();
-        setRequests(data.requests);
+        // Ensure requests is always an array
+        setRequests(Array.isArray(data.requests) ? data.requests : []);
       } else {
+        // Set empty array on error
+        setRequests([]);
         toast({
           title: "Error",
           description: "Failed to fetch registration requests",
@@ -104,6 +107,8 @@ export default function RegistrationRequestManager() {
       }
     } catch (error) {
       console.error("Error fetching requests:", error);
+      // Set empty array on error
+      setRequests([]);
       toast({
         title: "Error",
         description: "An error occurred while fetching requests",
@@ -296,9 +301,11 @@ export default function RegistrationRequestManager() {
     }
   };
 
-  const pendingRequests = requests.filter((r) => r.status === "pending");
-  const approvedRequests = requests.filter((r) => r.status === "approved");
-  const rejectedRequests = requests.filter((r) => r.status === "rejected");
+  // Safely filter requests (ensure requests is always an array)
+  const safeRequests = Array.isArray(requests) ? requests : [];
+  const pendingRequests = safeRequests.filter((r) => r.status === "pending");
+  const approvedRequests = safeRequests.filter((r) => r.status === "approved");
+  const rejectedRequests = safeRequests.filter((r) => r.status === "rejected");
 
   const RequestCard = ({ request }) => (
     <Card
@@ -455,7 +462,7 @@ export default function RegistrationRequestManager() {
             <Tab>Pending ({pendingRequests.length})</Tab>
             <Tab>Approved ({approvedRequests.length})</Tab>
             <Tab>Rejected ({rejectedRequests.length})</Tab>
-            <Tab>All ({requests.length})</Tab>
+            <Tab>All ({safeRequests.length})</Tab>
           </TabList>
 
           <TabPanels>
@@ -502,13 +509,13 @@ export default function RegistrationRequestManager() {
             </TabPanel>
 
             <TabPanel>
-              {requests.length === 0 ? (
+              {safeRequests.length === 0 ? (
                 <Text color="gray.500" textAlign="center" py={8}>
                   No registration requests
                 </Text>
               ) : (
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-                  {requests.map((request) => (
+                  {safeRequests.map((request) => (
                     <RequestCard key={request._id} request={request} />
                   ))}
                 </SimpleGrid>
