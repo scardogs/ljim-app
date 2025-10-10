@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "src/pages/api/cloudinary/upload-video.js": {
+      "maxDuration": 300
+    },
+    "src/pages/api/cloudinary/upload.js": {
+      "maxDuration": 60
+    }
+  }
+}

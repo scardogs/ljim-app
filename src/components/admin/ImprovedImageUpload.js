@@ -154,16 +154,23 @@ export default function ImprovedImageUpload({
       reader.onload = (e) => setPreviewUrl(e.target.result);
       reader.readAsDataURL(fileToUpload);
 
-      // Upload to Cloudinary with progress tracking
-      const formData = new FormData();
-      formData.append("image", fileToUpload);
-      formData.append("type", imageType);
+      // Get Cloudinary cloud name for direct upload
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 
-      const token = localStorage.getItem("adminToken");
+      if (!cloudName) {
+        throw new Error("Cloudinary cloud name not configured");
+      }
+
       const startTime = Date.now();
 
+      // Upload directly to Cloudinary (bypasses Vercel's 4.5MB limit)
+      const formData = new FormData();
+      formData.append("file", fileToUpload);
+      formData.append("upload_preset", "ljim_unsigned"); // Upload preset in Cloudinary
+      formData.append("folder", `church-images/${imageType}`);
+
       // Use XMLHttpRequest for upload progress tracking
-      const data = await new Promise((resolve, reject) => {
+      const cloudinaryResponse = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
         // Track upload progress
@@ -202,11 +209,26 @@ export default function ImprovedImageUpload({
           reject(new Error("Upload cancelled"));
         });
 
-        // Open and send request
-        xhr.open("POST", "/api/cloudinary/upload");
-        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+        // Upload directly to Cloudinary
+        xhr.open(
+          "POST",
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
+        );
         xhr.send(formData);
       });
+
+      // Transform response to match expected format
+      const data = {
+        success: true,
+        image: {
+          url: cloudinaryResponse.secure_url,
+          publicId: cloudinaryResponse.public_id,
+          width: cloudinaryResponse.width,
+          height: cloudinaryResponse.height,
+          format: cloudinaryResponse.format,
+          size: cloudinaryResponse.bytes,
+        },
+      };
 
       const uploadTime = ((Date.now() - startTime) / 1000).toFixed(2);
 

@@ -303,6 +303,3 @@ function formatDateForGoogle(dateString) {
   const date = new Date(dateString);
   return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 }
-
-
-

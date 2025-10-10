@@ -121,20 +121,27 @@ export default function VideoUpload({
         duration: 3000,
       });
 
-      // Upload to Cloudinary with progress tracking
+      // For Vercel deployment, upload directly to Cloudinary to bypass 4.5MB limit
+      // Create upload preset in Cloudinary dashboard first (unsigned upload)
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+      if (!cloudName) {
+        throw new Error("Cloudinary cloud name not configured");
+      }
+
+      // Upload directly to Cloudinary (bypasses Vercel's 4.5MB limit)
       const formData = new FormData();
-      formData.append(mediaType === "video" ? "video" : "image", file);
-      formData.append("type", imageType);
+      formData.append("file", file);
+      formData.append("upload_preset", "ljim_unsigned"); // You'll need to create this preset
       formData.append(
-        "resource_type",
-        mediaType === "video" ? "video" : "image"
+        "folder",
+        `church-${mediaType === "video" ? "videos" : "images"}/${imageType}`
       );
 
-      const token = localStorage.getItem("adminToken");
       const startTime = Date.now();
 
       // Use XMLHttpRequest for upload progress tracking
-      const data = await new Promise((resolve, reject) => {
+      const cloudinaryResponse = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
         // Track upload progress
@@ -173,16 +180,26 @@ export default function VideoUpload({
           reject(new Error("Upload cancelled"));
         });
 
-        // Open and send request
+        // Upload directly to Cloudinary
+        const resourceType = mediaType === "video" ? "video" : "image";
         xhr.open(
           "POST",
-          mediaType === "video"
-            ? "/api/cloudinary/upload-video"
-            : "/api/cloudinary/upload"
+          `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`
         );
-        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
         xhr.send(formData);
       });
+
+      // Transform response to match expected format
+      const data = {
+        success: true,
+        url: cloudinaryResponse.secure_url,
+        publicId: cloudinaryResponse.public_id,
+        width: cloudinaryResponse.width,
+        height: cloudinaryResponse.height,
+        format: cloudinaryResponse.format,
+        duration: cloudinaryResponse.duration,
+        size: cloudinaryResponse.bytes,
+      };
 
       const uploadTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
