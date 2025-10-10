@@ -5,12 +5,21 @@ import {
   Text,
   VStack,
   HStack,
-  Image,
   useColorModeValue,
   Flex,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Divider,
+  Badge,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaMapMarkerAlt, FaChurch, FaPhone } from "react-icons/fa";
+import ChurchLoader from "../ChurchLoader";
+import OptimizedImage from "../OptimizedImage";
 
 // Gentle shimmer
 const shimmer = keyframes`
@@ -26,11 +35,8 @@ export default function IntroSection() {
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
-  const mapImage = useColorModeValue(
-    "/images/map-ph.png",
-    "/images/white-map-ph.png"
-  );
   const verseColor = useColorModeValue("gray.700", "gray.300");
+  const isDarkMode = useColorModeValue(false, true);
 
   // Fetch content from database
   useEffect(() => {
@@ -54,7 +60,7 @@ export default function IntroSection() {
   if (!content) {
     return (
       <Flex justify="center" align="center" minH="400px">
-        <Text>Loading...</Text>
+        <ChurchLoader message="Loading content..." />
       </Flex>
     );
   }
@@ -154,19 +160,205 @@ export default function IntroSection() {
       </VStack>
 
       {/* Map Image */}
-      <Box flexShrink={0} w={{ base: "90%", md: "40%" }}>
-        <Image
-          src={mapImage}
+      <Box
+        flexShrink={0}
+        w={{ base: "90%", md: "40%" }}
+        borderRadius="2xl"
+        overflow="hidden"
+        boxShadow="0 0 25px rgba(255,255,255,0.1)"
+        transition="transform 1.5s ease, box-shadow 1.5s ease"
+        _hover={{
+          transform: "scale(1.03)",
+          boxShadow: "0 0 35px rgba(255,255,255,0.2)",
+        }}
+      >
+        <OptimizedImage
+          src={
+            isDarkMode
+              ? content.philippinesMapImageDark || "/images/white-map-ph.png"
+              : content.philippinesMapImageLight || "/images/map-ph.png"
+          }
           alt="Philippines Map"
-          borderRadius="2xl"
-          boxShadow="0 0 25px rgba(255,255,255,0.1)"
-          transition="transform 1.5s ease, box-shadow 1.5s ease"
-          _hover={{
-            transform: "scale(1.03)",
-            boxShadow: "0 0 35px rgba(255,255,255,0.2)",
+          width={600}
+          height={600}
+          crop="fit"
+          quality="auto"
+          format="auto"
+          style={{
+            width: "100%",
+            height: "auto",
           }}
         />
       </Box>
     </Flex>
+  );
+}
+
+/**
+ * Regional Churches Accordion Section
+ * Collapsible FAQ for Luzon, Visayas, Mindanao
+ */
+export function RegionalChurchesSection() {
+  const [content, setContent] = useState(null);
+
+  const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
+  const subText = useColorModeValue("gray.600", "gray.400");
+  const cardBg = useColorModeValue("white", "rgba(0, 0, 0, 0.6)");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const hoverBg = useColorModeValue("gray.50", "gray.700");
+  const accordionBg = useColorModeValue("gray.50", "gray.800");
+
+  // Fetch content from database
+  useEffect(() => {
+    fetch("/api/admin/homepage")
+      .then((res) => res.json())
+      .then((data) => setContent(data))
+      .catch((err) => console.error("Error fetching homepage content:", err));
+  }, []);
+
+  // Show loading state
+  if (!content) {
+    return (
+      <Flex justify="center" align="center" minH="300px">
+        <ChurchLoader message="Loading church locations..." />
+      </Flex>
+    );
+  }
+
+  // Group churches by region
+  const luzonChurches =
+    content.regionalChurches?.filter((c) => c.region === "Luzon") || [];
+  const visayasChurches =
+    content.regionalChurches?.filter((c) => c.region === "Visayas") || [];
+  const mindanaoChurches =
+    content.regionalChurches?.filter((c) => c.region === "Mindanao") || [];
+
+  // Don't render if no churches
+  if (
+    luzonChurches.length === 0 &&
+    visayasChurches.length === 0 &&
+    mindanaoChurches.length === 0
+  ) {
+    return null;
+  }
+
+  const RegionSection = ({ churches, regionName }) => {
+    if (churches.length === 0) return null;
+
+    return (
+      <AccordionItem
+        bg={cardBg}
+        borderWidth="1px"
+        borderColor={borderColor}
+        borderRadius="xl"
+        overflow="hidden"
+        mb={4}
+      >
+        <AccordionButton
+          _hover={{ bg: hoverBg }}
+          py={4}
+          px={6}
+          _expanded={{ bg: accordionBg }}
+        >
+          <HStack flex="1" spacing={3}>
+            <FaMapMarkerAlt />
+            <Heading size="md" color={textColor} fontFamily="monospace">
+              {regionName}
+            </Heading>
+            <Badge fontSize="sm">
+              {churches.length} {churches.length === 1 ? "Church" : "Churches"}
+            </Badge>
+          </HStack>
+          <AccordionIcon />
+        </AccordionButton>
+        <AccordionPanel pb={6} px={6} bg={accordionBg}>
+          <VStack spacing={4} align="stretch">
+            {churches.map((church, idx) => (
+              <Box
+                key={idx}
+                p={4}
+                bg={cardBg}
+                borderRadius="lg"
+                borderWidth="1px"
+                borderColor={borderColor}
+                _hover={{ boxShadow: "md" }}
+                transition="all 0.3s"
+              >
+                <VStack align="start" spacing={2}>
+                  <HStack>
+                    <FaChurch />
+                    <Heading size="sm" color={textColor}>
+                      {church.churchName}
+                    </Heading>
+                  </HStack>
+
+                  {church.address && (
+                    <HStack align="start" spacing={2}>
+                      <FaMapMarkerAlt
+                        style={{ marginTop: "4px", flexShrink: 0 }}
+                      />
+                      <Text
+                        fontSize="sm"
+                        color={subText}
+                        fontFamily="monospace"
+                      >
+                        {church.address}
+                      </Text>
+                    </HStack>
+                  )}
+
+                  {church.description && (
+                    <Text fontSize="sm" color={subText} mt={2}>
+                      {church.description}
+                    </Text>
+                  )}
+
+                  {church.contactInfo && (
+                    <HStack spacing={2} mt={2}>
+                      <FaPhone style={{ flexShrink: 0 }} />
+                      <Text
+                        fontSize="sm"
+                        color={subText}
+                        fontFamily="monospace"
+                      >
+                        {church.contactInfo}
+                      </Text>
+                    </HStack>
+                  )}
+                </VStack>
+              </Box>
+            ))}
+          </VStack>
+        </AccordionPanel>
+      </AccordionItem>
+    );
+  };
+
+  return (
+    <VStack spacing={6} w="full" maxW="7xl" mx="auto" py={8}>
+      <Heading
+        size="xl"
+        color={textColor}
+        fontFamily="monospace"
+        textAlign="center"
+      >
+        Our Churches in the Philippines
+      </Heading>
+      <Text
+        fontSize="md"
+        color={subText}
+        textAlign="center"
+        maxW="2xl"
+        fontFamily="monospace"
+      >
+        Find a church near you
+      </Text>
+
+      <Accordion position="relative" allowMultiple w="full" defaultIndex={[0]}>
+        <RegionSection churches={luzonChurches} regionName="Luzon" />
+        <RegionSection churches={visayasChurches} regionName="Visayas" />
+        <RegionSection churches={mindanaoChurches} regionName="Mindanao" />
+      </Accordion>
+    </VStack>
   );
 }

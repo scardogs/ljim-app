@@ -28,6 +28,7 @@ import {
   Badge,
   Flex,
   Icon,
+  Select,
 } from "@chakra-ui/react";
 import { DeleteIcon, AddIcon, StarIcon } from "@chakra-ui/icons";
 import {
@@ -37,6 +38,9 @@ import {
   FiUsers,
   FiTarget,
   FiMusic,
+  FiCamera,
+  FiStar,
+  FiMapPin,
 } from "react-icons/fi";
 import ImprovedImageUpload from "./ImprovedImageUpload";
 import ColorPicker from "./ColorPicker";
@@ -337,6 +341,45 @@ export default function HomepageContentEditor() {
             />
             <Text display={{ base: "none", sm: "inline" }}>Leaders</Text>
           </Tab>
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiCamera}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Gallery</Text>
+          </Tab>
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiStar}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Showcase</Text>
+          </Tab>
+          <Tab
+            _selected={{ bg: "gray.700", color: "white" }}
+            fontSize={{ base: "xs", sm: "sm", md: "md" }}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 2 }}
+          >
+            <Icon
+              as={FiMapPin}
+              mr={{ base: 1, md: 2 }}
+              boxSize={{ base: 3, md: 4 }}
+            />
+            <Text display={{ base: "none", sm: "inline" }}>Locations</Text>
+          </Tab>
         </TabList>
 
         <TabPanels>
@@ -528,6 +571,37 @@ export default function HomepageContentEditor() {
                         rows={2}
                       />
                     </FormControl>
+
+                    <Divider />
+
+                    <Heading size="sm" mb={2}>
+                      Philippines Map Images
+                    </Heading>
+                    <Text fontSize="xs" color="gray.500" mb={4}>
+                      Upload different maps for light and dark mode
+                    </Text>
+
+                    <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
+                      <ImprovedImageUpload
+                        label="Map Image (Light Mode)"
+                        value={content.philippinesMapImageLight || ""}
+                        onChange={(value) =>
+                          updateField("philippinesMapImageLight", value)
+                        }
+                        placeholder="/images/map-ph.png"
+                        imageType="homepage/map-light"
+                      />
+
+                      <ImprovedImageUpload
+                        label="Map Image (Dark Mode)"
+                        value={content.philippinesMapImageDark || ""}
+                        onChange={(value) =>
+                          updateField("philippinesMapImageDark", value)
+                        }
+                        placeholder="/images/white-map-ph.png"
+                        imageType="homepage/map-dark"
+                      />
+                    </SimpleGrid>
                   </VStack>
                 </CardBody>
               </Card>
@@ -1026,6 +1100,523 @@ export default function HomepageContentEditor() {
                 </Button>
               </Box>
             </VStack>
+          </TabPanel>
+
+          {/* Congregation Gallery Tab */}
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <VStack spacing={{ base: 4, md: 6 }} align="stretch">
+              {/* Section Info */}
+              <Card
+                bg={cardBg}
+                shadow="lg"
+                borderRadius={{ base: "lg", md: "xl" }}
+              >
+                <CardBody p={{ base: 4, md: 8 }}>
+                  <SectionHeader
+                    icon={FiCamera}
+                    title="Congregation Gallery"
+                    count={content.congregationPhotos?.length}
+                  />
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Section Title</FormLabel>
+                      <DebouncedInput
+                        value={content.congregationTitle || ""}
+                        onChange={(value) =>
+                          updateField("congregationTitle", value)
+                        }
+                        size="lg"
+                        placeholder="Our Congregation"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Description</FormLabel>
+                      <DebouncedTextarea
+                        value={content.congregationDescription || ""}
+                        onChange={(value) =>
+                          updateField("congregationDescription", value)
+                        }
+                        rows={2}
+                        placeholder="A beautiful community of believers..."
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Bible Verse</FormLabel>
+                      <DebouncedTextarea
+                        value={content.congregationBibleVerse || ""}
+                        onChange={(value) =>
+                          updateField("congregationBibleVerse", value)
+                        }
+                        rows={2}
+                        placeholder='"For where two or three gather..." — Matthew 18:20'
+                      />
+                    </FormControl>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              {/* Photos List */}
+              <Box>
+                <Text fontSize="lg" fontWeight="bold" mb={4}>
+                  Congregation Photos
+                </Text>
+                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
+                  {content.congregationPhotos?.map((photo, index) => (
+                    <Card
+                      key={index}
+                      variant="outline"
+                      borderWidth="2px"
+                      bg={sectionBg}
+                    >
+                      <CardHeader
+                        bg={cardHeaderBg}
+                        borderBottom="1px"
+                        borderColor={borderColor}
+                      >
+                        <HStack justify="space-between">
+                          <HStack>
+                            <Badge
+                              colorScheme="gray"
+                              fontSize="md"
+                              px={3}
+                              py={1}
+                            >
+                              {index + 1}
+                            </Badge>
+                            <Text fontWeight="bold">
+                              {photo.caption || "Untitled Photo"}
+                            </Text>
+                          </HStack>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              removeArrayItem("congregationPhotos", index)
+                            }
+                            aria-label="Delete photo"
+                          />
+                        </HStack>
+                      </CardHeader>
+                      <CardBody p={{ base: 3, md: 4 }}>
+                        <VStack spacing={{ base: 3, md: 4 }}>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Caption
+                            </FormLabel>
+                            <DebouncedInput
+                              value={photo.caption}
+                              onChange={(value) =>
+                                updateArrayField("congregationPhotos", index, {
+                                  ...photo,
+                                  caption: value,
+                                })
+                              }
+                              placeholder="Photo caption..."
+                            />
+                          </FormControl>
+                          <ImprovedImageUpload
+                            label="Photo"
+                            value={photo.image}
+                            onChange={(value) =>
+                              updateArrayField("congregationPhotos", index, {
+                                ...photo,
+                                image: value,
+                              })
+                            }
+                            placeholder="/images/congregation-photo.jpg"
+                            imageType="congregation"
+                          />
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </SimpleGrid>
+
+                <Button
+                  leftIcon={<AddIcon />}
+                  onClick={() =>
+                    addArrayItem("congregationPhotos", {
+                      caption: "",
+                      image: "",
+                    })
+                  }
+                  variant="outline"
+                  borderColor={addButtonBorderColor}
+                  color={addButtonColor}
+                  _hover={{ bg: addButtonHoverBg }}
+                  size="lg"
+                  mt={4}
+                  w="full"
+                >
+                  Add New Photo
+                </Button>
+              </Box>
+            </VStack>
+          </TabPanel>
+
+          {/* Showcase Section Tab */}
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <VStack spacing={{ base: 4, md: 6 }} align="stretch">
+              {/* Section Info */}
+              <Card
+                bg={cardBg}
+                shadow="lg"
+                borderRadius={{ base: "lg", md: "xl" }}
+              >
+                <CardBody p={{ base: 4, md: 8 }}>
+                  <SectionHeader
+                    icon={FiStar}
+                    title="Showcase Section"
+                    count={content.showcaseItems?.length}
+                  />
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Section Title</FormLabel>
+                      <DebouncedInput
+                        value={content.showcaseTitle || ""}
+                        onChange={(value) =>
+                          updateField("showcaseTitle", value)
+                        }
+                        size="lg"
+                        placeholder="Highlights"
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontWeight="semibold">Description</FormLabel>
+                      <DebouncedTextarea
+                        value={content.showcaseDescription || ""}
+                        onChange={(value) =>
+                          updateField("showcaseDescription", value)
+                        }
+                        rows={2}
+                        placeholder="Celebrating moments that matter..."
+                      />
+                    </FormControl>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              {/* Showcase Items List */}
+              <Box>
+                <Text fontSize="lg" fontWeight="bold" mb={4}>
+                  Showcase Items
+                </Text>
+                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
+                  {content.showcaseItems?.map((item, index) => (
+                    <Card
+                      key={index}
+                      variant="outline"
+                      borderWidth="2px"
+                      bg={sectionBg}
+                    >
+                      <CardHeader
+                        bg={cardHeaderBg}
+                        borderBottom="1px"
+                        borderColor={borderColor}
+                      >
+                        <HStack justify="space-between">
+                          <HStack>
+                            <Badge
+                              colorScheme="gray"
+                              fontSize="md"
+                              px={3}
+                              py={1}
+                            >
+                              {index + 1}
+                            </Badge>
+                            <Text fontWeight="bold">
+                              {item.title || "Untitled Item"}
+                            </Text>
+                          </HStack>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              removeArrayItem("showcaseItems", index)
+                            }
+                            aria-label="Delete item"
+                          />
+                        </HStack>
+                      </CardHeader>
+                      <CardBody p={{ base: 3, md: 4 }}>
+                        <VStack spacing={{ base: 3, md: 4 }}>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Title
+                            </FormLabel>
+                            <DebouncedInput
+                              value={item.title}
+                              onChange={(value) =>
+                                updateArrayField("showcaseItems", index, {
+                                  ...item,
+                                  title: value,
+                                })
+                              }
+                              placeholder="Item title..."
+                            />
+                          </FormControl>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Description
+                            </FormLabel>
+                            <DebouncedTextarea
+                              value={item.description}
+                              onChange={(value) =>
+                                updateArrayField("showcaseItems", index, {
+                                  ...item,
+                                  description: value,
+                                })
+                              }
+                              rows={2}
+                              placeholder="Item description..."
+                            />
+                          </FormControl>
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Link (Optional)
+                            </FormLabel>
+                            <DebouncedInput
+                              value={item.link}
+                              onChange={(value) =>
+                                updateArrayField("showcaseItems", index, {
+                                  ...item,
+                                  link: value,
+                                })
+                              }
+                              placeholder="https://..."
+                            />
+                          </FormControl>
+                          <ImprovedImageUpload
+                            label="Image"
+                            value={item.image}
+                            onChange={(value) =>
+                              updateArrayField("showcaseItems", index, {
+                                ...item,
+                                image: value,
+                              })
+                            }
+                            placeholder="/images/showcase-item.jpg"
+                            imageType="showcase"
+                          />
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </SimpleGrid>
+
+                <Button
+                  leftIcon={<AddIcon />}
+                  onClick={() =>
+                    addArrayItem("showcaseItems", {
+                      title: "",
+                      description: "",
+                      image: "",
+                      link: "",
+                    })
+                  }
+                  variant="outline"
+                  borderColor={addButtonBorderColor}
+                  color={addButtonColor}
+                  _hover={{ bg: addButtonHoverBg }}
+                  size="lg"
+                  mt={4}
+                  w="full"
+                >
+                  Add New Showcase Item
+                </Button>
+              </Box>
+            </VStack>
+          </TabPanel>
+
+          {/* Regional Churches (Locations) Tab */}
+          <TabPanel px={{ base: 0, md: 4 }}>
+            <Card
+              bg={cardBg}
+              shadow="lg"
+              borderRadius={{ base: "lg", md: "xl" }}
+            >
+              <CardBody p={{ base: 4, md: 8 }}>
+                <SectionHeader
+                  icon={FiMapPin}
+                  title="Church Locations"
+                  count={content.regionalChurches?.length}
+                />
+                <Text fontSize="sm" color="gray.500" mb={6}>
+                  Add churches in different regions (Luzon, Visayas, Mindanao)
+                </Text>
+
+                <VStack spacing={4} align="stretch">
+                  {content.regionalChurches?.map((church, index) => (
+                    <Card
+                      key={index}
+                      variant="outline"
+                      borderWidth="2px"
+                      bg={sectionBg}
+                    >
+                      <CardHeader
+                        bg={cardHeaderBg}
+                        borderBottom="1px"
+                        borderColor={borderColor}
+                      >
+                        <HStack justify="space-between">
+                          <HStack>
+                            <Badge
+                              colorScheme={
+                                church.region === "Luzon"
+                                  ? "blue"
+                                  : church.region === "Visayas"
+                                  ? "green"
+                                  : "purple"
+                              }
+                              fontSize="md"
+                              px={3}
+                              py={1}
+                            >
+                              {church.region || "Unknown"}
+                            </Badge>
+                            <Text fontWeight="bold">
+                              {church.churchName || "Untitled Church"}
+                            </Text>
+                          </HStack>
+                          <IconButton
+                            icon={<DeleteIcon />}
+                            colorScheme="red"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              removeArrayItem("regionalChurches", index)
+                            }
+                            aria-label="Delete church"
+                          />
+                        </HStack>
+                      </CardHeader>
+                      <CardBody p={{ base: 3, md: 4 }}>
+                        <VStack spacing={{ base: 3, md: 4 }}>
+                          <SimpleGrid
+                            columns={{ base: 1, md: 2 }}
+                            spacing={{ base: 3, md: 4 }}
+                            w="full"
+                          >
+                            <FormControl>
+                              <FormLabel fontSize="sm" fontWeight="semibold">
+                                Region
+                              </FormLabel>
+                              <Select
+                                value={church.region || "Luzon"}
+                                onChange={(e) =>
+                                  updateArrayField("regionalChurches", index, {
+                                    ...church,
+                                    region: e.target.value,
+                                  })
+                                }
+                              >
+                                <option value="Luzon">Luzon</option>
+                                <option value="Visayas">Visayas</option>
+                                <option value="Mindanao">Mindanao</option>
+                              </Select>
+                            </FormControl>
+
+                            <FormControl>
+                              <FormLabel fontSize="sm" fontWeight="semibold">
+                                Church Name
+                              </FormLabel>
+                              <DebouncedInput
+                                value={church.churchName}
+                                onChange={(value) =>
+                                  updateArrayField("regionalChurches", index, {
+                                    ...church,
+                                    churchName: value,
+                                  })
+                                }
+                                placeholder="LJIM Manila"
+                              />
+                            </FormControl>
+                          </SimpleGrid>
+
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Address
+                            </FormLabel>
+                            <DebouncedTextarea
+                              value={church.address}
+                              onChange={(value) =>
+                                updateArrayField("regionalChurches", index, {
+                                  ...church,
+                                  address: value,
+                                })
+                              }
+                              rows={2}
+                              placeholder="123 Main Street, Manila, Philippines"
+                            />
+                          </FormControl>
+
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Description
+                            </FormLabel>
+                            <DebouncedTextarea
+                              value={church.description}
+                              onChange={(value) =>
+                                updateArrayField("regionalChurches", index, {
+                                  ...church,
+                                  description: value,
+                                })
+                              }
+                              rows={2}
+                              placeholder="Brief description of the church..."
+                            />
+                          </FormControl>
+
+                          <FormControl>
+                            <FormLabel fontSize="sm" fontWeight="semibold">
+                              Contact Info
+                            </FormLabel>
+                            <DebouncedInput
+                              value={church.contactInfo}
+                              onChange={(value) =>
+                                updateArrayField("regionalChurches", index, {
+                                  ...church,
+                                  contactInfo: value,
+                                })
+                              }
+                              placeholder="+63 123 456 7890 or email@church.com"
+                            />
+                          </FormControl>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  ))}
+
+                  <Button
+                    leftIcon={<AddIcon />}
+                    onClick={() =>
+                      addArrayItem("regionalChurches", {
+                        region: "Luzon",
+                        churchName: "",
+                        address: "",
+                        description: "",
+                        contactInfo: "",
+                      })
+                    }
+                    variant="outline"
+                    borderColor={addButtonBorderColor}
+                    color={addButtonColor}
+                    _hover={{ bg: addButtonHoverBg }}
+                    size="lg"
+                    w="full"
+                  >
+                    Add New Church Location
+                  </Button>
+                </VStack>
+              </CardBody>
+            </Card>
           </TabPanel>
         </TabPanels>
       </Tabs>

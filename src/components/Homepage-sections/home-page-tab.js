@@ -29,8 +29,12 @@ import MissionVluesSection from "./MissionValuesSection";
 import MinistriesSection from "./MinistriesSection";
 import CallToActionSection from "./CallToActionSection";
 import FooterSection from "./FooterSection";
-import MainContentSection from "../components/../Homepage-sections/MainContentSection";
+import MainContentSection, {
+  RegionalChurchesSection,
+} from "../components/../Homepage-sections/MainContentSection";
 import SingersImagesSection from "../components/../Homepage-sections/Singers-images-sections";
+import CongregationGallery from "./CongregationGallery";
+import ShowcaseSection from "./ShowcaseSection";
 import FloatingVerseWidget from "../../shared/FloatingVerseWidget";
 const ministries = [
   { name: "Worship", tagline: "Lift God in Spirit and Truth" },
@@ -93,8 +97,14 @@ export default function HomePageTab() {
 
         <VStack align="center" maxW="6xl" mx="auto">
           <MainContentSection />
+          {/* Regional Churches Accordion */}
+          <RegionalChurchesSection />
           {/* Singer Images Grid */}
           <SingersImagesSection />
+          {/* Congregation Gallery */}
+          <CongregationGallery />
+          {/* Showcase Section */}
+          <ShowcaseSection />
           {/* Mission & Values */}
           <MissionVluesSection />
 

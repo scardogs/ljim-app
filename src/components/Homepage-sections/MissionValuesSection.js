@@ -5,6 +5,7 @@ import {
   Text,
   IconButton,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 import {
   ChevronLeftIcon,
@@ -14,6 +15,7 @@ import {
   ChatIcon,
   CheckCircleIcon,
 } from "@chakra-ui/icons";
+import ChurchLoader from "../ChurchLoader";
 
 export default function MissionValuesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -91,15 +93,9 @@ export default function MissionValuesSection() {
   // Show loading state
   if (!content || cards.length === 0) {
     return (
-      <Box
-        w="100vw"
-        h="50vh"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Text>Loading...</Text>
-      </Box>
+      <Flex w="100vw" minH="500px" justify="center" align="center">
+        <ChurchLoader message="Loading mission & values..." />
+      </Flex>
     );
   }
 

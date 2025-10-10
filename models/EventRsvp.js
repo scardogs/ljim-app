@@ -84,6 +84,3 @@ EventRsvpSchema.statics.hasRsvp = async function (eventId, email) {
 
 export default mongoose.models.EventRsvp ||
   mongoose.model("EventRsvp", EventRsvpSchema);
-
-
-

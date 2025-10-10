@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import ChurchLoader from "../ChurchLoader";
 
 export default function CallToActionSection() {
   const router = useRouter();
@@ -17,8 +18,8 @@ export default function CallToActionSection() {
   // Show loading state
   if (!content) {
     return (
-      <Flex justify="center" w="full" mt={12}>
-        <Text>Loading...</Text>
+      <Flex justify="center" w="full" mt={12} minH="200px" align="center">
+        <ChurchLoader message="Loading..." />
       </Flex>
     );
   }

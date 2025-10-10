@@ -7,9 +7,11 @@ import {
   Heading,
   VStack,
   Divider,
+  Flex,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { keyframes } from "@emotion/react";
+import ChurchLoader from "../ChurchLoader";
 
 const MotionBox = motion(Box);
 
@@ -56,9 +58,9 @@ export default function MinistriesSection() {
   // Show loading state
   if (!content) {
     return (
-      <Box w="100vw" py={24} textAlign="center">
-        <Text>Loading...</Text>
-      </Box>
+      <Flex w="100vw" minH="500px" justify="center" align="center">
+        <ChurchLoader message="Loading ministries..." />
+      </Flex>
     );
   }
 

@@ -11,6 +11,7 @@ import {
 import { motion } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import OptimizedImage from "../OptimizedImage";
+import { SectionChurchLoader } from "../ChurchLoader";
 
 const MotionBox = motion(Box);
 
@@ -56,8 +57,11 @@ export default function SingersSection() {
   // Show loading state
   if (!content) {
     return (
-      <Box w="100vw" py={24} textAlign="center">
-        <Text>Loading...</Text>
+      <Box w="100vw">
+        <SectionChurchLoader
+          message="Loading worship leaders..."
+          minHeight="600px"
+        />
       </Box>
     );
   }

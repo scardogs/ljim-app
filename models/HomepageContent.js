@@ -49,6 +49,28 @@ const HomepageContentSchema = new mongoose.Schema(
       default:
         '"From him the whole body, joined and held together by every supporting ligament, grows and builds itself up in love, as each part does its work." — Ephesians 4:16, NIV',
     },
+    philippinesMapImageLight: {
+      type: String,
+      default: "/images/map-ph.png",
+    },
+    philippinesMapImageDark: {
+      type: String,
+      default: "/images/white-map-ph.png",
+    },
+
+    // Regional Churches (Luzon, Visayas, Mindanao)
+    regionalChurches: {
+      type: [
+        {
+          region: String, // "Luzon", "Visayas", or "Mindanao"
+          churchName: String,
+          address: String,
+          description: String,
+          contactInfo: String,
+        },
+      ],
+      default: [],
+    },
 
     // Mission & Values Section (Carousel)
     missionValues: {
@@ -183,6 +205,52 @@ const HomepageContentSchema = new mongoose.Schema(
       type: String,
       default:
         '"Sing to Him, sing praise to Him; tell of all His wonderful acts." — 1 Chronicles 16:9 (NIV)',
+    },
+
+    // Congregation Gallery Section
+    congregationTitle: {
+      type: String,
+      default: "Our Congregation",
+    },
+    congregationDescription: {
+      type: String,
+      default:
+        "A beautiful community of believers united in faith, worship, and service.",
+    },
+    congregationPhotos: {
+      type: [
+        {
+          image: String,
+          caption: String,
+        },
+      ],
+      default: [],
+    },
+    congregationBibleVerse: {
+      type: String,
+      default:
+        '"For where two or three gather in my name, there am I with them." — Matthew 18:20 (NIV)',
+    },
+
+    // Showcase Section (Flexible)
+    showcaseTitle: {
+      type: String,
+      default: "Highlights",
+    },
+    showcaseDescription: {
+      type: String,
+      default: "Celebrating moments that matter in our ministry.",
+    },
+    showcaseItems: {
+      type: [
+        {
+          title: String,
+          description: String,
+          image: String,
+          link: String,
+        },
+      ],
+      default: [],
     },
   },
   { timestamps: true }

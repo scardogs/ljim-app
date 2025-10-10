@@ -483,6 +483,3 @@ RSVPs are stored in MongoDB (lightweight):
 - Full setup guide: `GOOGLE_CALENDAR_SETUP.md`
 - Google Calendar API Docs: https://developers.google.com/calendar
 - Next.js API Routes: https://nextjs.org/docs/api-routes/introduction
-
-
-

@@ -1,0 +1,133 @@
+================================================================================
+           HOW TO FIND THE "LOCATIONS" TAB IN ADMIN PANEL
+================================================================================
+
+STEP 1: Go to Admin Panel
+--------------------------
+URL: http://localhost:3001/admin
+Login with your admin credentials
+
+
+STEP 2: Click "Homepage Content"
+---------------------------------
+You'll see a page with tabs at the top
+
+
+STEP 3: Look for the Tabs at the Top
+-------------------------------------
+You should see 9 tabs. They look like this:
+
+┌────┬────┬────┬────┬────┬────┬────┬────┬────┐
+│Hero│Main│Mis.│Min.│CTA │Lead│Gal.│Show│LOC.│ ← Look for "Locations" or 📍
+└────┴────┴────┴────┴────┴────┴────┴────┴────┘
+  1    2    3    4    5    6    7    8    9
+
+The 9th tab is "LOCATIONS" with a 📍 map pin icon
+
+
+STEP 4: Click the "Locations" Tab
+----------------------------------
+- It's the LAST tab (9th one)
+- Has a 📍 map pin icon
+- Says "Locations" or just shows the icon on mobile
+
+
+STEP 5: Add a Church
+--------------------
+Once you click the Locations tab, you'll see:
+
+   📍 Church Locations
+   
+   Add churches in different regions
+   (Luzon, Visayas, Mindanao)
+   
+   [+ Add New Church Location] ← Click this button
+
+
+STEP 6: Fill in the Form
+-------------------------
+Region: [Dropdown: Luzon / Visayas / Mindanao]
+Church Name: LJIM Manila
+Address: 123 Main Street, Manila, Philippines  
+Description: Our main church in Manila
+Contact Info: +63 912 345 6789
+
+
+STEP 7: Save
+------------
+Click "Save Changes" at the top of the page
+
+
+STEP 8: View on Homepage
+-------------------------
+Go to: http://localhost:3001
+Scroll to the Main Content section
+Below it you'll see:
+
+   Our Churches in the Philippines
+         Find a church near you
+   
+   ┌─────────────────────────────┐
+   │ 📍 Luzon    [1 Church]  ▼   │ ← Click to expand
+   └─────────────────────────────┘
+
+
+================================================================================
+                           TROUBLESHOOTING
+================================================================================
+
+CAN'T SEE THE "LOCATIONS" TAB?
+-------------------------------
+1. Hard refresh browser: Ctrl + Shift + R (Windows) or Cmd + Shift + R (Mac)
+2. Try incognito/private mode
+3. Check if all 9 tabs are there - count them!
+4. On mobile, swipe left to see more tabs
+
+
+TAB LIST ON DESKTOP:
+--------------------
+Tab 1: Hero      (🖼️ image icon)
+Tab 2: Main      (📄 file icon)
+Tab 3: Mission   (🏆 award icon)
+Tab 4: Ministries (👥 users icon)
+Tab 5: CTA       (🎯 target icon)
+Tab 6: Leaders   (🎵 music icon)
+Tab 7: Gallery   (📸 camera icon)
+Tab 8: Showcase  (⭐ star icon)
+Tab 9: Locations (📍 map pin icon) ← THIS ONE!
+
+
+REGIONAL CHURCHES NOT SHOWING ON HOMEPAGE?
+-------------------------------------------
+This is NORMAL! It auto-hides when empty.
+
+To make it appear:
+1. Add at least 1 church in the admin panel
+2. Save changes
+3. Refresh homepage
+4. It will now appear!
+
+
+================================================================================
+                              QUICK TEST
+================================================================================
+
+1. Admin panel → Homepage Content
+2. Count tabs: Should be 9 total
+3. Click tab #9 (Locations / 📍)
+4. Click "Add New Church Location"
+5. Select Region: Luzon
+6. Enter any church name
+7. Save
+8. Go to homepage
+9. Scroll to Main Content section
+10. See "Our Churches in the Philippines" appear! ✓
+
+================================================================================
+
+The feature IS there - just scroll through all 9 tabs to find "Locations"!
+
+If you still can't find it after hard refresh, let me know what tabs you DO see.
+
+================================================================================
+

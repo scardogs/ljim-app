@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, VStack, Heading, Text, Button, Fade } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import OptimizedImage from "../OptimizedImage";
+import { SectionChurchLoader } from "../ChurchLoader";
 
 export default function HeroSection() {
   const router = useRouter();
@@ -38,12 +39,11 @@ export default function HeroSection() {
         width="100%"
         height="calc(100vh - 80px)"
         mt="80px"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        bg="gray.900"
       >
-        <Text color="white">Loading...</Text>
+        <SectionChurchLoader
+          message="Preparing your experience..."
+          minHeight="calc(100vh - 80px)"
+        />
       </Box>
     );
   }

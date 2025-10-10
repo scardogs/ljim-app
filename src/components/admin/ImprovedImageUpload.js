@@ -35,6 +35,7 @@ import {
 } from "@chakra-ui/icons";
 import { CldImage } from "next-cloudinary";
 import imageCompression from "browser-image-compression";
+import Image from "next/image";
 
 export default function ImprovedImageUpload({
   label,
@@ -294,6 +295,7 @@ export default function ImprovedImageUpload({
                 }}
               />
             ) : (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={previewUrl}
                 alt="Preview"
