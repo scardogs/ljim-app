@@ -354,7 +354,7 @@ export function RegionalChurchesSection() {
         Find a church near you
       </Text>
 
-      <Accordion position="relative" allowMultiple w="full" defaultIndex={[0]}>
+      <Accordion position="relative" allowMultiple w="full">
         <RegionSection churches={luzonChurches} regionName="Luzon" />
         <RegionSection churches={visayasChurches} regionName="Visayas" />
         <RegionSection churches={mindanaoChurches} regionName="Mindanao" />
