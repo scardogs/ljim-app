@@ -29,6 +29,9 @@ import {
   Flex,
   Icon,
   Select,
+  Radio,
+  RadioGroup,
+  Stack,
 } from "@chakra-ui/react";
 import { DeleteIcon, AddIcon, StarIcon } from "@chakra-ui/icons";
 import {
@@ -43,6 +46,7 @@ import {
   FiMapPin,
 } from "react-icons/fi";
 import ImprovedImageUpload from "./ImprovedImageUpload";
+import VideoUpload from "./VideoUpload";
 import ColorPicker from "./ColorPicker";
 import DebouncedInput from "./DebouncedInput";
 import DebouncedTextarea from "./DebouncedTextarea";
@@ -432,13 +436,47 @@ export default function HomepageContentEditor() {
 
                   <Divider />
 
-                  <ImprovedImageUpload
-                    label="Hero Background Image"
-                    value={content.heroImage || ""}
-                    onChange={(value) => updateField("heroImage", value)}
-                    placeholder="/images/your-image.png"
-                    imageType="homepage/hero"
-                  />
+                  <FormControl>
+                    <FormLabel fontWeight="semibold">Hero Media Type</FormLabel>
+                    <Text fontSize="xs" color="gray.500" mb={2}>
+                      Choose between image, video, or GIF background
+                    </Text>
+                    <RadioGroup
+                      value={content.heroMediaType || "image"}
+                      onChange={(value) => updateField("heroMediaType", value)}
+                    >
+                      <Stack direction="row" spacing={4}>
+                        <Radio value="image">Image</Radio>
+                        <Radio value="video">Video</Radio>
+                        <Radio value="gif">GIF</Radio>
+                      </Stack>
+                    </RadioGroup>
+                  </FormControl>
+
+                  {content.heroMediaType === "image" ? (
+                    <ImprovedImageUpload
+                      label="Hero Background Image"
+                      value={content.heroImage || ""}
+                      onChange={(value) => updateField("heroImage", value)}
+                      placeholder="/images/your-image.png"
+                      imageType="homepage/hero"
+                    />
+                  ) : (
+                    <VideoUpload
+                      label={`Hero Background ${
+                        content.heroMediaType === "video" ? "Video" : "GIF"
+                      }`}
+                      value={content.heroVideoUrl || ""}
+                      onChange={(value) => updateField("heroVideoUrl", value)}
+                      placeholder={
+                        content.heroMediaType === "video"
+                          ? "https://res.cloudinary.com/your-cloud/video/upload/..."
+                          : "https://res.cloudinary.com/your-cloud/image/upload/.../animation.gif"
+                      }
+                      mediaType={content.heroMediaType}
+                      imageType="homepage/hero"
+                    />
+                  )}
                 </VStack>
               </CardBody>
             </Card>

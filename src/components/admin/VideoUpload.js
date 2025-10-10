@@ -1,7 +1,6 @@
 /**
- * Improved Image Upload Component
- * Supports both Cloudinary and manual URL input
- * Automatically uses Cloudinary for new uploads
+ * Video/GIF Upload Component for Cloudinary
+ * Upload videos and GIFs directly to Cloudinary
  */
 
 import React, { useState, useRef } from "react";
@@ -24,8 +23,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
-  Card,
-  CardBody,
+  Progress,
 } from "@chakra-ui/react";
 import {
   AttachmentIcon,
@@ -33,21 +31,18 @@ import {
   CheckIcon,
   LinkIcon,
 } from "@chakra-ui/icons";
-import { CldImage } from "next-cloudinary";
-import imageCompression from "browser-image-compression";
-import Image from "next/image";
-import { Progress } from "@chakra-ui/react";
 
-export default function ImprovedImageUpload({
+export default function VideoUpload({
   label,
   value,
   onChange,
   placeholder,
+  mediaType = "video", // "video" or "gif"
   imageType = "general",
 }) {
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState(value);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [tabIndex, setTabIndex] = useState(0);
   const fileInputRef = useRef(null);
   const toast = useToast();
@@ -57,38 +52,18 @@ export default function ImprovedImageUpload({
   const buttonColor = useColorModeValue("white", "gray.900");
   const buttonHoverBg = useColorModeValue("gray.700", "gray.300");
 
-  // Check if current value is a Cloudinary URL
-  const isCloudinaryImage = (url) => {
-    return (
-      url &&
-      (url.includes("res.cloudinary.com") ||
-        url.includes("cloudinary://") ||
-        (!url.startsWith("http") && !url.startsWith("/")))
-    );
-  };
-
-  // Extract public ID from Cloudinary URL
-  const getPublicIdFromUrl = (url) => {
-    if (!url) return null;
-    if (url.includes("res.cloudinary.com")) {
-      const parts = url.split("/upload/");
-      if (parts.length > 1) {
-        let publicId = parts[1].replace(/^v\d+\//, "");
-        return publicId.split(".")[0];
-      }
-    }
-    return url;
-  };
-
   const handleFileSelect = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith("image/")) {
+    const isVideo = file.type.startsWith("video/");
+    const isGif = file.type === "image/gif";
+
+    if (mediaType === "video" && !isVideo) {
       toast({
         title: "Invalid File",
-        description: "Please select an image file (jpg, png, gif, etc.)",
+        description: "Please select a video file (MP4, WebM, etc.)",
         status: "error",
         duration: 4000,
         isClosable: true,
@@ -96,11 +71,25 @@ export default function ImprovedImageUpload({
       return;
     }
 
-    // Validate file size (10MB)
-    if (file.size > 10 * 1024 * 1024) {
+    if (mediaType === "gif" && !isGif) {
+      toast({
+        title: "Invalid File",
+        description: "Please select a GIF file",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Validate file size (50MB for videos, 10MB for GIFs)
+    const maxSize = mediaType === "video" ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > maxSize) {
       toast({
         title: "File Too Large",
-        description: "Image must be less than 10MB",
+        description: `${
+          mediaType === "video" ? "Video" : "GIF"
+        } must be less than ${mediaType === "video" ? "50MB" : "10MB"}`,
         status: "error",
         duration: 4000,
         isClosable: true,
@@ -110,54 +99,36 @@ export default function ImprovedImageUpload({
 
     // Upload to Cloudinary
     setIsUploading(true);
+    setUploadProgress(0);
+
     try {
-      const originalSize = (file.size / 1024 / 1024).toFixed(2);
-      console.log("Starting Cloudinary upload:", {
+      const fileSize = (file.size / 1024 / 1024).toFixed(2);
+      console.log(`Starting Cloudinary ${mediaType} upload:`, {
         fileName: file.name,
-        fileSize: `${originalSize} MB`,
+        fileSize: `${fileSize} MB`,
       });
 
-      // Compress image before upload for faster performance
-      let fileToUpload = file;
-      if (file.size > 512 * 1024) {
-        toast({
-          title: "Compressing image...",
-          description: "Optimizing for faster upload",
-          status: "info",
-          duration: 2000,
-        });
-
-        const options = {
-          maxSizeMB: 1.5,
-          maxWidthOrHeight: 1920,
-          useWebWorker: true,
-          fileType: file.type,
-          initialQuality: 0.8,
-        };
-
-        try {
-          fileToUpload = await imageCompression(file, options);
-          const compressedSize = (fileToUpload.size / 1024 / 1024).toFixed(2);
-          console.log(
-            `Image compressed: ${originalSize} MB → ${compressedSize} MB`
-          );
-        } catch (compressionError) {
-          console.error(
-            "Compression failed, using original:",
-            compressionError
-          );
-        }
+      // Create preview for videos (blob URL)
+      if (mediaType === "video") {
+        const blobUrl = URL.createObjectURL(file);
+        setPreviewUrl(blobUrl);
       }
 
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewUrl(e.target.result);
-      reader.readAsDataURL(fileToUpload);
+      toast({
+        title: `Uploading ${mediaType}...`,
+        description: "This may take a minute for larger files",
+        status: "info",
+        duration: 3000,
+      });
 
       // Upload to Cloudinary with progress tracking
       const formData = new FormData();
-      formData.append("image", fileToUpload);
+      formData.append(mediaType === "video" ? "video" : "image", file);
       formData.append("type", imageType);
+      formData.append(
+        "resource_type",
+        mediaType === "video" ? "video" : "image"
+      );
 
       const token = localStorage.getItem("adminToken");
       const startTime = Date.now();
@@ -203,7 +174,12 @@ export default function ImprovedImageUpload({
         });
 
         // Open and send request
-        xhr.open("POST", "/api/cloudinary/upload");
+        xhr.open(
+          "POST",
+          mediaType === "video"
+            ? "/api/cloudinary/upload-video"
+            : "/api/cloudinary/upload"
+        );
         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
         xhr.send(formData);
       });
@@ -211,35 +187,18 @@ export default function ImprovedImageUpload({
       const uploadTime = ((Date.now() - startTime) / 1000).toFixed(2);
 
       if (data.success) {
-        // Delete old Cloudinary image if exists
-        if (value && isCloudinaryImage(value)) {
-          try {
-            const publicId = getPublicIdFromUrl(value);
-            if (publicId) {
-              await fetch("/api/cloudinary/delete", {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ publicId }),
-              });
-            }
-          } catch (err) {
-            console.warn("Could not delete old Cloudinary image:", err);
-          }
-        }
+        setUploadProgress(100);
 
-        onChange(data.image.url);
-        setPreviewUrl(data.image.url);
-
-        const compressedSize = (fileToUpload.size / 1024 / 1024).toFixed(2);
-        const compressionInfo =
-          fileToUpload !== file ? ` (compressed to ${compressedSize} MB)` : "";
+        // For videos, use the URL directly; for GIFs (images), use image.url
+        const uploadedUrl = data.url || data.image?.url;
+        onChange(uploadedUrl);
+        setPreviewUrl(uploadedUrl);
 
         toast({
           title: "Upload Successful",
-          description: `Uploaded to Cloudinary in ${uploadTime}s${compressionInfo}`,
+          description: `${
+            mediaType === "video" ? "Video" : "GIF"
+          } uploaded to Cloudinary in ${uploadTime}s`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -251,7 +210,7 @@ export default function ImprovedImageUpload({
       console.error("Upload error:", error);
       toast({
         title: "Upload Failed",
-        description: error.message || "Failed to upload image",
+        description: error.message || `Failed to upload ${mediaType}`,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -266,36 +225,7 @@ export default function ImprovedImageUpload({
     }
   };
 
-  const handleClearImage = async () => {
-    // If it's a Cloudinary image, delete it
-    if (value && isCloudinaryImage(value)) {
-      try {
-        const publicId = getPublicIdFromUrl(value);
-        if (publicId) {
-          const token = localStorage.getItem("adminToken");
-          await fetch("/api/cloudinary/delete", {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ publicId }),
-          });
-
-          toast({
-            title: "Image Deleted",
-            description: "Image removed from Cloudinary",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        console.error("Delete error:", error);
-      }
-    }
-
-    // Clear the field
+  const handleClearMedia = () => {
     setPreviewUrl("");
     onChange("");
     if (fileInputRef.current) {
@@ -315,22 +245,19 @@ export default function ImprovedImageUpload({
             borderRadius="md"
             borderColor={borderColor}
             overflow="hidden"
-            maxW="300px"
+            maxW="400px"
           >
-            {isCloudinaryImage(previewUrl) ? (
-              <CldImage
-                src={getPublicIdFromUrl(previewUrl)}
-                alt="Preview"
-                width={300}
-                height={200}
-                crop="fill"
-                gravity="auto"
-                quality="auto"
-                format="auto"
+            {mediaType === "video" ? (
+              <video
+                src={previewUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
                 style={{
                   width: "100%",
                   height: "auto",
-                  maxHeight: "200px",
+                  maxHeight: "250px",
                   objectFit: "cover",
                 }}
               />
@@ -342,7 +269,7 @@ export default function ImprovedImageUpload({
                 style={{
                   width: "100%",
                   height: "auto",
-                  maxHeight: "200px",
+                  maxHeight: "250px",
                   objectFit: "cover",
                 }}
               />
@@ -354,10 +281,10 @@ export default function ImprovedImageUpload({
               right={2}
               size="sm"
               colorScheme="red"
-              onClick={handleClearImage}
-              aria-label="Remove image"
+              onClick={handleClearMedia}
+              aria-label="Remove media"
             />
-            {isCloudinaryImage(previewUrl) && (
+            {previewUrl.includes("res.cloudinary.com") && (
               <Badge
                 position="absolute"
                 top={2}
@@ -419,7 +346,7 @@ export default function ImprovedImageUpload({
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileSelect}
-                  accept="image/*"
+                  accept={mediaType === "video" ? "video/*" : "image/gif"}
                   style={{ display: "none" }}
                 />
                 <Button
@@ -428,17 +355,22 @@ export default function ImprovedImageUpload({
                   }
                   onClick={() => fileInputRef.current?.click()}
                   isLoading={isUploading}
-                  loadingText="Uploading to Cloudinary..."
+                  loadingText={`Uploading ${mediaType}...`}
                   variant="outline"
                   borderColor={borderColor}
                   size="sm"
                   w="full"
                 >
-                  {isUploading ? "Uploading..." : "Choose Image to Upload"}
+                  {isUploading
+                    ? `Uploading...`
+                    : `Choose ${
+                        mediaType === "video" ? "Video" : "GIF"
+                      } to Upload`}
                 </Button>
                 <Text fontSize="xs" color="gray.500">
-                  Max 10MB. Images uploaded to Cloudinary for fast delivery with
-                  automatic optimization (WebP/AVIF).
+                  {mediaType === "video"
+                    ? "Max 50MB. Supported: MP4, WebM, MOV. Uploaded to Cloudinary with automatic optimization."
+                    : "Max 10MB. GIF files only. Uploaded to Cloudinary with automatic optimization."}
                 </Text>
               </VStack>
             </TabPanel>
@@ -453,7 +385,12 @@ export default function ImprovedImageUpload({
                       onChange(e.target.value);
                       setPreviewUrl(e.target.value);
                     }}
-                    placeholder={placeholder || "https://... or /images/..."}
+                    placeholder={
+                      placeholder ||
+                      `https://res.cloudinary.com/.../your-${mediaType}.${
+                        mediaType === "video" ? "mp4" : "gif"
+                      }`
+                    }
                     size="sm"
                   />
                   {value && value === previewUrl && (
@@ -461,8 +398,8 @@ export default function ImprovedImageUpload({
                   )}
                 </HStack>
                 <Text fontSize="xs" color="gray.500">
-                  Enter a full URL or path. For best performance, upload to
-                  Cloudinary instead.
+                  Enter a full URL. For best performance, upload to Cloudinary
+                  instead.
                 </Text>
               </VStack>
             </TabPanel>

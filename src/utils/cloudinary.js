@@ -107,6 +107,70 @@ export async function uploadImage(file, options = {}) {
 }
 
 /**
+ * Upload video to Cloudinary
+ * @param {Buffer|string} file - File buffer or path
+ * @param {object} options - Upload options
+ * @returns {Promise<object>} Upload result with URL
+ */
+export async function uploadVideo(file, options = {}) {
+  try {
+    const {
+      folder = "church-videos",
+      transformation = [],
+      tags = [],
+    } = options;
+
+    console.log("Uploading video to Cloudinary:", {
+      folder,
+      tags,
+      hasFile: !!file,
+    });
+
+    const uploadStart = Date.now();
+
+    const result = await cloudinary.uploader.upload(file, {
+      folder,
+      transformation,
+      tags,
+      resource_type: "video",
+      // Auto-optimize video
+      quality: "auto:good",
+      // Optimize upload performance
+      timeout: 300000, // 5 minute timeout for larger videos
+      chunk_size: 6000000, // 6MB chunks
+    });
+
+    const uploadDuration = ((Date.now() - uploadStart) / 1000).toFixed(2);
+    console.log(`⚡ Video uploaded in ${uploadDuration}s`);
+
+    console.log("Video upload successful:", {
+      url: result.secure_url,
+      publicId: result.public_id,
+      duration: result.duration,
+    });
+
+    return {
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id,
+      width: result.width,
+      height: result.height,
+      format: result.format,
+      duration: result.duration,
+      size: result.bytes,
+      createdAt: result.created_at,
+    };
+  } catch (error) {
+    console.error("Cloudinary video upload error:", {
+      message: error.message,
+      error: error.error,
+      statusCode: error.http_code,
+    });
+    throw new Error(`Failed to upload video: ${error.message}`);
+  }
+}
+
+/**
  * Delete image from Cloudinary
  * @param {string} publicId - Cloudinary public ID
  * @returns {Promise<object>} Deletion result

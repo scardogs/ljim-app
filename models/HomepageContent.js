@@ -20,6 +20,15 @@ const HomepageContentSchema = new mongoose.Schema(
       type: String,
       default: "/images/Untitled design.png",
     },
+    heroMediaType: {
+      type: String,
+      enum: ["image", "video", "gif"],
+      default: "image",
+    },
+    heroVideoUrl: {
+      type: String,
+      default: "",
+    },
 
     // Main Content Section
     mainTitle: {

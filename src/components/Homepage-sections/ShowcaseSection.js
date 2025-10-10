@@ -62,6 +62,11 @@ export default function ShowcaseSection() {
     );
   }
 
+  // Don't render if no showcase items - completely hide the section
+  if (!content.showcaseItems || content.showcaseItems.length === 0) {
+    return null;
+  }
+
   return (
     <Box
       w="100vw"
@@ -96,99 +101,78 @@ export default function ShowcaseSection() {
           />
         </VStack>
 
-        {/* Showcase Grid or Empty State */}
-        {!content.showcaseItems || content.showcaseItems.length === 0 ? (
-          <Box
-            bg={cardBg}
-            p={12}
-            borderRadius="xl"
-            textAlign="center"
-            borderWidth="2px"
-            borderStyle="dashed"
-            borderColor={borderColor}
-            opacity={0.6}
-          >
-            <Text color={subText} fontSize="lg" fontFamily="monospace">
-              ⭐ No showcase items yet
-            </Text>
-            <Text color={subText} fontSize="sm" mt={2}>
-              Add showcase items from the admin panel to highlight important
-              content
-            </Text>
-          </Box>
-        ) : (
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
-            {content.showcaseItems.map((item, index) => (
-              <MotionBox
-                key={index}
-                bg={cardBg}
-                borderRadius="2xl"
-                overflow="hidden"
-                boxShadow="xl"
-                borderWidth="1px"
-                borderColor={borderColor}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                _hover={{
-                  transform: "translateY(-8px)",
-                  boxShadow: "2xl",
-                }}
-                cursor={item.link ? "pointer" : "default"}
-              >
-                {/* Image */}
-                {item.image && (
-                  <Box h="200px" overflow="hidden">
-                    <OptimizedImage
-                      src={item.image}
-                      alt={item.title || "Showcase item"}
-                      width={600}
-                      height={200}
-                      crop="fill"
-                      gravity="auto"
-                      quality="auto"
-                      format="auto"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Box>
+        {/* Showcase Grid */}
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
+          {content.showcaseItems.map((item, index) => (
+            <MotionBox
+              key={index}
+              bg={cardBg}
+              borderRadius="2xl"
+              overflow="hidden"
+              boxShadow="xl"
+              borderWidth="1px"
+              borderColor={borderColor}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              _hover={{
+                transform: "translateY(-8px)",
+                boxShadow: "2xl",
+              }}
+              cursor={item.link ? "pointer" : "default"}
+            >
+              {/* Image */}
+              {item.image && (
+                <Box h="200px" overflow="hidden">
+                  <OptimizedImage
+                    src={item.image}
+                    alt={item.title || "Showcase item"}
+                    width={600}
+                    height={200}
+                    crop="fill"
+                    gravity="auto"
+                    quality="auto"
+                    format="auto"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </Box>
+              )}
+
+              {/* Content */}
+              <VStack align="stretch" p={6} spacing={3}>
+                <Heading size="md" color={textColor} fontFamily="monospace">
+                  {item.title}
+                </Heading>
+
+                {item.description && (
+                  <Text color={subText} fontSize="sm">
+                    {item.description}
+                  </Text>
                 )}
 
-                {/* Content */}
-                <VStack align="stretch" p={6} spacing={3}>
-                  <Heading size="md" color={textColor} fontFamily="monospace">
-                    {item.title}
-                  </Heading>
-
-                  {item.description && (
-                    <Text color={subText} fontSize="sm">
-                      {item.description}
-                    </Text>
-                  )}
-
-                  {item.link && (
-                    <Link
-                      href={item.link}
-                      isExternal
-                      color="gray.600"
-                      fontSize="sm"
-                      fontWeight="semibold"
-                      display="inline-flex"
-                      alignItems="center"
-                      gap={1}
-                      _hover={{ color: "gray.800" }}
-                    >
-                      Learn More <ExternalLinkIcon mx="2px" />
-                    </Link>
-                  )}
-                </VStack>
-              </MotionBox>
-            ))}
-          </SimpleGrid>
-        )}
+                {item.link && (
+                  <Link
+                    href={item.link}
+                    isExternal
+                    color="gray.600"
+                    fontSize="sm"
+                    fontWeight="semibold"
+                    display="inline-flex"
+                    alignItems="center"
+                    gap={1}
+                    _hover={{ color: "gray.800" }}
+                  >
+                    Learn More <ExternalLinkIcon mx="2px" />
+                  </Link>
+                )}
+              </VStack>
+            </MotionBox>
+          ))}
+        </SimpleGrid>
       </VStack>
     </Box>
   );

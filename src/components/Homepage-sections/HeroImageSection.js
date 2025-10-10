@@ -59,7 +59,7 @@ export default function HeroSection() {
       justifyContent="center"
       overflow="hidden"
     >
-      {/* Background Image using Cloudinary */}
+      {/* Background Media (Image/Video/GIF) using Cloudinary */}
       <Box
         position="absolute"
         top="0"
@@ -70,7 +70,29 @@ export default function HeroSection() {
         overflow="hidden"
         zIndex="0"
       >
-        {content.heroImage ? (
+        {content.heroMediaType === "video" ||
+        content.heroMediaType === "gif" ? (
+          // Video or GIF Background
+          content.heroVideoUrl ? (
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            >
+              <source src={content.heroVideoUrl} type="video/mp4" />
+              Your browser does not support video backgrounds.
+            </video>
+          ) : (
+            <Box w="100%" h="100%" bg="gray.900" />
+          )
+        ) : // Image Background
+        content.heroImage ? (
           <OptimizedImage
             src={content.heroImage}
             alt={content.heroTitle || "Hero Image"}

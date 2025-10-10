@@ -62,6 +62,11 @@ export default function CongregationGallery() {
     );
   }
 
+  // Don't render if no photos - completely hide the section
+  if (!content.congregationPhotos || content.congregationPhotos.length === 0) {
+    return null;
+  }
+
   return (
     <Box
       w="100vw"
@@ -96,91 +101,70 @@ export default function CongregationGallery() {
           />
         </VStack>
 
-        {/* Photo Grid or Empty State */}
-        {!content.congregationPhotos ||
-        content.congregationPhotos.length === 0 ? (
-          <Box
-            bg={cardBg}
-            p={12}
-            borderRadius="xl"
-            textAlign="center"
-            borderWidth="2px"
-            borderStyle="dashed"
-            borderColor={subText}
-            opacity={0.6}
-          >
-            <Text color={subText} fontSize="lg" fontFamily="monospace">
-              📸 No photos yet
-            </Text>
-            <Text color={subText} fontSize="sm" mt={2}>
-              Add congregation photos from the admin panel
-            </Text>
-          </Box>
-        ) : (
-          <SimpleGrid
-            columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
-            spacing={6}
-            w="full"
-          >
-            {content.congregationPhotos.map((photo, index) => (
-              <MotionBox
-                key={index}
-                bg={cardBg}
-                borderRadius="xl"
-                overflow="hidden"
-                boxShadow="xl"
-                position="relative"
-                cursor="pointer"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0px 0px 25px rgba(255,255,255,0.3)",
-                }}
-              >
-                {/* Image */}
-                <Box h="250px" overflow="hidden">
-                  <OptimizedImage
-                    src={photo.image}
-                    alt={photo.caption || "Congregation photo"}
-                    width={400}
-                    height={250}
-                    crop="fill"
-                    gravity="auto"
-                    quality="auto"
-                    format="auto"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
+        {/* Photo Grid */}
+        <SimpleGrid
+          columns={{ base: 1, sm: 2, md: 3, lg: 4 }}
+          spacing={6}
+          w="full"
+        >
+          {content.congregationPhotos.map((photo, index) => (
+            <MotionBox
+              key={index}
+              bg={cardBg}
+              borderRadius="xl"
+              overflow="hidden"
+              boxShadow="xl"
+              position="relative"
+              cursor="pointer"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 0px 25px rgba(255,255,255,0.3)",
+              }}
+            >
+              {/* Image */}
+              <Box h="250px" overflow="hidden">
+                <OptimizedImage
+                  src={photo.image}
+                  alt={photo.caption || "Congregation photo"}
+                  width={400}
+                  height={250}
+                  crop="fill"
+                  gravity="auto"
+                  quality="auto"
+                  format="auto"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </Box>
 
-                {/* Caption */}
-                {photo.caption && (
-                  <Box
-                    position="absolute"
-                    bottom="0"
-                    w="100%"
-                    bgGradient="linear(to-t, rgba(0,0,0,0.8), transparent)"
-                    p={4}
+              {/* Caption */}
+              {photo.caption && (
+                <Box
+                  position="absolute"
+                  bottom="0"
+                  w="100%"
+                  bgGradient="linear(to-t, rgba(0,0,0,0.8), transparent)"
+                  p={4}
+                >
+                  <Text
+                    fontSize="sm"
+                    color="white"
+                    fontFamily="monospace"
+                    textAlign="center"
                   >
-                    <Text
-                      fontSize="sm"
-                      color="white"
-                      fontFamily="monospace"
-                      textAlign="center"
-                    >
-                      {photo.caption}
-                    </Text>
-                  </Box>
-                )}
-              </MotionBox>
-            ))}
-          </SimpleGrid>
-        )}
+                    {photo.caption}
+                  </Text>
+                </Box>
+              )}
+            </MotionBox>
+          ))}
+        </SimpleGrid>
 
         {/* Bible Verse */}
         <VStack spacing={4} mt={12} textAlign="center">
