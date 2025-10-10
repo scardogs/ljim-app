@@ -8,10 +8,10 @@ import {
   useColorModeValue,
   SimpleGrid,
   Divider,
-  Image,
   Stack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import OptimizedImage from "../OptimizedImage";
 
 const MotionBox = motion(Box);
 
@@ -83,14 +83,28 @@ export default function About() {
             spacing={8}
             align="center"
           >
-            <Image
-              src={content.founderImage || "/images/ed-fernandez.jpg"}
-              alt={content.founderName || "Bishop Ed Dalisay Fernandez"}
+            <Box
               borderRadius="full"
               boxSize={{ base: "150px", md: "200px" }}
-              objectFit="cover"
+              overflow="hidden"
               boxShadow="lg"
-            />
+            >
+              <OptimizedImage
+                src={content.founderImage || "/images/ed-fernandez.jpg"}
+                alt={content.founderName || "Bishop Ed Dalisay Fernandez"}
+                width={200}
+                height={200}
+                crop="thumb"
+                gravity="faces"
+                quality="auto"
+                format="auto"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </Box>
             <Box textAlign={{ base: "center", md: "left" }}>
               <Heading
                 bgGradient={gradientText}

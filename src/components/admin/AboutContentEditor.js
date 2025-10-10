@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { FiUser, FiFileText, FiBookOpen } from "react-icons/fi";
-import ImageUpload from "./ImageUpload";
+import ImprovedImageUpload from "./ImprovedImageUpload";
 import DebouncedInput from "./DebouncedInput";
 import DebouncedTextarea from "./DebouncedTextarea";
 
@@ -219,11 +219,12 @@ export default function AboutContentEditor() {
                 />
               </FormControl>
 
-              <ImageUpload
+              <ImprovedImageUpload
                 label="Founder Photo"
                 value={content.founderImage || ""}
                 onChange={(value) => updateField("founderImage", value)}
                 placeholder="/images/founder.jpg"
+                imageType="about/founder"
               />
             </VStack>
           </CardBody>

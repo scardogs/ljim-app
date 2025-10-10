@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, VStack, Heading, Text, Button, Fade } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import OptimizedImage from "../OptimizedImage";
 
 export default function HeroSection() {
   const router = useRouter();
@@ -53,16 +54,42 @@ export default function HeroSection() {
       width="100%"
       height="calc(100vh - 80px)" // full height minus navbar
       mt="80px"
-      bgImage={`url('${content.heroImage || "/images/Untitled design.png"}')`}
-      bgPosition="center"
-      bgRepeat="no-repeat"
-      bgSize="cover"
-      filter="grayscale(100%) brightness(0.85)"
       display="flex"
       alignItems="center"
       justifyContent="center"
       overflow="hidden"
     >
+      {/* Background Image using Cloudinary */}
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        w="100%"
+        h="100%"
+        filter="grayscale(100%) brightness(0.85)"
+        overflow="hidden"
+        zIndex="0"
+      >
+        {content.heroImage ? (
+          <OptimizedImage
+            src={content.heroImage}
+            alt={content.heroTitle || "Hero Image"}
+            width={1920}
+            height={1080}
+            crop="fill"
+            gravity="center"
+            quality="auto"
+            format="auto"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        ) : (
+          <Box w="100%" h="100%" bg="gray.900" />
+        )}
+      </Box>
       {/* Overlay tint */}
       <Box
         position="absolute"

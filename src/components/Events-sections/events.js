@@ -11,9 +11,9 @@ import {
   Center,
   Icon,
   HStack,
-  Image,
 } from "@chakra-ui/react";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
+import OptimizedImage from "../OptimizedImage";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
@@ -135,13 +135,23 @@ export default function Events() {
                     overflow="hidden"
                   >
                     {event.image && (
-                      <Image
-                        src={event.image}
-                        alt={event.title}
-                        w="100%"
-                        h="150px"
-                        objectFit="cover"
-                      />
+                      <Box w="100%" h="150px" overflow="hidden">
+                        <OptimizedImage
+                          src={event.image}
+                          alt={event.title}
+                          width={600}
+                          height={150}
+                          crop="fill"
+                          gravity="auto"
+                          quality="auto"
+                          format="auto"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </Box>
                     )}
                     <VStack align="stretch" p={5} spacing={3}>
                       <Badge

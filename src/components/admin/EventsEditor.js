@@ -32,7 +32,7 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon, AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
-import ImageUpload from "./ImageUpload";
+import ImprovedImageUpload from "./ImprovedImageUpload";
 import DebouncedInput from "./DebouncedInput";
 import DebouncedTextarea from "./DebouncedTextarea";
 
@@ -458,11 +458,12 @@ export default function EventsEditor() {
                 />
               </FormControl>
 
-              <ImageUpload
+              <ImprovedImageUpload
                 label="Event Image (Optional)"
                 value={selectedEvent?.image || ""}
                 onChange={(value) => updateField("image", value)}
                 placeholder="/images/event.jpg"
+                imageType="events"
               />
             </VStack>
           </ModalBody>

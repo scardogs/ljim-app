@@ -4,13 +4,13 @@ import {
   Text,
   Heading,
   VStack,
-  Image,
   useColorModeValue,
   SimpleGrid,
   Divider,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { keyframes } from "@emotion/react";
+import OptimizedImage from "../OptimizedImage";
 
 const MotionBox = motion(Box);
 
@@ -121,15 +121,24 @@ export default function SingersSection() {
             transition={{ duration: 0.5 }}
           >
             {/* Image Cover */}
-            <Image
-              src={s.image}
-              alt={s.name}
-              objectFit="cover"
-              w="100%"
-              h="320px"
-              transition="transform 0.5s ease"
-              _hover={{ transform: "scale(1.08)" }}
-            />
+            <Box w="100%" h="320px" overflow="hidden">
+              <OptimizedImage
+                src={s.image}
+                alt={s.name}
+                width={400}
+                height={320}
+                crop="fill"
+                gravity="faces"
+                quality="auto"
+                format="auto"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transition: "transform 0.5s ease",
+                }}
+              />
+            </Box>
 
             {/* Text Overlay */}
             <Box

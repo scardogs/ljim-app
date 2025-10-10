@@ -340,5 +340,3 @@ const FloatingVerseWidget = () => {
 };
 
 export default FloatingVerseWidget;
-
-

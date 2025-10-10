@@ -24,7 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { FiDollarSign, FiCreditCard } from "react-icons/fi";
-import ImageUpload from "./ImageUpload";
+import ImprovedImageUpload from "./ImprovedImageUpload";
 import DebouncedInput from "./DebouncedInput";
 import DebouncedTextarea from "./DebouncedTextarea";
 
@@ -269,11 +269,12 @@ export default function GiveContentEditor() {
           <CardBody p={{ base: 4, md: 8 }}>
             <SectionHeader icon={FiCreditCard} title="QR Code Settings" />
             <VStack spacing={6} align="stretch">
-              <ImageUpload
+              <ImprovedImageUpload
                 label="QR Code Image"
                 value={content.qrCodeImage || ""}
                 onChange={(value) => updateField("qrCodeImage", value)}
                 placeholder="/images/qrcode.png"
+                imageType="give/qrcode"
               />
 
               <FormControl>

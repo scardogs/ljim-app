@@ -39,7 +39,7 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon, DeleteIcon, AddIcon, EditIcon } from "@chakra-ui/icons";
 import { FiShoppingBag, FiPackage, FiCreditCard } from "react-icons/fi";
-import ImageUpload from "./ImageUpload";
+import ImprovedImageUpload from "./ImprovedImageUpload";
 import DebouncedInput from "./DebouncedInput";
 import DebouncedTextarea from "./DebouncedTextarea";
 
@@ -524,11 +524,12 @@ export default function ShopContentEditor() {
                 />
               </FormControl>
 
-              <ImageUpload
+              <ImprovedImageUpload
                 label="Product Image"
                 value={editingProduct?.image || ""}
                 onChange={(value) => updateProductField("image", value)}
                 placeholder="/images/product.jpg"
+                imageType="shop/products"
               />
 
               <FormControl display="flex" alignItems="center">

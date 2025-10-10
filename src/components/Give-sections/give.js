@@ -6,8 +6,8 @@ import {
   VStack,
   useColorModeValue,
   Button,
-  Image,
 } from "@chakra-ui/react";
+import OptimizedImage from "../OptimizedImage";
 
 export default function Give() {
   const [content, setContent] = useState(null);
@@ -106,14 +106,26 @@ export default function Give() {
 
           {showQR && (
             <VStack mt={4}>
-              <Image
-                src={content.qrCodeImage || "/images/qrcode.png"}
-                alt="QR Code"
+              <Box
                 width={{ base: "250px", md: "300px" }}
-                objectFit="contain"
                 borderRadius="md"
                 boxShadow="lg"
-              />
+                overflow="hidden"
+              >
+                <OptimizedImage
+                  src={content.qrCodeImage || "/images/qrcode.png"}
+                  alt="QR Code"
+                  width={300}
+                  height={300}
+                  crop="fit"
+                  quality="auto"
+                  format="auto"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                  }}
+                />
+              </Box>
               <Text fontFamily="monospace" color={subTextColor}>
                 QR Code expires in {timer} second{timer !== 1 ? "s" : ""}
               </Text>

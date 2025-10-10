@@ -28,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
 import { FiLayout } from "react-icons/fi";
-import ImageUpload from "./ImageUpload";
+import ImprovedImageUpload from "./ImprovedImageUpload";
 import DebouncedInput from "./DebouncedInput";
 
 export default function NavbarEditor() {
@@ -236,11 +236,12 @@ export default function NavbarEditor() {
                 <>
                   <Divider />
 
-                  <ImageUpload
+                  <ImprovedImageUpload
                     label="Logo Image"
                     value={content.logo || ""}
                     onChange={(value) => updateField("logo", value)}
                     placeholder="/images/logo.png"
+                    imageType="navbar/logo"
                   />
 
                   <FormControl>

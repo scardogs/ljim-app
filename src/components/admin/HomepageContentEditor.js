@@ -38,7 +38,7 @@ import {
   FiTarget,
   FiMusic,
 } from "react-icons/fi";
-import ImageUpload from "./ImageUpload";
+import ImprovedImageUpload from "./ImprovedImageUpload";
 import ColorPicker from "./ColorPicker";
 import DebouncedInput from "./DebouncedInput";
 import DebouncedTextarea from "./DebouncedTextarea";
@@ -389,11 +389,12 @@ export default function HomepageContentEditor() {
 
                   <Divider />
 
-                  <ImageUpload
+                  <ImprovedImageUpload
                     label="Hero Background Image"
                     value={content.heroImage || ""}
                     onChange={(value) => updateField("heroImage", value)}
                     placeholder="/images/your-image.png"
+                    imageType="homepage/hero"
                   />
                 </VStack>
               </CardBody>
@@ -986,7 +987,7 @@ export default function HomepageContentEditor() {
                               placeholder="Leading hearts into worship..."
                             />
                           </FormControl>
-                          <ImageUpload
+                          <ImprovedImageUpload
                             label="Singer Photo"
                             value={singer.image}
                             onChange={(value) =>
@@ -996,6 +997,7 @@ export default function HomepageContentEditor() {
                               })
                             }
                             placeholder="/images/singer-name.jpg"
+                            imageType="homepage/singers"
                           />
                         </VStack>
                       </CardBody>
