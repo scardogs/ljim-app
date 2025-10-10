@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 import OptimizedImage from "../OptimizedImage";
+import ChurchLoader from "../ChurchLoader";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
@@ -98,10 +99,7 @@ export default function Events() {
         {/* Loading State */}
         {isLoading && (
           <Center w="100%" py={10}>
-            <VStack spacing={4}>
-              <Spinner size="xl" color="gray.600" thickness="4px" />
-              <Text color={subTextColor}>Loading events...</Text>
-            </VStack>
+            <ChurchLoader message="Loading events..." />
           </Center>
         )}
 

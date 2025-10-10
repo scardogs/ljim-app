@@ -12,7 +12,7 @@ import { ArrowForwardIcon, ChatIcon } from "@chakra-ui/icons";
 import Navbar from "../components/navbar";
 export default function ChatPage() {
   const [messages, setMessages] = useState([
-    { role: "model", content: "Hi! How can I help?" },
+    { role: "model", content: "Hi! I'm Elai. How can I help you?" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);

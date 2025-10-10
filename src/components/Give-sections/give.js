@@ -8,6 +8,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import OptimizedImage from "../OptimizedImage";
+import ChurchLoader from "../ChurchLoader";
 
 export default function Give() {
   const [content, setContent] = useState(null);
@@ -59,8 +60,9 @@ export default function Give() {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        bgGradient={bg}
       >
-        <Text>Loading...</Text>
+        <ChurchLoader message="Loading give information..." />
       </Box>
     );
   }

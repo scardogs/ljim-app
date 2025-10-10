@@ -21,6 +21,7 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { FiHeart } from "react-icons/fi";
+import ChurchLoader from "../ChurchLoader";
 
 export default function PrayerRequests() {
   const [content, setContent] = useState(null);
@@ -158,8 +159,9 @@ export default function PrayerRequests() {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        bgGradient={bg}
       >
-        <Text>Loading...</Text>
+        <ChurchLoader message="Loading prayer requests..." />
       </Box>
     );
   }

@@ -27,6 +27,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { EmailIcon, PhoneIcon } from "@chakra-ui/icons";
+import ChurchLoader from "../ChurchLoader";
 
 export default function Shop() {
   const [content, setContent] = useState(null);
@@ -69,8 +70,9 @@ export default function Shop() {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        bgGradient={bg}
       >
-        <Text>Loading...</Text>
+        <ChurchLoader message="Loading shop..." />
       </Box>
     );
   }

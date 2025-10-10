@@ -664,6 +664,79 @@ export default function HomepageContentEditor() {
                   homepage
                 </Text>
 
+                {/* Background Media Settings */}
+                <Card
+                  variant="outline"
+                  borderWidth="2px"
+                  borderColor={borderColor}
+                  bg={sectionBg}
+                  mb={6}
+                >
+                  <CardBody>
+                    <Heading size="sm" mb={4}>
+                      Background Media
+                    </Heading>
+                    <Text fontSize="xs" color="gray.500" mb={4}>
+                      Choose background for Mission & Values section with
+                      parallax effect
+                    </Text>
+
+                    <VStack spacing={4} align="stretch">
+                      <FormControl>
+                        <FormLabel fontWeight="semibold">
+                          Background Type
+                        </FormLabel>
+                        <RadioGroup
+                          value={content.missionValuesMediaType || "pattern"}
+                          onChange={(value) =>
+                            updateField("missionValuesMediaType", value)
+                          }
+                        >
+                          <Stack direction="row" spacing={4} flexWrap="wrap">
+                            <Radio value="pattern">Pattern (Default)</Radio>
+                            <Radio value="image">Image</Radio>
+                            <Radio value="video">Video</Radio>
+                            <Radio value="gif">GIF</Radio>
+                          </Stack>
+                        </RadioGroup>
+                      </FormControl>
+
+                      {content.missionValuesMediaType === "image" ? (
+                        <ImprovedImageUpload
+                          label="Background Image"
+                          value={content.missionValuesBackgroundImage || ""}
+                          onChange={(value) =>
+                            updateField("missionValuesBackgroundImage", value)
+                          }
+                          placeholder="Upload background image"
+                          imageType="homepage/mission-values-bg"
+                        />
+                      ) : (content.missionValuesMediaType === "video" ||
+                          content.missionValuesMediaType === "gif") &&
+                        content.missionValuesMediaType !== "pattern" ? (
+                        <VideoUpload
+                          label={`Background ${
+                            content.missionValuesMediaType === "video"
+                              ? "Video"
+                              : "GIF"
+                          }`}
+                          value={content.missionValuesMediaUrl || ""}
+                          onChange={(value) =>
+                            updateField("missionValuesMediaUrl", value)
+                          }
+                          mediaType={content.missionValuesMediaType}
+                          imageType="homepage/mission-values-bg"
+                        />
+                      ) : null}
+
+                      <Text fontSize="xs" color="gray.500" fontStyle="italic">
+                        💡 The background will have a fixed parallax effect — it
+                        stays in place while content scrolls over it
+                      </Text>
+                    </VStack>
+                  </CardBody>
+                </Card>
+
                 <VStack spacing={4} align="stretch">
                   {content.missionValues?.map((item, index) => (
                     <Card

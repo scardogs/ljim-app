@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
+import ChurchLoader from "../ChurchLoader";
 
 export default function Contact() {
   const [content, setContent] = useState(null);
@@ -71,8 +72,9 @@ export default function Contact() {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        bgGradient={bg}
       >
-        <Text>Loading...</Text>
+        <ChurchLoader message="Loading contact information..." />
       </Box>
     );
   }

@@ -123,6 +123,21 @@ const HomepageContentSchema = new mongoose.Schema(
       ],
     },
 
+    // Mission & Values Background Media
+    missionValuesMediaType: {
+      type: String,
+      enum: ["pattern", "image", "video", "gif"],
+      default: "pattern",
+    },
+    missionValuesMediaUrl: {
+      type: String,
+      default: "",
+    },
+    missionValuesBackgroundImage: {
+      type: String,
+      default: "",
+    },
+
     // Ministries Section
     ministries: {
       type: [

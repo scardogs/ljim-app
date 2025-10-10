@@ -21,6 +21,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaBook, FaRedo, FaCopy, FaShareAlt } from "react-icons/fa";
+import ChurchLoader from "../ChurchLoader";
 
 const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
   const [verse, setVerse] = useState(null);
@@ -139,12 +140,7 @@ const VerseOfTheDay = ({ showTitle = true, compact = false }) => {
             px={8}
             py={12}
           >
-            <VStack spacing={4}>
-              <Spinner size="xl" color={spinnerColor} thickness="4px" />
-              <Text color={accentColor} fontWeight="medium">
-                Loading verse of the day...
-              </Text>
-            </VStack>
+            <ChurchLoader message="Loading verse of the day..." />
           </Box>
         </Container>
       </Box>

@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { DownloadIcon } from "@chakra-ui/icons";
 import { generateSongPDF } from "../../utils/pdfGenerator";
+import ChurchLoader from "../ChurchLoader";
 
 export default function MusicPublic() {
   const [songs, setSongs] = useState([]);
@@ -138,8 +139,7 @@ export default function MusicPublic() {
 
           {loading ? (
             <VStack spacing={4} py={10}>
-              <Spinner size="xl" color={accent} />
-              <Text color={subTextColor}>Loading songs...</Text>
+              <ChurchLoader message="Loading songs..." />
             </VStack>
           ) : (
             <Accordion allowToggle>
