@@ -2,6 +2,7 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import FloatingChatButton from "../shared/FloatingChatButton";
 import FloatingChatWidget from "../shared/FloatingChatWidget";
+import { Analytics } from "@vercel/analytics/next";
 
 const theme = extendTheme({
   config: {
@@ -26,6 +27,7 @@ function MyApp({ Component, pageProps }) {
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
       />
+      <Analytics />
     </ChakraProvider>
   );
 }
