@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const HomepageContext = createContext();
 
@@ -23,97 +16,48 @@ export const HomepageProvider = ({ children }) => {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const isInitialized = useRef(false);
 
   useEffect(() => {
-    if (isInitialized.current) return;
-    isInitialized.current = true;
-
-    // Check if we have cached content first
-    const cachedContent = sessionStorage.getItem("homepage-content");
-    const cacheTimestamp = sessionStorage.getItem("homepage-content-timestamp");
-    const now = Date.now();
-    const cacheAge = cacheTimestamp ? now - parseInt(cacheTimestamp) : Infinity;
-
-    // Use cache if it's less than 5 minutes old
-    if (cachedContent && cacheAge < 5 * 60 * 1000) {
+    const fetchContent = async () => {
       try {
-        const parsedContent = JSON.parse(cachedContent);
-        setContent(parsedContent);
-        setLoading(false);
-        setInitialLoadComplete(true);
-
-        // Fetch fresh data in background without showing loading
-        fetchContentInBackground();
-        return;
+        setLoading(true);
+        setError(null);
+        const response = await fetch("/api/admin/homepage");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setContent(data);
       } catch (err) {
-        console.warn("Failed to parse cached content:", err);
-        sessionStorage.removeItem("homepage-content");
-        sessionStorage.removeItem("homepage-content-timestamp");
+        console.error("Error fetching homepage content:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     fetchContent();
   }, []);
 
-  const fetchContent = async () => {
-    try {
+  const value = {
+    content,
+    loading,
+    error,
+    refetch: () => {
       setLoading(true);
-      setError(null);
-
-      const response = await fetch("/api/admin/homepage");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-
-      // Cache the content with timestamp
-      sessionStorage.setItem("homepage-content", JSON.stringify(data));
-      sessionStorage.setItem(
-        "homepage-content-timestamp",
-        Date.now().toString()
-      );
-
-      setContent(data);
-      setInitialLoadComplete(true);
-    } catch (err) {
-      console.error("Error fetching homepage content:", err);
-      setError(err.message);
-      setInitialLoadComplete(true);
-    } finally {
-      setLoading(false);
-    }
+      fetch("/api/admin/homepage")
+        .then((res) => res.json())
+        .then((data) => {
+          setContent(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error refetching homepage content:", err);
+          setError(err.message);
+          setLoading(false);
+        });
+    },
   };
-
-  const fetchContentInBackground = async () => {
-    try {
-      const response = await fetch("/api/admin/homepage");
-      if (response.ok) {
-        const data = await response.json();
-        sessionStorage.setItem("homepage-content", JSON.stringify(data));
-        sessionStorage.setItem(
-          "homepage-content-timestamp",
-          Date.now().toString()
-        );
-        setContent(data);
-      }
-    } catch (err) {
-      console.warn("Background fetch failed:", err);
-    }
-  };
-
-  // Memoize the context value to prevent unnecessary re-renders
-  const value = useMemo(
-    () => ({
-      content,
-      loading: false, // Never show loading after initial load
-      error,
-      initialLoadComplete,
-      refetch: fetchContentInBackground,
-    }),
-    [content, error, initialLoadComplete]
-  );
 
   return (
     <HomepageContext.Provider value={value}>
