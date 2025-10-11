@@ -671,6 +671,3 @@ await sheets.spreadsheets.values.append({
 5. Keep MongoDB as lightweight reference store
 
 Perfect for a church website! 🙏
-
-
-

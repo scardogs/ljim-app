@@ -426,6 +426,3 @@ async function migrateImages() {
 - 📱 Perfect for mobile
 
 Perfect solution! 🙏
-
-
-

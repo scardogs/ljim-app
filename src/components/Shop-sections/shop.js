@@ -166,7 +166,7 @@ export default function Shop() {
                       </Text>
                     )}
                     <Text fontSize="2xl" fontWeight="bold" color={priceColor}>
-                      ${product.price.toFixed(2)}
+                      ₱{product.price.toFixed(2)}
                     </Text>
                     {product.category && (
                       <Badge colorScheme="blue" w="fit-content">
@@ -282,7 +282,7 @@ export default function Shop() {
 
               <Box>
                 <Text fontSize="2xl" fontWeight="bold" color={priceColor}>
-                  ${selectedProduct?.price.toFixed(2)}
+                  ₱{selectedProduct?.price.toFixed(2)}
                 </Text>
                 {selectedProduct?.description && (
                   <Text color={subTextColor} mt={2}>
@@ -311,7 +311,7 @@ export default function Shop() {
                   <VStack align="stretch" spacing={2}>
                     {content.contactEmail && (
                       <Link
-                        href={`mailto:${content.contactEmail}?subject=Order Inquiry: ${selectedProduct?.name}`}
+                        href={`mailto:₱{content.contactEmail}?subject=Order Inquiry: ₱{selectedProduct?.name}`}
                         color={priceColor}
                         _hover={{ textDecoration: "underline" }}
                       >
@@ -323,7 +323,7 @@ export default function Shop() {
                     )}
                     {content.contactPhone && (
                       <Link
-                        href={`tel:${content.contactPhone}`}
+                        href={`tel:₱{content.contactPhone}`}
                         color={priceColor}
                         _hover={{ textDecoration: "underline" }}
                       >
@@ -349,11 +349,11 @@ export default function Shop() {
                 color="white"
                 _hover={{ bg: "gray.800" }}
                 as={Link}
-                href={`mailto:${content.contactEmail}?subject=Order Inquiry: ${
+                href={`mailto:₱{content.contactEmail}?subject=Order Inquiry: ₱{
                   selectedProduct?.name
-                }&body=Hi, I would like to order ${
+                }&body=Hi, I would like to order ₱{
                   selectedProduct?.name
-                } (${selectedProduct?.price.toFixed(2)}).`}
+                } (₱{selectedProduct?.price.toFixed(2)}).`}
               >
                 Send Email
               </Button>

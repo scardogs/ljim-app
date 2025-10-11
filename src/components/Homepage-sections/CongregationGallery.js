@@ -139,6 +139,7 @@ export default function CongregationGallery() {
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
+                    filter: "grayscale(100%) brightness(0.85)",
                   }}
                 />
               </Box>
