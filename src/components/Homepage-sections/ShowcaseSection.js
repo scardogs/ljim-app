@@ -96,8 +96,11 @@ export default function ShowcaseSection() {
       animation={`${bgShift} 30s ease infinite`}
       position="relative"
       overflow="hidden"
+      // Performance optimization
+      transform="translateZ(0)"
+      willChange="auto"
     >
-      {/* Decorative Elements */}
+      {/* Decorative Elements - Optimized */}
       <Box
         position="absolute"
         top="10%"
@@ -106,8 +109,9 @@ export default function ShowcaseSection() {
         h="300px"
         borderRadius="full"
         bg="gray.400"
-        opacity={0.03}
-        filter="blur(80px)"
+        opacity={0.02}
+        filter="blur(60px)"
+        transform="translateZ(0)"
       />
       <Box
         position="absolute"
@@ -117,8 +121,9 @@ export default function ShowcaseSection() {
         h="400px"
         borderRadius="full"
         bg="gray.600"
-        opacity={0.03}
-        filter="blur(100px)"
+        opacity={0.02}
+        filter="blur(60px)"
+        transform="translateZ(0)"
       />
 
       <Container maxW="7xl" px={{ base: 4, md: 8 }}>
@@ -310,7 +315,8 @@ export default function ShowcaseSection() {
                           transform: "scale(1.03)",
                           boxShadow: "2xl",
                         }}
-                        transition="all 0.3s"
+                        transition="transform 0.3s ease, box-shadow 0.3s ease"
+                        style={{ willChange: "transform" }}
                       >
                         <OptimizedImage
                           src={item.image}
@@ -406,6 +412,7 @@ export default function ShowcaseSection() {
                     boxShadow: "2xl",
                   }}
                   cursor={item.link ? "pointer" : "default"}
+                  style={{ willChange: "transform" }}
                 >
                   {/* Image */}
                   {item.image && (

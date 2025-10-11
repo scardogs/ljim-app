@@ -83,8 +83,11 @@ export default function SingersSection() {
       animation={`${bgShift} 30s ease infinite`}
       position="relative"
       overflow="hidden"
+      // Performance optimization
+      transform="translateZ(0)"
+      willChange="auto"
     >
-      {/* Decorative Background Elements */}
+      {/* Decorative Background Elements - Optimized */}
       <Box
         position="absolute"
         top="20%"
@@ -93,8 +96,9 @@ export default function SingersSection() {
         h="400px"
         borderRadius="full"
         bg="gray.500"
-        opacity={0.02}
-        filter="blur(100px)"
+        opacity={0.015}
+        filter="blur(80px)"
+        transform="translateZ(0)"
       />
       <Box
         position="absolute"
@@ -104,8 +108,9 @@ export default function SingersSection() {
         h="500px"
         borderRadius="full"
         bg="gray.600"
-        opacity={0.02}
-        filter="blur(120px)"
+        opacity={0.015}
+        filter="blur(80px)"
+        transform="translateZ(0)"
       />
 
       <VStack spacing={16} maxW="7xl" mx="auto" px={{ base: 4, md: 8 }}>
@@ -147,12 +152,14 @@ export default function SingersSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ y: -10 }}
+              style={{ willChange: "transform" }}
             >
               <VStack
                 spacing={0}
                 cursor="pointer"
-                transition="all 0.3s"
+                transition="transform 0.3s ease"
                 _hover={{ transform: "translateY(-10px)" }}
+                willChange="transform"
               >
                 {/* Image Container - Circular/Portrait Style */}
                 <Box position="relative" w="full" mb={6}>
@@ -181,6 +188,7 @@ export default function SingersSection() {
                     zIndex={1}
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
+                    style={{ willChange: "transform" }}
                   >
                     <OptimizedImage
                       src={s.image}

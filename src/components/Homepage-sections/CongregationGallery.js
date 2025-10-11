@@ -81,6 +81,9 @@ export default function CongregationGallery() {
       bgGradient={bgGradient}
       backgroundSize="400% 400%"
       animation={`${bgShift} 30s ease infinite`}
+      // Performance optimization
+      transform="translateZ(0)"
+      willChange="auto"
     >
       <VStack spacing={8} maxW="7xl" mx="auto" px={{ base: 4, md: 8 }}>
         {/* Header */}
@@ -130,6 +133,7 @@ export default function CongregationGallery() {
                 scale: 1.05,
                 boxShadow: "0px 0px 25px rgba(255,255,255,0.3)",
               }}
+              style={{ willChange: "transform" }}
             >
               {/* Image */}
               <Box h="250px" overflow="hidden">

@@ -95,10 +95,12 @@ export default function Navbar() {
         top={0}
         zIndex={20}
         bg={bg}
-        backdropFilter="blur(16px) saturate(180%)"
+        backdropFilter="blur(8px) saturate(120%)"
         borderBottom="1px solid rgba(255, 255, 255, 0.25)"
         boxShadow={scrolled ? "0 4px 20px rgba(0, 0, 0, 0.15)" : "none"}
-        transition="all 0.3s ease"
+        transition="background 0.3s ease, box-shadow 0.3s ease"
+        transform="translateZ(0)"
+        willChange="auto"
       >
         <Flex align="center">
           {/* Logo/Brand */}
@@ -277,8 +279,8 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} onClose={onClose} placement="right">
-        <DrawerOverlay />
-        <DrawerContent bg={drawerBg} backdropFilter="blur(12px)">
+        <DrawerOverlay backdropFilter="blur(2px)" />
+        <DrawerContent bg={drawerBg} backdropFilter="blur(6px)">
           <DrawerCloseButton />
           <DrawerBody mt={12}>
             <VStack spacing={6} align="start">

@@ -19,14 +19,27 @@ export default function OptimizedImage({
   format = "auto",
   ...props
 }) {
-  // If no src, return placeholder
-  if (!src) {
+  // Valid crop modes for auto gravity
+  const validCropModesForAutoGravity = [
+    "auto",
+    "crop",
+    "fill",
+    "lfill",
+    "fill_pad",
+    "thumb",
+  ];
+
+  // If gravity is auto but crop mode is not compatible, don't use gravity
+  const shouldUseGravity =
+    gravity !== "auto" || validCropModesForAutoGravity.includes(crop);
+
+  // If no src or empty string, return placeholder
+  if (!src || src.trim() === "") {
     return (
       <ChakraImage
         src="/images/placeholder.jpg"
-        alt={alt}
-        width={width}
-        height={height}
+        alt={alt || "Placeholder"}
+        objectFit="cover"
         {...props}
       />
     );
@@ -56,7 +69,7 @@ export default function OptimizedImage({
         width={width}
         height={height}
         crop={crop}
-        gravity={gravity}
+        {...(shouldUseGravity && { gravity })}
         quality={quality}
         format={format}
         loading="lazy"

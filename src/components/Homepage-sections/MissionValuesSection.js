@@ -145,6 +145,9 @@ export default function MissionValuesSection() {
             }
           : {}
       }
+      // Performance optimization
+      transform="translateZ(0)"
+      willChange="auto"
     >
       {/* Background Layer - Contained within section */}
       {mediaType === "pattern" ? (
@@ -200,7 +203,6 @@ export default function MissionValuesSection() {
               right={0}
               bottom={0}
               bg={bgOverlayForSx}
-              backdropFilter="blur(3px)"
               zIndex={1}
             />
           </Box>
@@ -244,7 +246,6 @@ export default function MissionValuesSection() {
               right={0}
               bottom={0}
               bg={overlayBg}
-              backdropFilter="blur(1px)"
               zIndex={1}
             />
           </Box>
@@ -263,9 +264,10 @@ export default function MissionValuesSection() {
         variant="ghost"
         size="lg"
         bg={glassBg}
-        backdropFilter="blur(10px)"
+        backdropFilter="blur(4px)"
         _hover={{ transform: "scale(1.1)", boxShadow: "xl" }}
-        transition="all 0.2s"
+        transition="transform 0.2s ease"
+        willChange="transform"
       />
 
       {/* Content Card */}
@@ -276,11 +278,11 @@ export default function MissionValuesSection() {
         borderRadius="3xl"
         borderWidth="1px"
         borderColor={borderColor}
-        backdropFilter="blur(20px) saturate(180%)"
+        backdropFilter="blur(8px) saturate(120%)"
         boxShadow="0 20px 60px rgba(0, 0, 0, 0.3)"
         p={{ base: 8, md: 12 }}
         textAlign="left"
-        transition="all 0.3s ease"
+        transition="transform 0.3s ease, box-shadow 0.3s ease"
         _hover={{
           transform: "translateY(-6px)",
           boxShadow: "0 30px 80px rgba(0, 0, 0, 0.4)",
@@ -288,6 +290,8 @@ export default function MissionValuesSection() {
         position="relative"
         overflow="hidden"
         zIndex={2}
+        // Performance optimization
+        willChange="transform"
       >
         {/* Decorative top accent */}
         <Box
@@ -396,9 +400,10 @@ export default function MissionValuesSection() {
         variant="ghost"
         size="lg"
         bg={navButtonBg}
-        backdropFilter="blur(10px)"
+        backdropFilter="blur(4px)"
         _hover={{ transform: "scale(1.1)", boxShadow: "xl" }}
-        transition="all 0.2s"
+        transition="transform 0.2s ease"
+        willChange="transform"
       />
 
       {/* Fade-in animation */}

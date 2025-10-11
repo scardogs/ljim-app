@@ -189,6 +189,7 @@ export default function IntroSection() {
           width={600}
           height={600}
           crop="fit"
+          gravity={undefined}
           quality="auto"
           format="auto"
           style={{
