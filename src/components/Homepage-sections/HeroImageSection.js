@@ -10,36 +10,26 @@ export default function HeroSection() {
   const { content, loading, error } = useHomepageContent();
   const [displayedText, setDisplayedText] = useState("");
 
+  // Use default content if no content is available yet
+  const displayContent = content || {
+    heroTitle: "LJIM",
+    heroSubtitle: "Living Jesus in Me",
+    heroImage: "/images/ljim-logo.png",
+  };
+
   // Typing animation effect
   useEffect(() => {
-    if (!content?.heroSubtitle) return;
+    if (!displayContent?.heroSubtitle) return;
 
     let index = 0;
     setDisplayedText(""); // Reset text
     const interval = setInterval(() => {
-      setDisplayedText(content.heroSubtitle.slice(0, index));
+      setDisplayedText(displayContent.heroSubtitle.slice(0, index));
       index++;
-      if (index > content.heroSubtitle.length) clearInterval(interval);
+      if (index > displayContent.heroSubtitle.length) clearInterval(interval);
     }, 40); // typing speed (ms per letter)
     return () => clearInterval(interval);
-  }, [content?.heroSubtitle]);
-
-  // Show loading state while fetching
-  if (loading) {
-    return (
-      <Box
-        position="relative"
-        width="100%"
-        height="calc(100vh - 80px)"
-        mt="80px"
-      >
-        <SectionChurchLoader
-          message="Preparing your experience..."
-          minHeight="calc(100vh - 80px)"
-        />
-      </Box>
-    );
-  }
+  }, [displayContent?.heroSubtitle]);
 
   // Show error state
   if (error) {
@@ -56,11 +46,6 @@ export default function HeroSection() {
         <Text color="red.500">Error loading content: {error}</Text>
       </Box>
     );
-  }
-
-  // Don't render if no content
-  if (!content) {
-    return null;
   }
 
   return (
@@ -85,10 +70,10 @@ export default function HeroSection() {
         overflow="hidden"
         zIndex="0"
       >
-        {content.heroMediaType === "video" ||
-        content.heroMediaType === "gif" ? (
+        {displayContent.heroMediaType === "video" ||
+        displayContent.heroMediaType === "gif" ? (
           // Video or GIF Background
-          content.heroVideoUrl ? (
+          displayContent.heroVideoUrl ? (
             <video
               autoPlay
               loop
@@ -100,17 +85,17 @@ export default function HeroSection() {
                 objectFit: "cover",
               }}
             >
-              <source src={content.heroVideoUrl} type="video/mp4" />
+              <source src={displayContent.heroVideoUrl} type="video/mp4" />
               Your browser does not support video backgrounds.
             </video>
           ) : (
             <Box w="100%" h="100%" bg="gray.900" />
           )
         ) : // Image Background
-        content.heroImage ? (
+        displayContent.heroImage ? (
           <OptimizedImage
-            src={content.heroImage}
-            alt={content.heroTitle || "Hero Image"}
+            src={displayContent.heroImage}
+            alt={displayContent.heroTitle || "Hero Image"}
             width={1920}
             height={1080}
             crop="fill"
@@ -147,7 +132,7 @@ export default function HeroSection() {
             fontWeight="bold"
             textShadow="2px 2px 10px rgba(0,0,0,0.8)"
           >
-            {content.heroTitle || "Lift Jesus International Ministries"}
+            {displayContent.heroTitle || "Lift Jesus International Ministries"}
           </Heading>
         </Fade>
 
@@ -179,7 +164,7 @@ export default function HeroSection() {
           _hover={{ bg: "gray.200" }}
           onClick={() => router.push("/about")}
         >
-          {content.heroButtonText || "Learn More"}
+          {displayContent.heroButtonText || "Learn More"}
         </Button>
       </VStack>
     </Box>
