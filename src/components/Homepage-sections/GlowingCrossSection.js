@@ -89,8 +89,8 @@ export default function GlowingCrossSection() {
   return (
     <Box
       w="100vw"
-      height="50vw"
-      py={{ base: 24, md: 32 }}
+      minH={{ base: "600px", md: "700px", lg: "50vw" }}
+      py={{ base: 16, md: 24, lg: 32 }}
       bgGradient={bgGradient}
       backgroundSize="400% 400%"
       animation={`${bgShift} 30s ease infinite`}
@@ -103,8 +103,8 @@ export default function GlowingCrossSection() {
         top="50%"
         left="50%"
         transform="translate(-50%, -50%)"
-        w="600px"
-        h="600px"
+        w={{ base: "300px", md: "600px" }}
+        h={{ base: "300px", md: "600px" }}
         borderRadius="full"
         bg="gray.400"
         opacity={0.02}
@@ -117,14 +117,19 @@ export default function GlowingCrossSection() {
         top="50%"
         left="50%"
         transform="translate(-50%, -50%)"
-        w="800px"
-        h="800px"
+        w={{ base: "400px", md: "800px" }}
+        h={{ base: "400px", md: "800px" }}
         bgGradient="conic(from 0deg, transparent, rgba(192, 192, 192, 0.05), transparent, rgba(192, 192, 192, 0.05), transparent)"
         animation={`${rayAnimation} 20s linear infinite`}
         pointerEvents="none"
       />
 
-      <VStack spacing={8} maxW="7xl" mx="auto" px={{ base: 4, md: 8 }}>
+      <VStack
+        spacing={{ base: 6, md: 8 }}
+        maxW="7xl"
+        mx="auto"
+        px={{ base: 4, md: 8 }}
+      >
         {/* Main Cross Container */}
         <MotionBox
           position="relative"
@@ -138,8 +143,8 @@ export default function GlowingCrossSection() {
             top="50%"
             left="50%"
             transform="translate(-50%, -50%)"
-            w="400px"
-            h="400px"
+            w={{ base: "250px", md: "400px" }}
+            h={{ base: "250px", md: "400px" }}
             borderRadius="full"
             bg="transparent"
             border="2px solid"
@@ -225,16 +230,16 @@ export default function GlowingCrossSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          mt={12}
+          mt={{ base: 6, md: 12 }}
         >
           <VStack spacing={4} textAlign="center">
             <Text
-              fontSize={{ base: "xl", md: "2xl" }}
+              fontSize={{ base: "md", md: "xl", lg: "2xl" }}
               fontStyle="italic"
               fontFamily="monospace"
               color={verseColor}
               maxW="3xl"
-              px={6}
+              px={{ base: 4, md: 6 }}
               lineHeight="tall"
               textShadow="0 0 20px rgba(192, 192, 192, 0.1)"
             >
