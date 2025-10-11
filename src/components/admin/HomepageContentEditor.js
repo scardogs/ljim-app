@@ -575,7 +575,6 @@ export default function HomepageContentEditor() {
             />
           </LazyTabPanel>
         </TabPanels>
-
       </Tabs>
 
       {/* Floating Save Button */}

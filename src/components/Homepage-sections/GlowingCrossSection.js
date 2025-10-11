@@ -89,6 +89,7 @@ export default function GlowingCrossSection() {
   return (
     <Box
       w="100vw"
+      height="50vw"
       py={{ base: 24, md: 32 }}
       bgGradient={bgGradient}
       backgroundSize="400% 400%"

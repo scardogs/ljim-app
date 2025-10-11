@@ -40,7 +40,7 @@ export default function CallToActionSection() {
           boxShadow: "lg",
         }}
         transition="all 0.3s ease"
-        onClick={() => router.push("/about")}
+        onClick={() => router.push("/contact")}
       >
         {content.ctaButtonText || "Learn More About Us"}
       </Button>
