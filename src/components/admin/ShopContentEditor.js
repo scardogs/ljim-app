@@ -387,6 +387,22 @@ export default function ShopContentEditor() {
             <SectionHeader icon={FiShoppingBag} title="Order Information" />
             <VStack spacing={6} align="stretch">
               <FormControl>
+                <FormLabel fontWeight="semibold">
+                  Google Sheets Form URL
+                </FormLabel>
+                <Text fontSize="xs" color="gray.500" mb={2}>
+                  Paste your Google Apps Script Web App URL here to receive
+                  order submissions. See GOOGLE_SHEETS_ORDER_FORM_SETUP.md for
+                  setup instructions.
+                </Text>
+                <DebouncedInput
+                  value={content.googleSheetsUrl || ""}
+                  onChange={(value) => updateField("googleSheetsUrl", value)}
+                  placeholder="https://script.google.com/macros/s/AKfycbxxx.../exec"
+                />
+              </FormControl>
+
+              <FormControl>
                 <FormLabel fontWeight="semibold">Order Instructions</FormLabel>
                 <Text fontSize="xs" color="gray.500" mb={2}>
                   Tell customers how to place an order

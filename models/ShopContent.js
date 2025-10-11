@@ -47,6 +47,10 @@ const ShopContentSchema = new mongoose.Schema(
     },
 
     // Order Information
+    googleSheetsUrl: {
+      type: String,
+      default: "",
+    },
     orderInstructions: {
       type: String,
       default:

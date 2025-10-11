@@ -25,6 +25,16 @@ import {
   ModalFooter,
   useDisclosure,
   Link,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  useToast,
 } from "@chakra-ui/react";
 import { EmailIcon, PhoneIcon } from "@chakra-ui/icons";
 import ChurchLoader from "../ChurchLoader";
@@ -33,7 +43,17 @@ export default function Shop() {
   const [content, setContent] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    customerName: "",
+    customerEmail: "",
+    customerPhone: "",
+    quantity: 1,
+    shippingAddress: "",
+    additionalNotes: "",
+  });
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const bg = useColorModeValue(
     "linear(to-b, white, gray.100)",
@@ -51,7 +71,122 @@ export default function Shop() {
 
   const handleOrderClick = (product) => {
     setSelectedProduct(product);
+    setFormData({
+      customerName: "",
+      customerEmail: "",
+      customerPhone: "",
+      quantity: 1,
+      shippingAddress: "",
+      additionalNotes: "",
+    });
     onOpen();
+  };
+
+  const handleSubmitOrder = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (
+      !formData.customerName ||
+      !formData.customerEmail ||
+      !formData.customerPhone
+    ) {
+      toast({
+        title: "Required Fields",
+        description: "Please provide your name, email, and phone number",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.customerEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please provide a valid email address",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Check if Google Sheets URL is configured
+      if (!content.googleSheetsUrl) {
+        throw new Error("Google Sheets URL not configured");
+      }
+
+      // Prepare order data
+      const orderData = {
+        productName: selectedProduct.name,
+        productPrice: selectedProduct.price,
+        customerName: formData.customerName,
+        customerEmail: formData.customerEmail,
+        customerPhone: formData.customerPhone,
+        quantity: formData.quantity,
+        shippingAddress: formData.shippingAddress,
+        additionalNotes: formData.additionalNotes,
+      };
+
+      // Submit to Google Sheets
+      const response = await fetch(content.googleSheetsUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      // Note: no-cors mode doesn't allow reading the response
+      // We assume success if no error is thrown
+      toast({
+        title: "Order Submitted!",
+        description:
+          "Thank you for your order! We will contact you shortly to confirm your order details.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      // Reset form and close modal
+      setFormData({
+        customerName: "",
+        customerEmail: "",
+        customerPhone: "",
+        quantity: 1,
+        shippingAddress: "",
+        additionalNotes: "",
+      });
+      onClose();
+    } catch (error) {
+      console.error("Error submitting order:", error);
+      toast({
+        title: "Submission Error",
+        description:
+          error.message === "Google Sheets URL not configured"
+            ? "Order form is not configured yet. Please contact us directly."
+            : "Failed to submit order. Please try contacting us directly via email or phone.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const updateFormField = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   // Fetch content from database
@@ -262,103 +397,172 @@ export default function Shop() {
         )}
       </VStack>
 
-      {/* Order Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+      {/* Order Modal with Form */}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent bg={modalBg}>
           <ModalHeader>Order: {selectedProduct?.name}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4} align="stretch">
-              {selectedProduct?.image && (
-                <Image
-                  src={selectedProduct.image}
-                  alt={selectedProduct.name}
-                  borderRadius="md"
-                  maxH="200px"
-                  objectFit="cover"
-                />
-              )}
-
-              <Box>
-                <Text fontSize="2xl" fontWeight="bold" color={priceColor}>
-                  ₱{selectedProduct?.price.toFixed(2)}
-                </Text>
-                {selectedProduct?.description && (
-                  <Text color={subTextColor} mt={2}>
-                    {selectedProduct.description}
-                  </Text>
+          <form onSubmit={handleSubmitOrder}>
+            <ModalBody>
+              <VStack spacing={4} align="stretch">
+                {/* Product Summary */}
+                {selectedProduct?.image && (
+                  <Image
+                    src={selectedProduct.image}
+                    alt={selectedProduct.name}
+                    borderRadius="md"
+                    maxH="200px"
+                    w="100%"
+                    objectFit="cover"
+                  />
                 )}
-              </Box>
 
-              <Divider />
-
-              <Box>
-                <Heading size="sm" mb={2}>
-                  How to Order
-                </Heading>
-                <Text color={subTextColor} whiteSpace="pre-wrap">
-                  {content?.orderInstructions ||
-                    "Please contact us to place your order."}
-                </Text>
-              </Box>
-
-              {(content?.contactEmail || content?.contactPhone) && (
                 <Box>
-                  <Heading size="sm" mb={3}>
-                    Contact Information
-                  </Heading>
-                  <VStack align="stretch" spacing={2}>
-                    {content.contactEmail && (
-                      <Link
-                        href={`mailto:₱{content.contactEmail}?subject=Order Inquiry: ₱{selectedProduct?.name}`}
-                        color={priceColor}
-                        _hover={{ textDecoration: "underline" }}
-                      >
-                        <HStack>
-                          <EmailIcon />
-                          <Text>{content.contactEmail}</Text>
-                        </HStack>
-                      </Link>
-                    )}
-                    {content.contactPhone && (
-                      <Link
-                        href={`tel:₱{content.contactPhone}`}
-                        color={priceColor}
-                        _hover={{ textDecoration: "underline" }}
-                      >
-                        <HStack>
-                          <PhoneIcon />
-                          <Text>{content.contactPhone}</Text>
-                        </HStack>
-                      </Link>
-                    )}
-                  </VStack>
+                  <Text fontSize="2xl" fontWeight="bold" color={priceColor}>
+                    ₱{selectedProduct?.price.toFixed(2)}
+                  </Text>
+                  {selectedProduct?.description && (
+                    <Text color={subTextColor} mt={2}>
+                      {selectedProduct.description}
+                    </Text>
+                  )}
                 </Box>
-              )}
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" onClick={onClose}>
-              Close
-            </Button>
-            {content?.contactEmail && (
+
+                <Divider />
+
+                <Heading size="sm">Your Information</Heading>
+
+                {/* Customer Name */}
+                <FormControl isRequired>
+                  <FormLabel>Full Name</FormLabel>
+                  <Input
+                    value={formData.customerName}
+                    onChange={(e) =>
+                      updateFormField("customerName", e.target.value)
+                    }
+                    placeholder="Juan Dela Cruz"
+                  />
+                </FormControl>
+
+                {/* Customer Email */}
+                <FormControl isRequired>
+                  <FormLabel>Email Address</FormLabel>
+                  <Input
+                    type="email"
+                    value={formData.customerEmail}
+                    onChange={(e) =>
+                      updateFormField("customerEmail", e.target.value)
+                    }
+                    placeholder="juan@example.com"
+                  />
+                </FormControl>
+
+                {/* Customer Phone */}
+                <FormControl isRequired>
+                  <FormLabel>Phone Number</FormLabel>
+                  <Input
+                    type="tel"
+                    value={formData.customerPhone}
+                    onChange={(e) =>
+                      updateFormField("customerPhone", e.target.value)
+                    }
+                    placeholder="+63 912 345 6789"
+                  />
+                </FormControl>
+
+                {/* Quantity */}
+                <FormControl isRequired>
+                  <FormLabel>Quantity</FormLabel>
+                  <NumberInput
+                    value={formData.quantity}
+                    onChange={(valueString) =>
+                      updateFormField("quantity", parseInt(valueString) || 1)
+                    }
+                    min={1}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                  <Text fontSize="sm" color={subTextColor} mt={1}>
+                    Total: ₱
+                    {(selectedProduct?.price * formData.quantity).toFixed(2)}
+                  </Text>
+                </FormControl>
+
+                {/* Shipping Address */}
+                <FormControl>
+                  <FormLabel>Shipping Address</FormLabel>
+                  <Textarea
+                    value={formData.shippingAddress}
+                    onChange={(e) =>
+                      updateFormField("shippingAddress", e.target.value)
+                    }
+                    placeholder="Street Address, Barangay, City, Province, Postal Code"
+                    rows={3}
+                  />
+                </FormControl>
+
+                {/* Additional Notes */}
+                <FormControl>
+                  <FormLabel>Additional Notes (Optional)</FormLabel>
+                  <Textarea
+                    value={formData.additionalNotes}
+                    onChange={(e) =>
+                      updateFormField("additionalNotes", e.target.value)
+                    }
+                    placeholder="Any special instructions or questions?"
+                    rows={2}
+                  />
+                </FormControl>
+
+                {/* Contact Information */}
+                {(content?.contactEmail || content?.contactPhone) && (
+                  <Box bg={sectionBg} p={4} borderRadius="md">
+                    <Text fontSize="sm" color={subTextColor}>
+                      We will contact you shortly to confirm your order.
+                    </Text>
+                    <HStack spacing={4} mt={2} flexWrap="wrap">
+                      {content.contactEmail && (
+                        <HStack>
+                          <EmailIcon color={priceColor} />
+                          <Text fontSize="sm" color={textColor}>
+                            {content.contactEmail}
+                          </Text>
+                        </HStack>
+                      )}
+                      {content.contactPhone && (
+                        <HStack>
+                          <PhoneIcon color={priceColor} />
+                          <Text fontSize="sm" color={textColor}>
+                            {content.contactPhone}
+                          </Text>
+                        </HStack>
+                      )}
+                    </HStack>
+                  </Box>
+                )}
+              </VStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onClose}>
+                Cancel
+              </Button>
               <Button
-                ml={3}
+                type="submit"
                 bg="black"
                 color="white"
                 _hover={{ bg: "gray.800" }}
-                as={Link}
-                href={`mailto:₱{content.contactEmail}?subject=Order Inquiry: ₱{
-                  selectedProduct?.name
-                }&body=Hi, I would like to order ₱{
-                  selectedProduct?.name
-                } (₱{selectedProduct?.price.toFixed(2)}).`}
+                isLoading={isSubmitting}
+                loadingText="Submitting..."
               >
-                Send Email
+                Submit Order
               </Button>
-            )}
-          </ModalFooter>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </Box>
