@@ -231,6 +231,13 @@ const HomepageContentSchema = new mongoose.Schema(
         '"Sing to Him, sing praise to Him; tell of all His wonderful acts." — 1 Chronicles 16:9 (NIV)',
     },
 
+    // Glowing Cross Section
+    crossSectionVerse: {
+      type: String,
+      default:
+        '"For the message of the cross is foolishness to those who are perishing, but to us who are being saved it is the power of God." — 1 Corinthians 1:18 (NIV)',
+    },
+
     // Congregation Gallery Section
     congregationTitle: {
       type: String,

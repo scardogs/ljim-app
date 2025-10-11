@@ -33,6 +33,7 @@ import MainContentSection, {
   RegionalChurchesSection,
 } from "../components/../Homepage-sections/MainContentSection";
 import SingersImagesSection from "../components/../Homepage-sections/Singers-images-sections";
+import GlowingCrossSection from "./GlowingCrossSection";
 import CongregationGallery from "./CongregationGallery";
 import ShowcaseSection from "./ShowcaseSection";
 import FloatingVerseWidget from "../../shared/FloatingVerseWidget";
@@ -101,6 +102,8 @@ export default function HomePageTab() {
           <RegionalChurchesSection />
           {/* Singer Images Grid */}
           <SingersImagesSection />
+          {/* Glowing Cross Section */}
+          <GlowingCrossSection />
           {/* Congregation Gallery */}
           <CongregationGallery />
           {/* Showcase Section */}
