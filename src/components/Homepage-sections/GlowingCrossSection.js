@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Box, VStack, Text, useColorModeValue, Flex } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
 import { motion } from "framer-motion";
 import ChurchLoader from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 const MotionBox = motion(Box);
 
@@ -60,7 +61,7 @@ const rayAnimation = keyframes`
 `;
 
 export default function GlowingCrossSection() {
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const bgGradient = useColorModeValue(
     "linear(to-b, white, gray.50, white)",
@@ -69,21 +70,27 @@ export default function GlowingCrossSection() {
   const crossColor = useColorModeValue("gray.300", "gray.600");
   const verseColor = useColorModeValue("gray.700", "gray.300");
 
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
-
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex w="100vw" minH="600px" justify="center" align="center">
         <ChurchLoader message="Loading..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box w="100vw" py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   return (

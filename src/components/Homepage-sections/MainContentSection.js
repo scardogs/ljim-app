@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaMapMarkerAlt, FaChurch, FaPhone } from "react-icons/fa";
 import ChurchLoader from "../ChurchLoader";
 import OptimizedImage from "../OptimizedImage";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 // Gentle shimmer
 const shimmer = keyframes`
@@ -30,21 +31,13 @@ const shimmer = keyframes`
 const MotionText = motion(Text);
 
 export default function IntroSection() {
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
   const [index, setIndex] = useState(0);
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
   const verseColor = useColorModeValue("gray.700", "gray.300");
   const isDarkMode = useColorModeValue(false, true);
-
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
 
   // Rotate through texts
   useEffect(() => {
@@ -57,12 +50,26 @@ export default function IntroSection() {
   }, [content?.mainRotatingTexts?.length]);
 
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex justify="center" align="center" minH="400px">
         <ChurchLoader message="Loading content..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   return (
@@ -199,7 +206,7 @@ export default function IntroSection() {
  * Collapsible FAQ for Luzon, Visayas, Mindanao
  */
 export function RegionalChurchesSection() {
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
@@ -208,21 +215,27 @@ export function RegionalChurchesSection() {
   const hoverBg = useColorModeValue("gray.50", "gray.700");
   const accordionBg = useColorModeValue("gray.50", "gray.800");
 
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
-
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex justify="center" align="center" minH="300px">
         <ChurchLoader message="Loading church locations..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   // Group churches by region

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Heading,
@@ -19,6 +19,7 @@ import { keyframes } from "@emotion/react";
 import { ExternalLinkIcon, StarIcon } from "@chakra-ui/icons";
 import OptimizedImage from "../OptimizedImage";
 import ChurchLoader from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -44,7 +45,7 @@ const pulse = keyframes`
 `;
 
 export default function ShowcaseSection() {
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
@@ -55,21 +56,27 @@ export default function ShowcaseSection() {
   const cardBg = useColorModeValue("white", "rgba(0, 0, 0, 0.6)");
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
-
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex w="100vw" minH="600px" justify="center" align="center">
         <ChurchLoader message="Loading showcase..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box w="100vw" py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   // Don't render if no showcase items - completely hide the section

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Heading,
@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import OptimizedImage from "../OptimizedImage";
 import ChurchLoader from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 const MotionBox = motion(Box);
 
@@ -31,7 +32,7 @@ const bgShift = keyframes`
 `;
 
 export default function CongregationGallery() {
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
@@ -45,21 +46,27 @@ export default function CongregationGallery() {
   );
   const verseColor = useColorModeValue("gray.700", "gray.300");
 
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
-
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex w="100vw" minH="600px" justify="center" align="center">
         <ChurchLoader message="Loading congregation gallery..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box w="100vw" py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   // Don't render if no photos - completely hide the section

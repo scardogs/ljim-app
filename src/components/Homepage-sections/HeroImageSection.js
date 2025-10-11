@@ -3,19 +3,12 @@ import { Box, VStack, Heading, Text, Button, Fade } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import OptimizedImage from "../OptimizedImage";
 import { SectionChurchLoader } from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 export default function HeroSection() {
   const router = useRouter();
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
   const [displayedText, setDisplayedText] = useState("");
-
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
 
   // Typing animation effect
   useEffect(() => {
@@ -32,7 +25,7 @@ export default function HeroSection() {
   }, [content?.heroSubtitle]);
 
   // Show loading state while fetching
-  if (!content) {
+  if (loading) {
     return (
       <Box
         position="relative"
@@ -46,6 +39,28 @@ export default function HeroSection() {
         />
       </Box>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box
+        position="relative"
+        width="100%"
+        height="calc(100vh - 80px)"
+        mt="80px"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   return (

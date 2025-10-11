@@ -17,11 +17,12 @@ import {
 } from "@chakra-ui/icons";
 import OptimizedImage from "../OptimizedImage";
 import ChurchLoader from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 export default function MissionValuesSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
@@ -60,14 +61,6 @@ export default function MissionValuesSection() {
   );
   const iconBoxBg = useColorModeValue("gray.100", "gray.800");
   const bgOverlayForSx = useColorModeValue("", "rgba(0, 0, 0, 0.75)");
-
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
 
   // Icon mapping
   const iconMap = {
@@ -108,12 +101,26 @@ export default function MissionValuesSection() {
   }, [nextSlide, cards.length]);
 
   // Show loading state
-  if (!content || cards.length === 0) {
+  if (loading) {
     return (
       <Flex w="100vw" minH="500px" justify="center" align="center">
         <ChurchLoader message="Loading mission & values..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box w="100vw" py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content or cards
+  if (!content || cards.length === 0) {
+    return null;
   }
 
   const currentCard = cards[currentIndex];

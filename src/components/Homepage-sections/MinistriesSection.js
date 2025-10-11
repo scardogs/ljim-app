@@ -25,6 +25,7 @@ import {
   FiAward,
 } from "react-icons/fi";
 import ChurchLoader from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 const MotionBox = motion(Box);
 
@@ -67,7 +68,7 @@ const bgShift = keyframes`
 `;
 
 export default function MinistriesSection() {
-  const [content, setContent] = React.useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
@@ -95,24 +96,30 @@ export default function MinistriesSection() {
   );
   const cardHoverBorderColor = useColorModeValue("gray.400", "gray.500");
 
-  // Fetch content from database
-  React.useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
-
   // Get ministries from content
   const ministries = content?.ministries || [];
 
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex w="100vw" minH="500px" justify="center" align="center">
         <ChurchLoader message="Loading ministries..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box w="100vw" py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   // Helper to get icon for ministry

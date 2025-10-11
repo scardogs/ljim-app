@@ -37,6 +37,8 @@ import GlowingCrossSection from "./GlowingCrossSection";
 import CongregationGallery from "./CongregationGallery";
 import ShowcaseSection from "./ShowcaseSection";
 import FloatingVerseWidget from "../../shared/FloatingVerseWidget";
+import { HomepageProvider } from "../../contexts/HomepageContext";
+import ChurchLoader from "../ChurchLoader";
 const ministries = [
   { name: "Worship", tagline: "Lift God in Spirit and Truth" },
   { name: "Word", tagline: "Teaching the Living Word" },
@@ -44,7 +46,7 @@ const ministries = [
   { name: "Discipleship", tagline: "Growing Strong in Faith" },
 ];
 
-export default function HomePageTab() {
+function HomePageContent() {
   const router = useRouter();
 
   // Palette
@@ -120,5 +122,13 @@ export default function HomePageTab() {
         </VStack>
       </Box>
     </Box>
+  );
+}
+
+export default function HomePageTab() {
+  return (
+    <HomepageProvider>
+      <HomePageContent />
+    </HomepageProvider>
   );
 }

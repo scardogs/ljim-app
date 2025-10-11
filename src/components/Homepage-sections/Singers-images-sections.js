@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Box,
   Text,
@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import OptimizedImage from "../OptimizedImage";
 import { SectionChurchLoader } from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 const MotionBox = motion(Box);
 
@@ -30,7 +31,7 @@ const bgShift = keyframes`
 `;
 
 export default function SingersSection() {
-  const [content, setContent] = useState(null);
+  const { content, loading, error } = useHomepageContent();
 
   const subText = useColorModeValue("gray.600", "gray.400");
   const cardBg = useColorModeValue(
@@ -44,19 +45,11 @@ export default function SingersSection() {
   );
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
 
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
-
   // Get singers from content or use defaults
   const singers = content?.singers || [];
 
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Box w="100vw">
         <SectionChurchLoader
@@ -65,6 +58,20 @@ export default function SingersSection() {
         />
       </Box>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Box w="100vw" py={20} textAlign="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Box>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   return (

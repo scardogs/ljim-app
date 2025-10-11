@@ -1,27 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import ChurchLoader from "../ChurchLoader";
+import { useHomepageContent } from "../../contexts/HomepageContext";
 
 export default function CallToActionSection() {
   const router = useRouter();
-  const [content, setContent] = useState(null);
-
-  // Fetch content from database
-  useEffect(() => {
-    fetch("/api/admin/homepage")
-      .then((res) => res.json())
-      .then((data) => setContent(data))
-      .catch((err) => console.error("Error fetching homepage content:", err));
-  }, []);
+  const { content, loading, error } = useHomepageContent();
 
   // Show loading state
-  if (!content) {
+  if (loading) {
     return (
       <Flex justify="center" w="full" mt={12} minH="200px" align="center">
         <ChurchLoader message="Loading..." />
       </Flex>
     );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <Flex justify="center" w="full" mt={12} minH="200px" align="center">
+        <Text color="red.500">Error loading content: {error}</Text>
+      </Flex>
+    );
+  }
+
+  // Don't render if no content
+  if (!content) {
+    return null;
   }
 
   return (
