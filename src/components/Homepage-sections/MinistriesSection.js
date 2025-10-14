@@ -67,6 +67,12 @@ const bgShift = keyframes`
   100% { background-position: 0% 0%; }
 `;
 
+// Continuous sliding animation for cards
+const slideLoop = keyframes`
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+`;
+
 export default function MinistriesSection() {
   const { content, loading, error } = useHomepageContent();
 
@@ -75,10 +81,7 @@ export default function MinistriesSection() {
   const glassBg = useColorModeValue("rgba(255,255,255,0.9)", "rgba(0,0,0,0.5)");
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const verseColor = useColorModeValue("gray.700", "gray.300");
-  const bgGradient = useColorModeValue(
-    "linear(to-b, gray.50, white)",
-    "linear(to-b, gray.900, black)"
-  );
+  const bgColor = useColorModeValue("gray.100", "gray.800");
   const iconBg = useColorModeValue("gray.100", "gray.800");
   const iconColor = useColorModeValue("gray.700", "gray.300");
   const accentLine = useColorModeValue("gray.300", "gray.600");
@@ -137,9 +140,7 @@ export default function MinistriesSection() {
     <Box
       w="100vw"
       py={{ base: 20, md: 28 }}
-      bgGradient={bgGradient}
-      backgroundSize="400% 400%"
-      animation={`${bgShift} 25s ease infinite`}
+      bg={bgColor}
       position="relative"
       overflow="hidden"
     >
@@ -230,147 +231,296 @@ export default function MinistriesSection() {
           />
         </VStack>
 
-        {/* Ministries Grid */}
-        <SimpleGrid
-          columns={{ base: 1, md: 2, lg: 4 }}
-          spacing={{ base: 6, md: 8 }}
-          mb={20}
-        >
-          {ministries.map((m, index) => {
-            const MinistryIcon = getMinistryIcon(m.title);
+        {/* Ministries Sliding Container */}
+        <Box mb={20} overflow="hidden" position="relative" w="100%">
+          {/* Sliding Track */}
+          <Box
+            display="flex"
+            gap={{ base: 6, md: 8 }}
+            animation={`${slideLoop} ${
+              ministries.length * 1.5
+            }s linear infinite`}
+            w="200%"
+          >
+            {/* First set of cards */}
+            {ministries.map((m, index) => {
+              const MinistryIcon = getMinistryIcon(m.title);
 
-            return (
-              <MotionBox
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
+              return (
                 <Box
-                  bg={glassBg}
-                  borderWidth="1px"
-                  borderColor={borderColor}
-                  backdropFilter="blur(12px)"
-                  borderRadius="2xl"
-                  p={6}
-                  h="full"
-                  position="relative"
-                  overflow="hidden"
-                  _hover={{
-                    bg: cardHoverBg,
-                    transform: "translateY(-8px)",
-                    boxShadow: "0 12px 40px rgba(0,0,0,0.15)",
-                    borderColor: cardHoverBorderColor,
-                  }}
-                  transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-                  cursor="pointer"
-                  boxShadow="md"
+                  key={`first-${index}`}
+                  flex="0 0 auto"
+                  w={{ base: "300px", md: "350px" }}
                 >
-                  {/* Decorative top accent */}
                   <Box
-                    position="absolute"
-                    top={0}
-                    left={0}
-                    right={0}
-                    h="3px"
-                    bgGradient="linear(to-r, gray.400, silver, gray.400)"
-                    opacity={0.6}
-                  />
-
-                  {/* Decorative corner accent */}
-                  <Box
-                    position="absolute"
-                    top={0}
-                    right={0}
-                    w="100px"
-                    h="100px"
-                    bgGradient="radial(gray.200, transparent)"
-                    opacity={0.2}
-                    pointerEvents="none"
-                  />
-
-                  <VStack spacing={4} align="center">
-                    {/* Icon */}
-                    <Flex
-                      w="70px"
-                      h="70px"
-                      borderRadius="2xl"
-                      bg={iconBg}
-                      align="center"
-                      justify="center"
-                      position="relative"
-                      borderWidth="2px"
-                      borderColor={borderColor}
-                      _groupHover={{
-                        animation: `${pulse} 2s ease-in-out infinite`,
-                      }}
-                    >
-                      <Icon as={MinistryIcon} boxSize={8} color={iconColor} />
-
-                      {/* Icon glow effect */}
-                      <Box
-                        position="absolute"
-                        w="100%"
-                        h="100%"
-                        borderRadius="2xl"
-                        bg={iconBg}
-                        filter="blur(10px)"
-                        opacity={0.3}
-                        zIndex={-1}
-                      />
-                    </Flex>
-
-                    {/* Number badge */}
+                    bg={glassBg}
+                    borderWidth="1px"
+                    borderColor={borderColor}
+                    backdropFilter="blur(12px)"
+                    borderRadius="2xl"
+                    p={6}
+                    h="full"
+                    position="relative"
+                    overflow="hidden"
+                    _hover={{
+                      bg: cardHoverBg,
+                      transform: "translateY(-8px)",
+                      boxShadow: "0 12px 40px rgba(0,0,0,0.15)",
+                      borderColor: cardHoverBorderColor,
+                    }}
+                    transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                    cursor="pointer"
+                    boxShadow="md"
+                  >
+                    {/* Decorative top accent */}
                     <Box
                       position="absolute"
-                      top={4}
-                      left={4}
-                      w="28px"
-                      h="28px"
-                      borderRadius="full"
-                      bg={iconBg}
-                      borderWidth="2px"
-                      borderColor={borderColor}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Text fontSize="xs" fontWeight="bold" color={iconColor}>
-                        {String(index + 1).padStart(2, "0")}
+                      top={0}
+                      left={0}
+                      right={0}
+                      h="3px"
+                      bgGradient="linear(to-r, gray.400, silver, gray.400)"
+                      opacity={0.6}
+                    />
+
+                    {/* Decorative corner accent */}
+                    <Box
+                      position="absolute"
+                      top={0}
+                      right={0}
+                      w="100px"
+                      h="100px"
+                      bgGradient="radial(gray.200, transparent)"
+                      opacity={0.2}
+                      pointerEvents="none"
+                    />
+
+                    <VStack spacing={4} align="center">
+                      {/* Icon */}
+                      <Flex
+                        w="70px"
+                        h="70px"
+                        borderRadius="2xl"
+                        bg={iconBg}
+                        align="center"
+                        justify="center"
+                        position="relative"
+                        borderWidth="2px"
+                        borderColor={borderColor}
+                        _groupHover={{
+                          animation: `${pulse} 2s ease-in-out infinite`,
+                        }}
+                      >
+                        <Icon as={MinistryIcon} boxSize={8} color={iconColor} />
+
+                        {/* Icon glow effect */}
+                        <Box
+                          position="absolute"
+                          w="100%"
+                          h="100%"
+                          borderRadius="2xl"
+                          bg={iconBg}
+                          filter="blur(10px)"
+                          opacity={0.3}
+                          zIndex={-1}
+                        />
+                      </Flex>
+
+                      {/* Number badge */}
+                      <Box
+                        position="absolute"
+                        top={4}
+                        left={4}
+                        w="28px"
+                        h="28px"
+                        borderRadius="full"
+                        bg={iconBg}
+                        borderWidth="2px"
+                        borderColor={borderColor}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Text fontSize="xs" fontWeight="bold" color={iconColor}>
+                          {String(index + 1).padStart(2, "0")}
+                        </Text>
+                      </Box>
+
+                      {/* Title */}
+                      <Heading
+                        size="md"
+                        color={textColor}
+                        fontFamily="monospace"
+                        textAlign="center"
+                        letterSpacing="tight"
+                      >
+                        {m.title}
+                      </Heading>
+
+                      {/* Divider */}
+                      <Box
+                        w="40px"
+                        h="2px"
+                        bg={accentLine}
+                        borderRadius="full"
+                      />
+
+                      {/* Description */}
+                      <Text
+                        fontSize="sm"
+                        color={subText}
+                        lineHeight="tall"
+                        textAlign="center"
+                        fontFamily="monospace"
+                      >
+                        {m.description}
                       </Text>
-                    </Box>
-
-                    {/* Title */}
-                    <Heading
-                      size="md"
-                      color={textColor}
-                      fontFamily="monospace"
-                      textAlign="center"
-                      letterSpacing="tight"
-                    >
-                      {m.title}
-                    </Heading>
-
-                    {/* Divider */}
-                    <Box w="40px" h="2px" bg={accentLine} borderRadius="full" />
-
-                    {/* Description */}
-                    <Text
-                      fontSize="sm"
-                      color={subText}
-                      lineHeight="tall"
-                      textAlign="center"
-                      fontFamily="monospace"
-                    >
-                      {m.description}
-                    </Text>
-                  </VStack>
+                    </VStack>
+                  </Box>
                 </Box>
-              </MotionBox>
-            );
-          })}
-        </SimpleGrid>
+              );
+            })}
+
+            {/* Duplicate set for seamless loop */}
+            {ministries.map((m, index) => {
+              const MinistryIcon = getMinistryIcon(m.title);
+
+              return (
+                <Box
+                  key={`second-${index}`}
+                  flex="0 0 auto"
+                  w={{ base: "300px", md: "350px" }}
+                >
+                  <Box
+                    bg={glassBg}
+                    borderWidth="1px"
+                    borderColor={borderColor}
+                    backdropFilter="blur(12px)"
+                    borderRadius="2xl"
+                    p={6}
+                    h="full"
+                    position="relative"
+                    overflow="hidden"
+                    _hover={{
+                      bg: cardHoverBg,
+                      transform: "translateY(-8px)",
+                      boxShadow: "0 12px 40px rgba(0,0,0,0.15)",
+                      borderColor: cardHoverBorderColor,
+                    }}
+                    transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                    cursor="pointer"
+                    boxShadow="md"
+                  >
+                    {/* Decorative top accent */}
+                    <Box
+                      position="absolute"
+                      top={0}
+                      left={0}
+                      right={0}
+                      h="3px"
+                      bgGradient="linear(to-r, gray.400, silver, gray.400)"
+                      opacity={0.6}
+                    />
+
+                    {/* Decorative corner accent */}
+                    <Box
+                      position="absolute"
+                      top={0}
+                      right={0}
+                      w="100px"
+                      h="100px"
+                      bgGradient="radial(gray.200, transparent)"
+                      opacity={0.2}
+                      pointerEvents="none"
+                    />
+
+                    <VStack spacing={4} align="center">
+                      {/* Icon */}
+                      <Flex
+                        w="70px"
+                        h="70px"
+                        borderRadius="2xl"
+                        bg={iconBg}
+                        align="center"
+                        justify="center"
+                        position="relative"
+                        borderWidth="2px"
+                        borderColor={borderColor}
+                        _groupHover={{
+                          animation: `${pulse} 2s ease-in-out infinite`,
+                        }}
+                      >
+                        <Icon as={MinistryIcon} boxSize={8} color={iconColor} />
+
+                        {/* Icon glow effect */}
+                        <Box
+                          position="absolute"
+                          w="100%"
+                          h="100%"
+                          borderRadius="2xl"
+                          bg={iconBg}
+                          filter="blur(10px)"
+                          opacity={0.3}
+                          zIndex={-1}
+                        />
+                      </Flex>
+
+                      {/* Number badge */}
+                      <Box
+                        position="absolute"
+                        top={4}
+                        left={4}
+                        w="28px"
+                        h="28px"
+                        borderRadius="full"
+                        bg={iconBg}
+                        borderWidth="2px"
+                        borderColor={borderColor}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Text fontSize="xs" fontWeight="bold" color={iconColor}>
+                          {String(index + 1).padStart(2, "0")}
+                        </Text>
+                      </Box>
+
+                      {/* Title */}
+                      <Heading
+                        size="md"
+                        color={textColor}
+                        fontFamily="monospace"
+                        textAlign="center"
+                        letterSpacing="tight"
+                      >
+                        {m.title}
+                      </Heading>
+
+                      {/* Divider */}
+                      <Box
+                        w="40px"
+                        h="2px"
+                        bg={accentLine}
+                        borderRadius="full"
+                      />
+
+                      {/* Description */}
+                      <Text
+                        fontSize="sm"
+                        color={subText}
+                        lineHeight="tall"
+                        textAlign="center"
+                        fontFamily="monospace"
+                      >
+                        {m.description}
+                      </Text>
+                    </VStack>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
 
         {/* Bible Verse Section */}
         <MotionBox

@@ -1,33 +1,8 @@
 import React from "react";
-import {
-  Box,
-  Heading,
-  Text,
-  Button,
-  VStack,
-  SimpleGrid,
-  useColorModeValue,
-  IconButton,
-  HStack,
-  Divider,
-  List,
-  ListItem,
-  ListIcon,
-  Flex,
-  Fade,
-} from "@chakra-ui/react";
-import {
-  InfoOutlineIcon,
-  StarIcon,
-  AtSignIcon,
-  RepeatIcon,
-} from "@chakra-ui/icons";
-import { FaFacebook, FaEnvelope, FaPhone } from "react-icons/fa";
-import { useRouter } from "next/router";
+import { Box, useColorModeValue } from "@chakra-ui/react";
 import HeroImageSection from "./HeroImageSection";
 import MissionVluesSection from "./MissionValuesSection";
 import MinistriesSection from "./MinistriesSection";
-import CallToActionSection from "./CallToActionSection";
 import FooterSection from "./FooterSection";
 import MainContentSection, {
   RegionalChurchesSection,
@@ -38,26 +13,8 @@ import CongregationGallery from "./CongregationGallery";
 import ShowcaseSection from "./ShowcaseSection";
 import FloatingVerseWidget from "../../shared/FloatingVerseWidget";
 import { HomepageProvider } from "../../contexts/HomepageContext";
-import ChurchLoader from "../ChurchLoader";
-const ministries = [
-  { name: "Worship", tagline: "Lift God in Spirit and Truth" },
-  { name: "Word", tagline: "Teaching the Living Word" },
-  { name: "Outreach", tagline: "Serving with Love and Compassion" },
-  { name: "Discipleship", tagline: "Growing Strong in Faith" },
-];
 
 function HomePageContent() {
-  const router = useRouter();
-
-  // Palette
-  const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
-  const subText = useColorModeValue("gray.600", "gray.400");
-  const glassBg = useColorModeValue(
-    "rgba(255,255,255,0.8)",
-    "rgba(0,0,0,0.45)"
-  );
-  const borderColor = useColorModeValue("gray.200", "gray.700");
-
   return (
     <Box
       minH="100vh"
@@ -78,49 +35,31 @@ function HomePageContent() {
       </Box>
 
       {/* ✅ Main Content Section */}
-      <Box
-        px={{ base: 4, md: 8 }}
-        py={{ base: 16, md: 24 }}
-        position="relative"
-      >
-        {/* Decorative lines in background */}
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          w="100%"
-          h="100%"
-          backgroundSize="20px 20px"
-          backgroundImage="
-          linear-gradient(to right, gray 1px, transparent 1px),
-          linear-gradient(to bottom, gray 1px, transparent 1px)"
-          opacity={0.1}
-          zIndex={0}
-        />
+      <MainContentSection />
 
-        <VStack align="center" maxW="6xl" mx="auto">
-          <MainContentSection />
-          {/* Regional Churches Accordion */}
-          <RegionalChurchesSection />
-          {/* Singer Images Grid */}
-          <SingersImagesSection />
-          {/* Glowing Cross Section */}
-          <GlowingCrossSection />
-          {/* Congregation Gallery */}
-          <CongregationGallery />
-          {/* Showcase Section */}
-          <ShowcaseSection />
-          {/* Mission & Values */}
-          <MissionVluesSection />
+      {/* Regional Churches Accordion */}
+      <RegionalChurchesSection />
 
-          {/* Ministries Grid */}
-          <MinistriesSection />
-          {/* Call to Action */}
-          <CallToActionSection />
-          {/* Footer */}
-          <FooterSection />
-        </VStack>
-      </Box>
+      {/* Singer Images Grid */}
+      <SingersImagesSection />
+
+      {/* Glowing Cross Section */}
+      <GlowingCrossSection />
+
+      {/* Congregation Gallery */}
+      <CongregationGallery />
+
+      {/* Showcase Section */}
+      <ShowcaseSection />
+
+      {/* Mission & Values */}
+      <MissionVluesSection />
+
+      {/* Ministries Grid */}
+      <MinistriesSection />
+
+      {/* Footer with Call to Action */}
+      <FooterSection />
     </Box>
   );
 }
