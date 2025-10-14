@@ -59,10 +59,13 @@ export default function IntroSection() {
   const { content, loading, error } = useHomepageContent();
   const [index, setIndex] = useState(0);
 
+  // All hooks must be called before any early returns
   const textColor = useColorModeValue("gray.900", "whiteAlpha.900");
   const subText = useColorModeValue("gray.600", "gray.400");
   const verseColor = useColorModeValue("gray.700", "gray.300");
   const isDarkMode = useColorModeValue(false, true);
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const cardBg = useColorModeValue("gray.50", "gray.900");
 
   // Rotate through texts
   useEffect(() => {
@@ -296,8 +299,8 @@ export default function IntroSection() {
               p={6}
               borderRadius="xl"
               borderWidth="1px"
-              borderColor={useColorModeValue("gray.200", "gray.700")}
-              bg={useColorModeValue("gray.50", "gray.900")}
+              borderColor={borderColor}
+              bg={cardBg}
               maxW="2xl"
             >
               <Text
